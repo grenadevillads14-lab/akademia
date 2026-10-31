@@ -17,6 +17,7 @@ Third-person 3D exploration and story game set at Plato's Academy, Athens, 367â€
 | `npm run build:artifact` | Build + `dist/artifact.html` for the hosted page (https://claude.ai/artifact/UHr1NTKJf2f1pbcwGsXMQx). Republish with the asset files it prints |
 | `python3 -I scripts/fetch_polyhaven.py` | Download the Poly Haven assets in `content/assets/polyhaven.json` (WebP-encoded) |
 | `node scripts/optimize-models.mjs` | Simplify fetched models into `public/assets/ph/game/<id>/lod{0,1}.gltf` |
+| `python3 -I scripts/build_humans.py` | Bake the CC0 MakeHuman body, targets, skins, hair, beards into `public/assets/humans/` |
 
 URL parameters: `?bench[=s]` (also the **Run benchmark** button, `#bench`), `?preset=low|medium|high|ultra`, `?time=18.3`, `?season=summer`,
 `?timescale=0`, `?at=x,z`, `?overlay=1`. Post-processing debug: `?post=0`, `?ao=0`, `?bloom=0`, `?shafts=0`, `?msaa=0`, `?postdebug=1` (raw scene colour).
@@ -56,7 +57,8 @@ src/
                                doric (fluted columns, entablature, stoa), academy (gymnasium, shrine, altars, enclosuresâ€¦), reliefs
   render/                      renderer, material library (Poly Haven), model library (glTF LODs, instancing),
                                post pipeline (SSAO, height fog, aerial perspective, shafts, bloom, grade), sky environment (IBL)
-  characters/                  appearance schema, procedural skinned humanoid (one draw call, linen cloth), procedural animator
+  characters/                  appearance schema; mhuman.ts = realistic MakeHuman bodies (targets, fitted hair/beards, clothes cut
+                               from helpers with masked edges, bound to the 20-bone rig); humanoid.ts = stylised fallback; animator
   player/                      Rapier kinematic controller (walk/run/sprint/jump/swim), third-person camera with collision
   npc/                         ambient crowd (walkers, groups) and story NPCs (pose / walk / patrol / follow)
   dialogue/                    ink runner (cmd:/anim:/shot: tags, external functions) and the dialogue UI
@@ -92,5 +94,5 @@ Conventions that matter:
 ## Known issues
 
 - The Rapier `-compat` chunk is 1.7 MB gzipped (WASM inlined).
-- Characters are stylized procedural figures (decision in PROGRESS.md). Realistic humans would need MakeHuman/Mixamo assets from the user.
+- Characters are realistic CC0 MakeHuman bodies (`?humans=stylized` falls back to the old procedural figures). Crowds use the low-poly body.
 - `pickDefaultPreset` sends SwiftShader to Low; screenshots must request a preset explicitly.

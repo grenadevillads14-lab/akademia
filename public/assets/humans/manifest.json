@@ -1,0 +1,43 @@
+{
+ "hair": [
+  "short01",
+  "short02",
+  "short03",
+  "short04",
+  "long01",
+  "bob02",
+  "braid01",
+  "ponytail01"
+ ],
+ "beard": [
+  "beard_scruffy",
+  "beard_viking",
+  "beard_sigmund"
+ ],
+ "eyebrows": [
+  "eyebrow001",
+  "eyebrow006",
+  "eyebrow010"
+ ],
+ "skins": {
+  "young_caucasian_male": "tex/skin_young_caucasian_male.webp",
+  "young_caucasian_female": "tex/skin_young_caucasian_female.webp",
+  "middleage_caucasian_male": "tex/skin_middleage_caucasian_male.webp",
+  "middleage_caucasian_female": "tex/skin_middleage_caucasian_female.webp",
+  "old_caucasian_male": "tex/skin_old_caucasian_male.webp",
+  "old_caucasian_female": "tex/skin_old_caucasian_female.webp",
+  "young_african_male": "tex/skin_young_african_male.webp",
+  "middleage_african_male": "tex/skin_middleage_african_male.webp",
+  "young_african_female": "tex/skin_young_african_female.webp"
+ },
+ "eyes": {
+  "brown": "tex/eye_brown.webp",
+  "brownlight": "tex/eye_brownlight.webp",
+  "grey": "tex/eye_grey.webp",
+  "bluegreen": "tex/eye_bluegreen.webp"
+ },
+ "bodies": [
+  "body_male_lo",
+  "body_female_lo"
+ ]
+}

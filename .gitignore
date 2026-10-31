@@ -8,3 +8,4 @@ playwright-report/
 
 # Raw Poly Haven downloads (re-fetch with scripts/fetch_polyhaven.py); optimised copies live in public/assets/ph/game
 public/assets/ph/models/
+assets-src/

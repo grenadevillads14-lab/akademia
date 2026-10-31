@@ -25,6 +25,7 @@ import { PauseMenu } from '../ui/menu';
 import type { NewGameChoices } from '../ui/title';
 import { saveSettings } from '../core/settings';
 import { CaveInterlude } from '../cave/cave';
+import { loadHumanKit } from '../characters/mhuman';
 import { AthleticsHost } from './athletics';
 import { PuzzleHost } from './puzzleHost';
 import { StoryDirector } from './story';
@@ -112,6 +113,11 @@ export class Game {
 
   async start(): Promise<void> {
     const o = this.o;
+    // Realistic people (MakeHuman CC0 data); without it the stylised figures are used.
+    if (o.params.get('humans') !== 'stylized') {
+      await o.setLoading(t('loading.people'));
+      await loadHumanKit();
+    }
     this.world = await buildWorld('academy', {
       scene: this.scene,
       renderer: o.renderer,

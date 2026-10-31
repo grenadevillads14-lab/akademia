@@ -51,7 +51,7 @@ interface Part {
 
 const col = (hex: string) => new THREE.Color(hex);
 
-export function buildHumanoid(a: Appearance): Humanoid {
+export function buildStylizedHumanoid(a: Appearance): Humanoid {
   const s = a.height / 1.72;
   const broad = 0.85 + a.build * 0.35;
   const fem = a.sex === 'f';

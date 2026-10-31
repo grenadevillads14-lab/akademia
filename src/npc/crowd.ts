@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { Animator, type AnimState } from '../characters/animator';
 import { parseAppearance, type AppearanceInput } from '../characters/appearance';
-import { buildHumanoid, type Humanoid } from '../characters/humanoid';
+import { buildHumanoid } from '../characters/build';
+import type { Humanoid } from '../characters/humanoid';
 import { polylineLength, samplePolyline, type Vec2 } from '../procgen/geometry2d';
 import { mulberry32, pick, range, type Rng } from '../procgen/rng';
 
@@ -80,7 +81,7 @@ export class Crowd {
     for (let i = 0; i < count; i++) {
       const rng = this.rng;
       const role = pick(rng, ['traveller', 'citizen', 'citizen', 'worker', 'woman', 'elder', 'youth'] as const);
-      const h = buildHumanoid(parseAppearance(randomCitizen(rng, role)));
+      const h = buildHumanoid(parseAppearance(randomCitizen(rng, role)), { lite: true });
       this.group.add(h.object);
       const anim = new Animator(h, rng() * 100);
       anim.play('walk');
@@ -93,7 +94,7 @@ export class Crowd {
     for (let i = 0; i < count; i++) {
       const rng = this.rng;
       const role = pick(rng, ['citizen', 'citizen', 'elder', 'youth', 'woman', 'traveller'] as const);
-      const h = buildHumanoid(parseAppearance(randomCitizen(rng, role)));
+      const h = buildHumanoid(parseAppearance(randomCitizen(rng, role)), { lite: true });
       const a = (i / count) * Math.PI * 2 + rng() * 0.4;
       const px = x + Math.cos(a) * radius;
       const pz = z + Math.sin(a) * radius;

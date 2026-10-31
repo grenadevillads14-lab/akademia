@@ -3,6 +3,17 @@
 Every third-party file in the repository is listed here with its source and license. Only CC0 or equivalently permissive
 licenses are allowed. Procedural assets (generated in code) are listed too.
 
+## MakeHuman (CC0 1.0): http://www.makehumancommunity.org
+
+Baked by `python3 -I scripts/build_humans.py` into `public/assets/humans/` (the downloads are a git-ignored cache in `assets-src/`).
+Bodies are blended at runtime from the macro targets; textures are re-encoded to WebP (hair, beards and eyebrows as neutral grey for tinting).
+
+| Asset | Source | Author(s) | Used for |
+|---|---|---|---|
+| hm08 base mesh, macrodetail targets, default skeleton and weights, clothing helpers | [makehuman repository](https://github.com/makehumancommunity/makehuman) (`makehuman/data`, CC0 since 2020) | MakeHuman team (Manuel Bastioni, Data Collection AB, Joel Palmius, Jonas Hauquier) | every character's body, shape, skin weights; chiton/himation/chlamys are cut from the bodysuit and skirt helpers |
+| Skins (young/middle-aged/old, caucasian and african), eyes, eyebrows 001/006/010, eyelashes 01, hair short01–04, long01, bob02, braid01, ponytail01, low-poly bodies male1591/female1605 | [MakeHuman system assets pack](https://files2.makehumancommunity.org/asset_packs/makehuman_system_assets/) (`makehuman_system_assets_cc0.zip`) | MakeHuman team | skin, faces, hair; low-poly bodies for crowds |
+| Scruffy beard (WDG), Viking beard (RehmanPolanski), Sigmund beard (Grinsegold) | [bodyparts05 pack](https://files2.makehumancommunity.org/asset_packs/bodyparts05/) (CC0 per pack metadata) | WDG, RehmanPolanski, Grinsegold | beards |
+
 ## Poly Haven (CC0 1.0): https://polyhaven.com
 
 Fetched by `python3 -I scripts/fetch_polyhaven.py` (manifest: `content/assets/polyhaven.json`), re-encoded to WebP.

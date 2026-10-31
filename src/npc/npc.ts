@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { Animator, type AnimState } from '../characters/animator';
 import { parseAppearance, type AppearanceInput } from '../characters/appearance';
-import { buildHumanoid, type Humanoid } from '../characters/humanoid';
+import { buildHumanoid } from '../characters/build';
+import type { Humanoid } from '../characters/humanoid';
 
 /**
  * A named NPC body: a humanoid that can stand, sit, read, draw in the dust, gesture, walk to points,
