@@ -1,0 +1,40 @@
+{
+  "notes": "Poly Haven assets (CC0 1.0) used by the game. Fetched by scripts/fetch_polyhaven.py into public/assets/ph/ and re-encoded to WebP. 'role' says what each one is for.",
+  "textures": [
+    { "id": "white_sandstone_blocks_02", "role": "ashlar limestone: gate towers, wall socles, altars" },
+    { "id": "large_sandstone_blocks", "role": "big ashlar courses: Dipylon gate piers, city wall" },
+    { "id": "stacked_stone_wall", "role": "dry-stone walls (Kepidion, field walls)" },
+    { "id": "clay_plaster", "role": "mudbrick with clay render: city wall upper courses, houses" },
+    { "id": "white_plaster_rough_01", "role": "whitewashed house walls" },
+    { "id": "clay_roof_tiles", "role": "terracotta roof tiles" },
+    { "id": "marble_01", "role": "Pentelic marble: stelai, herms, altar of Prometheus" },
+    { "id": "gravel_road", "role": "the road to the Academy" },
+    { "id": "stony_dirt_path", "role": "footpaths and the Dipylon court" },
+    { "id": "sparse_grass", "role": "meadow ground" },
+    { "id": "dry_ground_01", "role": "dry summer ground" },
+    { "id": "rock_face", "role": "outcrops on Colonus" },
+    { "id": "brown_mud", "role": "river banks" },
+    { "id": "sand_01", "role": "palaestra sand" },
+    { "id": "rock_tile_floor", "role": "paved floors (stoa, gymnasium porticoes)" },
+    { "id": "bark_platanus", "role": "oriental plane bark" },
+    { "id": "bark_brown_02", "role": "olive and fig bark" },
+    { "id": "wood_plank_wall", "role": "gate doors, workshop shutters" }
+  ],
+  "models": [
+    { "id": "namaqualand_boulder_02", "role": "boulder" },
+    { "id": "namaqualand_boulder_04", "role": "boulder" },
+    { "id": "boulder_01", "role": "boulder" },
+    { "id": "stone_01", "role": "small stone" },
+    { "id": "shrub_01", "role": "shrub" },
+    { "id": "shrub_02", "role": "shrub" },
+    { "id": "shrub_04", "role": "shrub" },
+    { "id": "wild_rooibos_bush", "role": "low scrub (stands in for thyme and rosemary)" },
+    { "id": "grass_medium_01", "role": "grass tuft" },
+    { "id": "grass_medium_02", "role": "grass tuft" },
+    { "id": "antique_ceramic_vase_01", "role": "pottery" },
+    { "id": "ceramic_vase_01", "role": "pottery" },
+    { "id": "planter_pot_clay", "role": "pottery" },
+    { "id": "wicker_basket_01", "role": "basket" },
+    { "id": "marble_bust_01", "role": "herm head" }
+  ]
+}

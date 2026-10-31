@@ -54,6 +54,8 @@ export function buildForest(
     variants?: number;
     drawDistance: number;
     shadows: boolean;
+    /** Photographic bark layers [olive-grey, plane]. */
+    bark?: THREE.DataArrayTexture;
   },
 ): Forest {
   const variantsPer = opts.variants ?? 3;
@@ -80,7 +82,7 @@ export function buildForest(
     magFilter: THREE.LinearFilter,
     depthBuffer: true,
   });
-  const woodMat = createWoodMaterial(opts.uniforms);
+  const woodMat = createWoodMaterial(opts.uniforms, opts.bark);
   const leafMat = createLeafMaterial(opts.uniforms, leafAtlas, impostorRT.texture, opts.sunDir);
   // The capture pass must not bind the atlas it renders into (that's a GL feedback loop).
   const blank = new THREE.DataTexture(new Uint8Array([0, 0, 0, 0]), 1, 1);

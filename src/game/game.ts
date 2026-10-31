@@ -13,6 +13,10 @@ import type { Physics } from '../physics/physics';
 import { ThirdPersonCamera } from '../player/camera';
 import { Player } from '../player/player';
 import { polylineLength, samplePolyline, type Vec2 } from '../procgen/geometry2d';
+import { SkyEnvironment } from '../render/environment';
+import { MaterialLib } from '../render/materialLib';
+import { ModelLib } from '../render/modelLib';
+import { PostPipeline } from '../render/post';
 import { onResize } from '../render/renderer';
 import { WorldClock, formatTime, type Season } from '../world/clock';
 import { createWorldUniforms, type WorldUniforms } from '../world/uniforms';
@@ -55,6 +59,9 @@ export class Game {
   private readonly hint: HTMLDivElement;
   private readonly timer = new THREE.Timer();
   private framesRendered = 0;
+  private post: PostPipeline | null = null;
+  private env: SkyEnvironment | null = null;
+  private elapsed = 0;
   ready = false;
   benchResult: import('../debug/benchmark').BenchmarkResult | null = null;
 
@@ -83,8 +90,24 @@ export class Game {
       physics: o.physics,
       uniforms: this.uniforms,
       settings: o.settings,
+      lib: new MaterialLib(o.renderer),
+      models: new ModelLib(this.uniforms),
       progress: (s) => o.setLoading(t(s)),
     });
+    const gfx = o.settings.graphics;
+    // Debug switches: ?post=0 disables the pipeline, ?ao=0 / ?bloom=0 / ?shafts=0 disable parts.
+    const P = o.params;
+    if (P.get('ao') === '0') gfx.post.ao = false;
+    if (P.get('bloom') === '0') gfx.post.bloom = false;
+    if (P.get('shafts') === '0') gfx.post.godRays = false;
+    const wantPost = P.get('post') !== '0' && (gfx.post.ao || gfx.post.bloom || gfx.post.godRays);
+    if (wantPost) {
+      this.post = new PostPipeline(o.renderer, gfx);
+      this.scene.fog = null; // the post pipeline's height fog replaces three's fog
+    }
+    this.env = new SkyEnvironment(o.renderer, this.world.sky.skyMesh, this.scene);
+    this.scene.environmentIntensity = 0.38;
+    this.world.sky.ambientScale = 0.4;
     await o.setLoading(t('loading.player'));
     const spawn = { ...this.world.layout.spawn };
     const at = o.params.get('at');
@@ -234,11 +257,30 @@ export class Game {
     this.world.forest.update(this.camera);
     this.world.grass.update(focus);
     this.world.water.update(dt);
+    this.world.update(this.camera, dt);
+    const sky = this.world.sky;
+    this.env?.update(dt, sky.sunDir, sky.fogColor.clone().multiplyScalar(0.45));
 
     // Render.
     const r = this.o.renderer;
     r.info.reset();
-    r.render(this.scene, this.camera);
+    this.elapsed += dt;
+    if (this.post) {
+      const p = this.post.params;
+      p.sunDir.copy(sky.sunDir);
+      p.sunColor.copy(sky.sunColor);
+      p.fogColor.copy(sky.fogColor);
+      p.fogDensity = sky.fogDensity * 0.55;
+      p.fogBase = 0;
+      p.heightFalloff = 0.006;
+      const el = Math.asin(Math.max(-1, Math.min(1, sky.sunDir.y))) * 57.3;
+      p.shafts = (1 - THREE.MathUtils.smoothstep(el, 12, 45)) * THREE.MathUtils.smoothstep(el, -2, 3) * 0.9;
+      p.horizonHaze = 0.65;
+      p.warmth = 0.2 + 0.3 * (1 - THREE.MathUtils.smoothstep(el, 5, 35));
+      this.post.render(this.scene, this.camera, this.elapsed);
+    } else {
+      r.render(this.scene, this.camera);
+    }
     let workMs = 0;
     if (this.benchRunning) {
       r.getContext().finish();

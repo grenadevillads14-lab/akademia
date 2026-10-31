@@ -41,5 +41,7 @@
   "zone.mouseion": "The Mouseion",
   "zone.kepidion": "Plato's Garden",
   "zone.colonus": "Colonus of the Horses",
-  "zone.cephissus": "The Cephissus"
+  "zone.cephissus": "The Cephissus",
+  "loading.city": "Raising the walls of the Kerameikos…",
+  "loading.people": "Filling the road with travellers…"
 }

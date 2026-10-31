@@ -20,7 +20,14 @@ export interface Terrain {
 
 const CHUNK_CELLS = 64;
 
-export function buildTerrain(hf: Heightfield, physics: Physics | null, uniforms: WorldUniforms): Terrain {
+/** Photographic ground layers (Poly Haven), in SURFACE_LAYERS order, with tile sizes in metres. */
+export interface GroundLayers {
+  diff: THREE.DataArrayTexture;
+  nor: THREE.DataArrayTexture;
+  metres: number[];
+}
+
+export function buildTerrain(hf: Heightfield, physics: Physics | null, uniforms: WorldUniforms, layers?: GroundLayers): Terrain {
   const { bounds, cellSize } = hf.layout;
   const cols = Math.round((bounds.maxX - bounds.minX) / cellSize);
   const rows = Math.round((bounds.maxZ - bounds.minZ) / cellSize);
@@ -44,7 +51,7 @@ export function buildTerrain(hf: Heightfield, physics: Physics | null, uniforms:
     }
   }
 
-  const material = createTerrainMaterial(uniforms);
+  const material = layers ? createPhotoTerrainMaterial(uniforms, layers) : createTerrainMaterial(uniforms);
   const group = new THREE.Group();
   group.name = 'terrain';
 
@@ -216,6 +223,93 @@ function createTerrainMaterial(uniforms: WorldUniforms): THREE.MeshStandardMater
         '#include <roughnessmap_fragment>',
         `float roughnessFactor = roughness - 0.25 * vSplatB.z - 0.2 * uWetness;`,
       );
+  };
+  return mat;
+}
+
+/**
+ * Terrain material with photographic layers: albedo + normal texture arrays, height-aware blending
+ * (each layer's own brightness decides who wins at the borders, so paths break up into pebbles and
+ * grass clumps instead of a soft fade), and a low-frequency tone map to hide tiling.
+ */
+function createPhotoTerrainMaterial(uniforms: WorldUniforms, layers: GroundLayers): THREE.MeshStandardMaterial {
+  const mat = new THREE.MeshStandardMaterial({ roughness: 0.95, metalness: 0 });
+  mat.userData.layers = layers.diff;
+  const m = layers.metres;
+  mat.onBeforeCompile = (shader) => {
+    shader.uniforms.uDiff = { value: layers.diff };
+    shader.uniforms.uNor = { value: layers.nor };
+    shader.uniforms.uScaleA = { value: new THREE.Vector4(1 / m[0]!, 1 / m[1]!, 1 / m[2]!, 1 / m[3]!) };
+    shader.uniforms.uScaleB = { value: new THREE.Vector4(1 / m[4]!, 1 / m[5]!, 1 / m[6]!, 1 / m[7]!) };
+    shader.uniforms.uSeasonTint = uniforms.seasonTint;
+    shader.uniforms.uWetness = uniforms.wetness;
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', `#include <common>
+        attribute vec4 splatA; attribute vec4 splatB;
+        varying vec4 vSplatA; varying vec4 vSplatB; varying vec3 vWorldPosT;`)
+      .replace('#include <begin_vertex>', `#include <begin_vertex>
+        vSplatA = splatA; vSplatB = splatB; vWorldPosT = (modelMatrix * vec4(position, 1.0)).xyz;`);
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', `#include <common>
+        uniform mediump sampler2DArray uDiff;
+        uniform mediump sampler2DArray uNor;
+        uniform vec4 uScaleA; uniform vec4 uScaleB;
+        uniform vec3 uSeasonTint; uniform float uWetness;
+        varying vec4 vSplatA; varying vec4 vSplatB; varying vec3 vWorldPosT;
+        vec2 terrainUv(float s) { return vec2(vWorldPosT.x, -vWorldPosT.z) * s; }
+        // Explicit gradients: sampling happens inside a loop with early-outs, where implicit
+        // derivatives are undefined (that caused sparkling pixels). Gradients are computed once.
+        // A second, scaled sample breaks up visible repetition.
+        vec2 gdx; vec2 gdy;
+        vec4 sampleLayer(sampler2DArray t, float i, float s) {
+          vec2 uv = terrainUv(s);
+          vec4 a = textureGrad(t, vec3(uv, i), gdx * s, gdy * s);
+          vec4 b = textureGrad(t, vec3(uv * 0.31 + vec2(0.37, 0.71), i), gdx * s * 0.31, gdy * s * 0.31);
+          return mix(a, b, 0.35);
+        }
+`)
+      .replace('#include <map_fragment>', `
+        gdx = dFdx(vec2(vWorldPosT.x, -vWorldPosT.z));
+        gdy = dFdy(vec2(vWorldPosT.x, -vWorldPosT.z));
+        float w0[8];
+        w0[0]=vSplatA.x; w0[1]=vSplatA.y; w0[2]=vSplatA.z; w0[3]=vSplatA.w;
+        w0[4]=vSplatB.x; w0[5]=vSplatB.y; w0[6]=vSplatB.z; w0[7]=vSplatB.w;
+        float sc[8];
+        sc[0]=uScaleA.x; sc[1]=uScaleA.y; sc[2]=uScaleA.z; sc[3]=uScaleA.w;
+        sc[4]=uScaleB.x; sc[5]=uScaleB.y; sc[6]=uScaleB.z; sc[7]=uScaleB.w;
+        vec3 tnorm = vec3(0.0);
+        float wsum = 0.0;
+        vec3 col = vec3(0.0);
+        for (int i = 0; i < 8; i++) {
+          if (w0[i] < 0.004) continue;
+          vec4 d = sampleLayer(uDiff, float(i), sc[i]);
+          vec3 n = sampleLayer(uNor, float(i), sc[i]).xyz * 2.0 - 1.0;
+          vec3 tintL = i == 7 ? vec3(1.32, 1.24, 1.12) : i == 2 ? vec3(1.12, 1.07, 1.0) : i == 4 ? vec3(1.12, 1.08, 1.0) : vec3(1.0);
+          d.rgb *= tintL;
+          float h = dot(d.rgb, vec3(0.333));
+          float w = w0[i] * pow(h + 0.35, 4.0);
+          w = w0[i] < 0.995 ? w : 10.0;
+          col += d.rgb * w;
+          tnorm += n * w;
+          wsum += w;
+        }
+        col /= max(wsum, 1e-4);
+        tnorm /= max(wsum, 1e-4);
+        col = mix(col, col * uSeasonTint, vSplatA.x + vSplatA.y * 0.6);
+        // Pull photo albedo toward the painterly palette: a little less red, a little less saturated.
+        float lum = dot(col, vec3(0.299, 0.587, 0.114));
+        col = mix(vec3(lum), col, 0.66 - 0.2 * (vSplatB.w + vSplatA.z)) * vec3(0.98, 0.97, 0.95);
+        float macro = textureGrad(uDiff, vec3(vec2(vWorldPosT.x, -vWorldPosT.z) / 160.0, 1.0), gdx / 160.0, gdy / 160.0).r;
+        col *= mix(0.85, 1.12, macro);
+        col *= mix(1.0, 0.7, uWetness * (vSplatB.y + vSplatA.z + vSplatB.w));
+        diffuseColor.rgb *= col;`)
+      .replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>
+        // Ground UV frame: T = +X, B = -Z, N = up (see terrainUv). Perturb the geometric normal.
+        vec3 geoN = normalize((vec4(normal, 0.0) * viewMatrix).xyz); // transpose = inverse for a rotation
+        vec3 pert = vec3(tnorm.x, 0.0, -tnorm.y) * 0.9;
+        vec3 worldN = normalize(geoN + pert);
+        normal = normalize((viewMatrix * vec4(worldN, 0.0)).xyz);`)
+      .replace('#include <roughnessmap_fragment>', 'float roughnessFactor = roughness - 0.2 * uWetness - 0.15 * vSplatB.z;');
   };
   return mat;
 }

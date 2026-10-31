@@ -55,10 +55,12 @@ function addWindUniforms(shader: THREE.WebGLProgramParametersWithUniforms, u: Wo
   shader.uniforms.uGust = u.gust;
 }
 
-export function createWoodMaterial(u: WorldUniforms): THREE.MeshStandardMaterial {
+export function createWoodMaterial(u: WorldUniforms, bark?: THREE.DataArrayTexture): THREE.MeshStandardMaterial {
   const mat = new THREE.MeshStandardMaterial({ roughness: 0.92, metalness: 0, color: 0xffffff });
+  if (bark) mat.defines = { PHOTO_BARK: '' };
   mat.onBeforeCompile = (shader) => {
     addWindUniforms(shader, u);
+    if (bark) shader.uniforms.uBark = { value: bark };
     shader.vertexShader = shader.vertexShader
       .replace(
         '#include <common>',
@@ -79,6 +81,9 @@ export function createWoodMaterial(u: WorldUniforms): THREE.MeshStandardMaterial
          varying float vBark;
          varying vec2 vBarkUv;
          varying vec3 vVegWorld;
+         #ifdef PHOTO_BARK
+           uniform mediump sampler2DArray uBark;
+         #endif
          float vh(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
          float vn(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
            return mix(mix(vh(i),vh(i+vec2(1,0)),f.x), mix(vh(i+vec2(0,1)),vh(i+vec2(1,1)),f.x), f.y); }
@@ -110,7 +115,20 @@ export function createWoodMaterial(u: WorldUniforms): THREE.MeshStandardMaterial
            return mix(vec3(0.34,0.28,0.22), vec3(0.44,0.36,0.28), vn(p * 4.0));
          }`,
       )
-      .replace('#include <map_fragment>', `diffuseColor.rgb *= barkColor(vBark, vBarkUv, vVegWorld);`);
+      .replace(
+        '#include <map_fragment>',
+        `vec3 bc = barkColor(vBark, vBarkUv, vVegWorld);
+         #ifdef PHOTO_BARK
+           // Photographic bark (Poly Haven): olive/fig/pomegranate use the grey layer, planes the platanus layer.
+           if (vBark < 1.5 || (vBark > 2.5 && vBark < 4.5)) {
+             float layer = (vBark > 0.5 && vBark < 1.5) ? 1.0 : 0.0;
+             vec3 photo = texture(uBark, vec3(vBarkUv * vec2(2.0, 0.7), layer)).rgb;
+             if (layer < 0.5) photo = mix(vec3(dot(photo, vec3(0.33))), photo, 0.35) * (vBark > 2.5 ? vec3(1.25, 1.24, 1.2) : vec3(1.05, 1.03, 1.0));
+             bc = mix(bc, photo, 0.85);
+           }
+         #endif
+         diffuseColor.rgb *= bc;`,
+      );
   };
   return mat;
 }

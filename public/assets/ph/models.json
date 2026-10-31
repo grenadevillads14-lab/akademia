@@ -1,0 +1,62 @@
+{
+ "antique_ceramic_vase_01": {
+  "lod0": 3000,
+  "lod1": 900
+ },
+ "boulder_01": {
+  "lod0": 54122,
+  "lod1": 54122
+ },
+ "ceramic_vase_01": {
+  "lod0": 3000,
+  "lod1": 932
+ },
+ "grass_medium_01": {
+  "lod0": 5076,
+  "lod1": 1602
+ },
+ "grass_medium_02": {
+  "lod0": 3997,
+  "lod1": 1398
+ },
+ "marble_bust_01": {
+  "lod0": 6000,
+  "lod1": 1800
+ },
+ "namaqualand_boulder_02": {
+  "lod0": 6000,
+  "lod1": 1494
+ },
+ "namaqualand_boulder_04": {
+  "lod0": 5000,
+  "lod1": 1200
+ },
+ "planter_pot_clay": {
+  "lod0": 2000,
+  "lod1": 700
+ },
+ "shrub_01": {
+  "lod0": 11898,
+  "lod1": 3956
+ },
+ "shrub_02": {
+  "lod0": 8995,
+  "lod1": 2793
+ },
+ "shrub_04": {
+  "lod0": 9000,
+  "lod1": 2889
+ },
+ "stone_01": {
+  "lod0": 2500,
+  "lod1": 600
+ },
+ "wicker_basket_01": {
+  "lod0": 3894,
+  "lod1": 1154
+ },
+ "wild_rooibos_bush": {
+  "lod0": 9972,
+  "lod1": 2851
+ }
+}

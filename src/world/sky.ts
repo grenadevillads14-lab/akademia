@@ -14,8 +14,16 @@ export interface SkySystem {
   update(clock: WorldClock, camera: THREE.Camera, focus: THREE.Vector3, dt: number): void;
   /** Extra fog multiplier from zones (plane canopy, river mist). */
   fogBoost: number;
+  /** Scales hemisphere light (lower it when an environment map supplies ambient light). */
+  ambientScale: number;
   /** 0..1 overcast amount (weather). */
   overcast: number;
+  /** Current fog colour/density and sun colour, for the post-processing atmosphere. */
+  readonly fogColor: THREE.Color;
+  fogDensity: number;
+  readonly sunColor: THREE.Color;
+  /** The sky dome (shared with the environment-map capture). */
+  readonly skyMesh: THREE.Mesh;
   dispose(): void;
 }
 
@@ -181,7 +189,12 @@ export function createSky(
     sun,
     sunDir,
     fogBoost: 1,
+    ambientScale: 1,
     overcast: 0,
+    fogColor: new THREE.Color(),
+    fogDensity: 0.0016,
+    sunColor: new THREE.Color(),
+    skyMesh: sky,
     update(clock, camera, focus, _dt) {
       const [sx, sy, sz] = sunDirection(clock.hours, clock.dayOfYear);
       sunDir.set(sx, sy, sz);
@@ -224,11 +237,16 @@ export function createSky(
 
       hemi.color.copy(key.sky).lerp(grey, system.overcast * 0.5);
       hemi.groundColor.copy(key.ground);
-      hemi.intensity = key.hemiI * (1 + system.overcast * 0.2);
+      hemi.intensity = key.hemiI * (1 + system.overcast * 0.2) * system.ambientScale;
 
-      const fog = scene.fog as THREE.FogExp2;
-      fog.color.copy(key.fog).lerp(grey, system.overcast * 0.6);
-      fog.density = (0.0011 + system.overcast * 0.0025) * system.fogBoost;
+      system.fogColor.copy(key.fog).lerp(grey, system.overcast * 0.6);
+      system.fogDensity = (0.0011 + system.overcast * 0.0025) * system.fogBoost;
+      system.sunColor.copy(key.sun).multiplyScalar(key.sunI / 3);
+      const fog = scene.fog as THREE.FogExp2 | null;
+      if (fog) {
+        fog.color.copy(system.fogColor);
+        fog.density = system.fogDensity;
+      }
       renderer.toneMappingExposure = key.exposure;
     },
     dispose() {

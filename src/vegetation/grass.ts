@@ -96,7 +96,9 @@ export function createGrass(terrain: Terrain, u: WorldUniforms, opts: { density:
          float fade = 1.0 - smoothstep(uRadius * 0.6, uRadius, dist);
          float alive = step(aBlade.z, mask * uDensity) * fade;
          float h = aBlade.w * alive * (0.6 + 0.6 * mask);
-         vec3 transformed = vec3(position.x, position.y * h, position.z);
+         // Dead or faded blades collapse to a point (a zero-height blade still rasterises as a dark sliver).
+         float widthK = alive > 0.0 ? 1.0 : 0.0;
+         vec3 transformed = vec3(position.x * widthK, position.y * h, position.z * widthK);
          // Wind and the player's feet push blades over; the tip moves most.
          vec2 sway = windSway(vec3(wxz.x, ground, wxz.y), position.y, 1.4) * 0.35;
          vec2 away = wxz - uPlayer.xz;

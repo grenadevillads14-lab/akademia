@@ -1,0 +1,377 @@
+{
+ "textures": {
+  "white_sandstone_blocks_02": {
+   "role": "ashlar limestone: gate towers, wall socles, altars",
+   "files": {
+    "diff": 272982,
+    "nor": 265648,
+    "arm": 70554
+   },
+   "name": "White Sandstone Blocks 02",
+   "authors": [
+    "Rob Tuytel"
+   ]
+  },
+  "large_sandstone_blocks": {
+   "role": "big ashlar courses: Dipylon gate piers, city wall",
+   "files": {
+    "diff": 172392,
+    "nor": 192486,
+    "arm": 84014
+   },
+   "name": "Large Sandstone Blocks",
+   "authors": [
+    "Rob Tuytel"
+   ]
+  },
+  "stacked_stone_wall": {
+   "role": "dry-stone walls (Kepidion, field walls)",
+   "files": {
+    "diff": 133352,
+    "nor": 420944,
+    "arm": 137996
+   },
+   "name": "Stacked Stone Wall",
+   "authors": [
+    "Dimitrios Savva"
+   ]
+  },
+  "clay_plaster": {
+   "role": "mudbrick with clay render: city wall upper courses, houses",
+   "files": {
+    "diff": 9270,
+    "nor": 241750,
+    "arm": 16506
+   },
+   "name": "Clay Plaster",
+   "authors": [
+    "Amal Kumar"
+   ]
+  },
+  "white_plaster_rough_01": {
+   "role": "whitewashed house walls",
+   "files": {
+    "diff": 320102,
+    "nor": 159200,
+    "arm": 269146
+   },
+   "name": "White Plaster Rough 01",
+   "authors": [
+    "Rob Tuytel"
+   ]
+  },
+  "clay_roof_tiles": {
+   "role": "terracotta roof tiles",
+   "files": {
+    "diff": 188664,
+    "nor": 417122,
+    "arm": 85866
+   },
+   "name": "Clay Roof Tiles",
+   "authors": [
+    "Amal Kumar"
+   ]
+  },
+  "marble_01": {
+   "role": "Pentelic marble: stelai, herms, altar of Prometheus",
+   "files": {
+    "diff": 62298,
+    "nor": 16146,
+    "arm": 18082
+   },
+   "name": "Marble 01",
+   "authors": [
+    "Rob Tuytel"
+   ]
+  },
+  "gravel_road": {
+   "role": "the road to the Academy",
+   "files": {
+    "diff": 94228,
+    "nor": 342108,
+    "arm": 19604
+   },
+   "name": "Gravel Road",
+   "authors": [
+    "Amal Kumar"
+   ]
+  },
+  "stony_dirt_path": {
+   "role": "footpaths and the Dipylon court",
+   "files": {
+    "diff": 411890,
+    "nor": 621618,
+    "arm": 129306
+   },
+   "name": "Stony Dirt Path",
+   "authors": [
+    "eye-candy.xyz"
+   ]
+  },
+  "sparse_grass": {
+   "role": "meadow ground",
+   "files": {
+    "diff": 238326,
+    "nor": 637384,
+    "arm": 217010
+   },
+   "name": "Sparse Grass",
+   "authors": [
+    "Amal Kumar"
+   ]
+  },
+  "dry_ground_01": {
+   "role": "dry summer ground",
+   "files": {
+    "diff": 233812,
+    "nor": 296684,
+    "arm": 112138
+   },
+   "name": "Dry Ground 01",
+   "authors": [
+    "Rob Tuytel"
+   ]
+  },
+  "rock_face": {
+   "role": "outcrops on Colonus",
+   "files": {
+    "diff": 113868,
+    "nor": 456340,
+    "arm": 33934
+   },
+   "name": "Rock Face",
+   "authors": [
+    "Greg Zaal",
+    "Dario Barresi"
+   ]
+  },
+  "brown_mud": {
+   "role": "river banks",
+   "files": {
+    "diff": 203308,
+    "nor": 462688,
+    "arm": 150220
+   },
+   "name": "Brown Mud",
+   "authors": [
+    "Rob Tuytel"
+   ]
+  },
+  "sand_01": {
+   "role": "palaestra sand",
+   "files": {
+    "diff": 168906,
+    "nor": 372808,
+    "arm": 66050
+   },
+   "name": "Sand 01",
+   "authors": [
+    "Rob Tuytel"
+   ]
+  },
+  "rock_tile_floor": {
+   "role": "paved floors (stoa, gymnasium porticoes)",
+   "files": {
+    "diff": 391182,
+    "nor": 421218,
+    "arm": 80480
+   },
+   "name": "Rock Tile Floor",
+   "authors": [
+    "Charlotte Baglioni"
+   ]
+  },
+  "bark_platanus": {
+   "role": "oriental plane bark",
+   "files": {
+    "diff": 245622,
+    "nor": 544514,
+    "arm": 70830
+   },
+   "name": "Bark Platanus",
+   "authors": [
+    "Dimitrios Savva"
+   ]
+  },
+  "bark_brown_02": {
+   "role": "olive and fig bark",
+   "files": {
+    "diff": 289474,
+    "nor": 464050,
+    "arm": 153262
+   },
+   "name": "Bark Brown 02",
+   "authors": [
+    "Rob Tuytel"
+   ]
+  },
+  "wood_plank_wall": {
+   "role": "gate doors, workshop shutters",
+   "files": {
+    "diff": 34970,
+    "nor": 161820,
+    "arm": 22182
+   },
+   "name": "Wood Plank Wall",
+   "authors": [
+    "Dimitrios Savva"
+   ]
+  }
+ },
+ "models": {
+  "namaqualand_boulder_02": {
+   "role": "boulder",
+   "files": {
+    "gltf": 3072667
+   },
+   "name": "Namaqualand Boulder 02",
+   "authors": [
+    "Greg Zaal",
+    "Rico Cilliers"
+   ]
+  },
+  "namaqualand_boulder_04": {
+   "role": "boulder",
+   "files": {
+    "gltf": 1933989
+   },
+   "name": "Namaqualand Boulder 04",
+   "authors": [
+    "Jenelle van Heerden"
+   ]
+  },
+  "boulder_01": {
+   "role": "boulder",
+   "files": {
+    "gltf": 3731812
+   },
+   "name": "Boulder 01",
+   "authors": [
+    "Rico Cilliers"
+   ]
+  },
+  "stone_01": {
+   "role": "small stone",
+   "files": {
+    "gltf": 1843539
+   },
+   "name": "Stone 01",
+   "authors": [
+    "Dario Barresi",
+    "Rico Cilliers"
+   ]
+  },
+  "shrub_01": {
+   "role": "shrub",
+   "files": {
+    "gltf": 5570794
+   },
+   "name": "Shrub 01",
+   "authors": [
+    "Rico Cilliers"
+   ]
+  },
+  "shrub_02": {
+   "role": "shrub",
+   "files": {
+    "gltf": 968662
+   },
+   "name": "Shrub 02",
+   "authors": [
+    "Rico Cilliers"
+   ]
+  },
+  "shrub_04": {
+   "role": "shrub",
+   "files": {
+    "gltf": 941629
+   },
+   "name": "Shrub 04",
+   "authors": [
+    "Rico Cilliers"
+   ]
+  },
+  "wild_rooibos_bush": {
+   "role": "low scrub (stands in for thyme and rosemary)",
+   "files": {
+    "gltf": 1515549
+   },
+   "name": "Wild Rooibos Bush",
+   "authors": [
+    "James Ray Cock",
+    "Jenelle van Heerden"
+   ]
+  },
+  "grass_medium_01": {
+   "role": "grass tuft",
+   "files": {
+    "gltf": 1565515
+   },
+   "name": "Grass Medium 01",
+   "authors": [
+    "Rob Tuytel",
+    "Rico Cilliers"
+   ]
+  },
+  "grass_medium_02": {
+   "role": "grass tuft",
+   "files": {
+    "gltf": 357411
+   },
+   "name": "Grass Medium 02",
+   "authors": [
+    "Rico Cilliers"
+   ]
+  },
+  "antique_ceramic_vase_01": {
+   "role": "pottery",
+   "files": {
+    "gltf": 365798
+   },
+   "name": "Antique Ceramic Vase 01",
+   "authors": [
+    "James Ray Cock"
+   ]
+  },
+  "ceramic_vase_01": {
+   "role": "pottery",
+   "files": {
+    "gltf": 322881
+   },
+   "name": "Ceramic Vase 01",
+   "authors": [
+    "James Ray Cock"
+   ]
+  },
+  "planter_pot_clay": {
+   "role": "pottery",
+   "files": {
+    "gltf": 332970
+   },
+   "name": "Planter Pot Clay",
+   "authors": [
+    "Amal Kumar"
+   ]
+  },
+  "wicker_basket_01": {
+   "role": "basket",
+   "files": {
+    "gltf": 1021375
+   },
+   "name": "Wicker Basket 01",
+   "authors": [
+    "Kuutti Siitonen"
+   ]
+  },
+  "marble_bust_01": {
+   "role": "herm head",
+   "files": {
+    "gltf": 736964
+   },
+   "name": "Marble Bust 01",
+   "authors": [
+    "Rico Cilliers"
+   ]
+  }
+ }
+}

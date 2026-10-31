@@ -1,0 +1,329 @@
+{
+  "notes": "Built environment of the Academy map, from docs/RESEARCH.md. The Dipylon's local +Z points out of the city along the road to the Academy (angle -2.336 rad). Wall line passes through the inner gate.",
+  "cityWall": {
+    "points": [
+      [
+        678.9,
+        285.9
+      ],
+      [
+        457.3,
+        516.8
+      ],
+      [
+        249.5,
+        733.0
+      ]
+    ],
+    "height": 8.5,
+    "socle": 3.2,
+    "thickness": 3.2,
+    "towerEvery": 52,
+    "towerSize": 7.5,
+    "towerHeight": 12.5
+  },
+  "gates": [
+    {
+      "id": "dipylon",
+      "type": "dipylon",
+      "x": 445.0,
+      "z": 505.0,
+      "rot": -2.336
+    },
+    {
+      "id": "sacred_gate",
+      "type": "simple",
+      "x": 432.6,
+      "z": 542.5,
+      "rot": -2.336
+    }
+  ],
+  "districts": [
+    {
+      "id": "city_kerameikos",
+      "style": "city",
+      "frame": {
+        "x": 457.3,
+        "z": 516.8,
+        "rot": -2.336
+      },
+      "uRange": [
+        -290,
+        260
+      ],
+      "vRange": [
+        -230,
+        -46
+      ],
+      "blockU": 34,
+      "blockV": 30,
+      "street": 6,
+      "avenue": {
+        "u": 0,
+        "width": 18
+      },
+      "keepClear": [
+        [
+          456.9,
+          564.9,
+          34
+        ]
+      ],
+      "density": 0.92,
+      "seed": 41
+    },
+    {
+      "id": "outer_kerameikos",
+      "style": "potters",
+      "frame": {
+        "x": 457.3,
+        "z": 516.8,
+        "rot": -2.336
+      },
+      "uRange": [
+        -60,
+        140
+      ],
+      "vRange": [
+        36,
+        110
+      ],
+      "blockU": 26,
+      "blockV": 24,
+      "street": 6,
+      "avenue": {
+        "u": 0,
+        "width": 40
+      },
+      "keepClear": [
+        [
+          432.6,
+          542.5,
+          26
+        ]
+      ],
+      "density": 0.55,
+      "seed": 42
+    }
+  ],
+  "pompeion": {
+    "x": 456.9,
+    "z": 564.9,
+    "rot": -2.336,
+    "w": 44,
+    "d": 24
+  },
+  "graveRoad": {
+    "path": "road_academy",
+    "from": 38,
+    "to": 380,
+    "setback": 10.5,
+    "terraceWidth": [
+      8,
+      15
+    ],
+    "terraceDepth": [
+      5,
+      7
+    ],
+    "gap": [
+      2,
+      6
+    ],
+    "publicListsEvery": 85,
+    "seed": 43
+  },
+  "herms": [
+    {
+      "id": "herm-dipylon",
+      "x": 424.5,
+      "z": 485.5,
+      "rot": -2.336
+    },
+    {
+      "id": "herm-academy-gate",
+      "x": 160.0,
+      "z": 198.0,
+      "rot": -2.336
+    }
+  ],
+  "propClusters": [
+    {
+      "id": "potters-yard-1",
+      "x": 492.0,
+      "z": 448.0,
+      "radius": 9,
+      "models": [
+        "pottery"
+      ],
+      "count": 22,
+      "seed": 1
+    },
+    {
+      "id": "potters-yard-2",
+      "x": 520.0,
+      "z": 470.0,
+      "radius": 7,
+      "models": [
+        "pottery"
+      ],
+      "count": 14,
+      "seed": 2
+    },
+    {
+      "id": "court-goods",
+      "x": 450.0,
+      "z": 506.0,
+      "radius": 5,
+      "models": [
+        "pottery"
+      ],
+      "count": 7,
+      "seed": 3
+    }
+  ],
+  "rocks": [
+    {
+      "circle": [
+        330,
+        -480,
+        120
+      ],
+      "count": 60,
+      "models": [
+        "namaqualand_boulder_02",
+        "namaqualand_boulder_04",
+        "stone_01"
+      ],
+      "scale": [
+        0.6,
+        2.2
+      ],
+      "seed": 1
+    },
+    {
+      "circle": [
+        300,
+        330,
+        160
+      ],
+      "count": 26,
+      "models": [
+        "stone_01",
+        "namaqualand_boulder_04"
+      ],
+      "scale": [
+        0.4,
+        1.0
+      ],
+      "seed": 2
+    },
+    {
+      "circle": [
+        -470,
+        -50,
+        300
+      ],
+      "count": 30,
+      "models": [
+        "stone_01",
+        "namaqualand_boulder_02"
+      ],
+      "scale": [
+        0.5,
+        1.2
+      ],
+      "seed": 3
+    }
+  ],
+  "shrubs": [
+    {
+      "circle": [
+        300,
+        330,
+        170
+      ],
+      "count": 70,
+      "models": [
+        "shrub_02",
+        "shrub_04",
+        "wild_rooibos_bush"
+      ],
+      "scale": [
+        0.6,
+        1.2
+      ],
+      "seed": 4
+    },
+    {
+      "circle": [
+        330,
+        -480,
+        140
+      ],
+      "count": 60,
+      "models": [
+        "wild_rooibos_bush",
+        "shrub_04"
+      ],
+      "scale": [
+        0.5,
+        1.0
+      ],
+      "seed": 5
+    },
+    {
+      "circle": [
+        -30,
+        100,
+        230
+      ],
+      "count": 70,
+      "models": [
+        "shrub_02",
+        "wild_rooibos_bush"
+      ],
+      "scale": [
+        0.6,
+        1.1
+      ],
+      "seed": 6
+    }
+  ],
+  "tufts": [
+    {
+      "circle": [
+        300,
+        330,
+        170
+      ],
+      "count": 220,
+      "models": [
+        "grass_medium_02",
+        "grass_medium_01"
+      ],
+      "scale": [
+        0.7,
+        1.3
+      ],
+      "seed": 7
+    },
+    {
+      "circle": [
+        -30,
+        100,
+        230
+      ],
+      "count": 260,
+      "models": [
+        "grass_medium_02",
+        "grass_medium_01"
+      ],
+      "scale": [
+        0.7,
+        1.3
+      ],
+      "seed": 8
+    }
+  ]
+}

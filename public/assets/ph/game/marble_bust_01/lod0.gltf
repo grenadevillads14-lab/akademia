@@ -1,0 +1,161 @@
+{
+  "asset": {
+    "generator": "glTF-Transform v4.5.1",
+    "version": "2.0"
+  },
+  "accessors": [
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 18000,
+      "bufferView": 0,
+      "byteOffset": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5126,
+      "count": 3643,
+      "max": [
+        0.14886942505836487,
+        0.48668384552001953,
+        0.1551172435283661
+      ],
+      "min": [
+        -0.12288019061088562,
+        -0.028245996683835983,
+        -0.1445964276790619
+      ],
+      "bufferView": 1,
+      "byteOffset": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5126,
+      "count": 3643,
+      "bufferView": 1,
+      "byteOffset": 12
+    },
+    {
+      "type": "VEC2",
+      "componentType": 5126,
+      "count": 3643,
+      "bufferView": 1,
+      "byteOffset": 24
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 36000,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 36000,
+      "byteLength": 116576,
+      "byteStride": 32,
+      "target": 34962
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "textures": [
+    {
+      "source": 1,
+      "sampler": 0
+    },
+    {
+      "source": 0,
+      "sampler": 0
+    },
+    {
+      "source": 2,
+      "sampler": 0
+    }
+  ],
+  "images": [
+    {
+      "name": "marble_bust_01_nor_gl",
+      "mimeType": "image/webp",
+      "uri": "marble_bust_01_marble_bust_01_nor_gl_1k.webp"
+    },
+    {
+      "name": "marble_bust_01_diff",
+      "mimeType": "image/webp",
+      "uri": "marble_bust_01_marble_bust_01_diff_1k.webp"
+    },
+    {
+      "name": "marble_bust_01_arm",
+      "mimeType": "image/webp",
+      "uri": "marble_bust_01_marble_bust_01_rough_1k.webp"
+    }
+  ],
+  "buffers": [
+    {
+      "uri": "lod0.bin",
+      "byteLength": 152576
+    }
+  ],
+  "materials": [
+    {
+      "name": "marble_bust_01",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "metallicFactor": 0,
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 2
+        }
+      },
+      "normalTexture": {
+        "index": 1
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "marble_bust_01",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 1,
+            "NORMAL": 2,
+            "TEXCOORD_0": 3
+          },
+          "mode": 4,
+          "material": 0,
+          "indices": 0
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "marble_bust_01",
+      "translation": [
+        0,
+        0.028335653245449066,
+        0
+      ],
+      "mesh": 0
+    }
+  ],
+  "scenes": [
+    {
+      "name": "Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "scene": 0
+}
