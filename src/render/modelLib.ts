@@ -46,7 +46,7 @@ export class ModelLib {
   }
 
   private async loadLod(id: string, lod: number): Promise<ModelPart[]> {
-    const gltf = await this.loader.loadAsync(`${BASE}${id}/lod${lod}.gltf`);
+    const gltf = await loadGltf(this.loader, `${BASE}${id}/lod${lod}.gltf`);
     const byMat = new Map<THREE.Material, THREE.BufferGeometry[]>();
     gltf.scene.updateMatrixWorld(true);
     gltf.scene.traverse((o) => {
@@ -175,4 +175,53 @@ export class ModelField {
   dispose(): void {
     for (const e of this.entries) for (const l of e.meshes) for (const im of l) im.dispose();
   }
+}
+
+/**
+ * Load a glTF. The hosted build embeds buffers as base64 data URIs (the artifact host serves no .bin files),
+ * and its content policy blocks fetching data: URLs, so such files are decoded here and handed to the loader
+ * as an in-memory GLB.
+ */
+async function loadGltf(loader: GLTFLoader, url: string): Promise<{ scene: THREE.Group }> {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Could not load ${url}: ${res.status}`);
+  const json = (await res.json()) as { buffers?: { uri?: string; byteLength: number }[]; bufferViews?: { buffer: number; byteOffset?: number }[] };
+  const base = url.slice(0, url.lastIndexOf('/') + 1);
+  const buffers = json.buffers ?? [];
+  if (!buffers.some((b) => b.uri?.startsWith('data:'))) return loader.parseAsync(JSON.stringify(json), base);
+  // Concatenate every buffer into one binary chunk (4-byte aligned) and rebase the buffer views.
+  const parts: Uint8Array[] = [];
+  const offsets: number[] = [];
+  let total = 0;
+  for (const b of buffers) {
+    if (!b.uri?.startsWith('data:')) throw new Error(`Mixed external and embedded buffers in ${url}`);
+    const bin = atob(b.uri.slice(b.uri.indexOf(',') + 1));
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    offsets.push(total);
+    parts.push(bytes);
+    total += Math.ceil(bytes.length / 4) * 4;
+  }
+  for (const v of json.bufferViews ?? []) {
+    v.byteOffset = (v.byteOffset ?? 0) + offsets[v.buffer]!;
+    v.buffer = 0;
+  }
+  json.buffers = [{ byteLength: total }];
+  let text = JSON.stringify(json);
+  while (text.length % 4) text += ' ';
+  const jsonBytes = new TextEncoder().encode(text);
+  const glb = new ArrayBuffer(12 + 8 + jsonBytes.length + 8 + total);
+  const dv = new DataView(glb);
+  const u8 = new Uint8Array(glb);
+  dv.setUint32(0, 0x46546c67, true); // 'glTF'
+  dv.setUint32(4, 2, true);
+  dv.setUint32(8, glb.byteLength, true);
+  dv.setUint32(12, jsonBytes.length, true);
+  dv.setUint32(16, 0x4e4f534a, true); // 'JSON'
+  u8.set(jsonBytes, 20);
+  const binStart = 20 + jsonBytes.length;
+  dv.setUint32(binStart, total, true);
+  dv.setUint32(binStart + 4, 0x004e4942, true); // 'BIN\0'
+  parts.forEach((p, i) => u8.set(p, binStart + 8 + offsets[i]!));
+  return loader.parseAsync(glb, base);
 }
