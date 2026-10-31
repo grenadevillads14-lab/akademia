@@ -86,10 +86,27 @@ async function boot(): Promise<void> {
     cam.lookAt(0, 2.5, -10);
   };
   let bench: Benchmark | null = null;
+  const benchRunning = () => bench !== null && !bench.finished;
+  // The benchmark always renders at a fixed 1920×1080 internal resolution, whatever the window size,
+  // so results from a small panel and a full screen are comparable. The canvas is letterboxed meanwhile.
+  const BENCH_W = 1920;
+  const BENCH_H = 1080;
+  const setBenchResolution = (on: boolean) => {
+    renderer.domElement.classList.toggle('bench-fixed', on);
+    if (on) {
+      renderer.setPixelRatio(1);
+      renderer.setSize(BENCH_W, BENCH_H, false);
+      camera.aspect = BENCH_W / BENCH_H;
+      camera.updateProjectionMatrix();
+    } else {
+      onResize(renderer, camera, gfx);
+    }
+  };
   const startBenchmark = (secs: number) => {
-    if (bench && !bench.finished) return;
+    if (benchRunning()) return;
     if (freeFly.enabled) setCameraMode('showcase');
     document.querySelector('.bench-report')?.remove();
+    setBenchResolution(true);
     bench = new Benchmark(app, benchPath, { scene: 'm0-sandbox', gpu, preset: gfx.preset }, secs);
     benchButton.hidden = true;
     bus.emit('bench:started', { durationSec: secs });
@@ -122,7 +139,9 @@ async function boot(): Promise<void> {
     bus.emit('debug:cameraMode', { mode });
   };
 
-  window.addEventListener('resize', () => onResize(renderer, camera, gfx));
+  window.addEventListener('resize', () => {
+    if (!benchRunning()) onResize(renderer, camera, gfx);
+  });
 
   const handle: AkademeiaDebugHandle = {
     ready: false,
@@ -147,35 +166,45 @@ async function boot(): Promise<void> {
   const timer = new THREE.Timer();
   timer.connect(document); // pauses delta accumulation while the tab is hidden
   let framesRendered = 0;
+  const gl = renderer.getContext();
   renderer.setAnimationLoop((time) => {
+    const frameStart = performance.now();
     timer.update(time);
     const dt = timer.getDelta();
 
-    if (input.wasPressed('toggleDebugCamera') && !bench) setCameraMode(freeFly.enabled ? 'showcase' : 'freefly');
+    if (input.wasPressed('toggleDebugCamera') && !benchRunning()) setCameraMode(freeFly.enabled ? 'showcase' : 'freefly');
     if (input.wasPressed('toggleOverlay')) bus.emit('debug:overlay', { visible: overlay.toggle() });
     if (input.wasPressed('debugRespawn')) sandbox.dropObjects();
 
     fixed.advance(dt, (h) => physics.step(h));
     sandbox.update();
 
-    if (bench) {
+    if (benchRunning()) {
       /* the benchmark drives the camera */
     } else if (freeFly.enabled) freeFly.update(dt, input, input.pointerLocked);
     else showcase(dt);
 
     renderer.info.reset();
     renderer.render(scene, camera);
+    // During a benchmark, wait for the GPU to finish so we measure the real cost of a frame
+    // (CPU + GPU). That shows spare capacity even when fps is capped by the display's refresh rate.
+    let workMs = 0;
+    if (benchRunning()) {
+      gl.finish();
+      workMs = performance.now() - frameStart;
+    }
     stats.push(dt * 1000);
     overlay.update(dt, stats, renderer.info, {
       bodies: physics.bodyCount,
       preset: gfx.preset,
       gpu,
-      camera: freeFly.enabled ? 'free-fly' : bench ? 'benchmark' : 'showcase',
+      camera: freeFly.enabled ? 'free-fly' : benchRunning() ? 'benchmark' : 'showcase',
     });
 
-    if (bench && !bench.finished) {
-      const result = bench.update(dt, camera, renderer.info);
+    if (bench && benchRunning()) {
+      const result = bench.update(dt, camera, renderer.info, workMs);
       if (result) {
+        setBenchResolution(false);
         benchButton.hidden = false;
         handle.bench = result;
         bus.emit('bench:finished', { result });

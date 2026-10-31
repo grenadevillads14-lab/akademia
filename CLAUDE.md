@@ -66,7 +66,8 @@ Frame order in `main.ts`: input edge actions → fixed-step physics → sync mes
 ## Performance budgets (High preset, 1080p), checked in screenshots and overlay
 
 - Draw calls ≤ 250 (shadow passes included), triangles ≤ 1.5 M visible, shader programs ≤ 40.
-- Medium preset is the integrated-GPU target (60 fps). Low is the 30 fps floor.
+- **The user's machine is an Apple M1** (ANGLE Metal, 60 Hz display, DPR 2). Medium preset is the 60 fps target there. Low is the 30 fps floor.
+- The benchmark renders at a fixed 1920×1080 and reports `avgWorkMs` / `estUncappedFps` (CPU+GPU time via `gl.finish`), so compare those across runs, not avgFps (which is vsync-capped).
 - The truth is the `?bench` JSON from real hardware, logged in `PROGRESS.md`.
 
 ## Known issues

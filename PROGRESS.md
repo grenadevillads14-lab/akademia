@@ -41,8 +41,21 @@
   `?bench` once answers that question and gives a baseline.
 - Rapier is loaded as a lazy chunk so the loading screen paints immediately.
 
+**Real-hardware benchmark #1 (user's laptop, 2026-10-31)**
+
+| Field | Value |
+|---|---|
+| GPU | Apple M1 (ANGLE Metal), Claude desktop app (Chromium 152), DPR 2 |
+| Preset | medium (auto-picked) |
+| Result | 60 fps avg, 56 fps 1% low, p99 17.7 ms, worst 18.8 ms; about 124 draw calls, 8.8 k triangles |
+| Caveat | Run in a 579×855 side panel (about 25% of 1080p pixels) and capped by the 60 Hz display, so it shows the sandbox is smooth but not the spare capacity |
+
+Follow-up (done): the benchmark now renders at a **fixed 1920×1080** internal resolution and records **CPU+GPU work time per frame**
+(`gl.finish`), with `estUncappedFps`, so future runs are comparable and show spare capacity above the vsync cap.
+**Target machine is now known: Apple M1.** Medium preset is the 60 fps target. Re-benchmark at the end of M1 and M2.
+
 **Open items for the user**
-- Run the benchmark once on your laptop (instructions in README) and paste the JSON in chat.
+- ~~Run the benchmark once~~ ✅ done (Apple M1).
 - Optional: allow `polyhaven.com`, `dl.polyhaven.org`, `quaternius.com` and `kenney.nl` in the environment's network settings so real CC0 textures and models can be fetched.
   Until then everything is procedural.
 

@@ -40,6 +40,11 @@ body {
   height: 100%;
   outline: none;
 }
+/* Benchmark renders at a fixed 1920×1080; letterbox it instead of stretching. */
+#game-canvas.bench-fixed {
+  object-fit: contain;
+  background: #000;
+}
 
 /* Loading screen: black glaze with a terracotta meander band. */
 #loading {

@@ -18,6 +18,11 @@ export interface BenchmarkResult {
   p50Ms: number;
   p99Ms: number;
   worstMs: number;
+  /** Average CPU+GPU time per frame (measured with gl.finish). Not capped by vsync. */
+  avgWorkMs: number;
+  p99WorkMs: number;
+  /** 1000 / avgWorkMs: roughly the fps this machine could reach without the display's refresh cap. */
+  estUncappedFps: number;
   avgDrawCalls: number;
   avgTriangles: number;
   gpu: string;
@@ -33,6 +38,7 @@ export type CameraPath = (t01: number, camera: THREE.PerspectiveCamera) => void;
 export class Benchmark {
   private elapsed = 0;
   private readonly frameMs: number[] = [];
+  private readonly workMs: number[] = [];
   private calls = 0;
   private tris = 0;
   private done = false;
@@ -55,7 +61,7 @@ export class Benchmark {
   }
 
   /** Call once per rendered frame, after rendering. Returns the result on the final frame. */
-  update(dtSec: number, camera: THREE.PerspectiveCamera, info: THREE.WebGLInfo): BenchmarkResult | null {
+  update(dtSec: number, camera: THREE.PerspectiveCamera, info: THREE.WebGLInfo, workMs: number): BenchmarkResult | null {
     if (this.done) return null;
     this.elapsed += dtSec;
     const total = this.warmupSec + this.durationSec;
@@ -63,6 +69,7 @@ export class Benchmark {
 
     if (this.elapsed > this.warmupSec) {
       this.frameMs.push(dtSec * 1000);
+      this.workMs.push(workMs);
       this.calls += info.render.calls;
       this.tris += info.render.triangles;
     }
@@ -80,6 +87,7 @@ export class Benchmark {
     const n = Math.max(1, this.frameMs.length);
     const sum = this.frameMs.reduce((a, b) => a + b, 0);
     const canvas = document.querySelector('canvas');
+    const avgWork = this.workMs.reduce((a, b) => a + b, 0) / Math.max(1, this.workMs.length);
     return {
       build: __APP_VERSION__,
       scene: this.meta.scene,
@@ -90,6 +98,9 @@ export class Benchmark {
       p50Ms: round(percentile(this.frameMs, 50)),
       p99Ms: round(percentile(this.frameMs, 99)),
       worstMs: round(Math.max(0, ...this.frameMs)),
+      avgWorkMs: round(avgWork),
+      p99WorkMs: round(percentile(this.workMs, 99)),
+      estUncappedFps: Math.round(avgWork > 0 ? 1000 / avgWork : 0),
       avgDrawCalls: Math.round(this.calls / n),
       avgTriangles: Math.round(this.tris / n),
       gpu: this.meta.gpu,

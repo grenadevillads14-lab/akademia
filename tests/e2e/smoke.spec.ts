@@ -35,9 +35,20 @@ test('instanced stress test stays at a handful of draw calls', async ({ page }) 
 });
 
 test('benchmark mode produces a report', async ({ page }) => {
-  await page.goto('/?bench=2&overlay=0');
+  await page.goto('/?bench=2');
   await expect(page.getByTestId('bench-report')).toBeVisible({ timeout: 90_000 });
   const result = await page.evaluate(() => window.__akademeia!.bench);
   expect(result?.frames).toBeGreaterThan(0);
   expect(result?.gpu.length).toBeGreaterThan(0);
+  expect(result?.canvas).toBe('1920x1080'); // fixed benchmark resolution, whatever the window size
+  expect(result?.avgWorkMs).toBeGreaterThan(0);
+  // After the run the game must hand control back: canvas follows the window again, free camera works.
+  const after = await page.evaluate(() => {
+    const c = document.querySelector('canvas')!;
+    return { w: c.width, cls: c.className };
+  });
+  expect(after.w).not.toBe(1920);
+  expect(after.cls).not.toContain('bench-fixed');
+  await page.keyboard.press('F2');
+  await expect(page.getByTestId('debug-overlay')).toContainText('free-fly');
 });
