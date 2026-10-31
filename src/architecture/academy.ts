@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import type { Rng } from '../procgen/rng';
 import { column, entablature, GYMNASIUM_ORDER, orderHeight, stoa } from './doric';
 import { courtyardHouse, type Ground } from './greek';
-import { Builder, Frame } from './kit';
+import type { Builder} from './kit';
+import { Frame } from './kit';
 
 /**
  * Buildings of the Academy precinct (docs/RESEARCH.md §2–5).

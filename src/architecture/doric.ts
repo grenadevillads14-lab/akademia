@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { Builder, Frame } from './kit';
+import type { Builder} from './kit';
+import { Frame } from './kit';
 
 /**
  * The Doric order (docs/RESEARCH.md §11; Vitruvius 4.3).
