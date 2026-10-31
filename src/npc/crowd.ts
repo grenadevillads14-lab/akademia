@@ -134,12 +134,12 @@ export class Crowd {
       o.position.set(x, this.ground(x, z), z);
       o.rotation.y = Math.atan2(p.tx * w.dir, p.tz * w.dir);
       const d = o.position.distanceTo(this.camPos);
-      o.visible = d < 170;
+      o.visible = d < 130;
       if (o.visible && d < 90) w.anim.update(dt, w.pause > 0 ? 0 : w.speed);
     }
     for (const l of this.loiterers) {
       const d = l.h.object.position.distanceTo(this.camPos);
-      l.h.object.visible = d < 170;
+      l.h.object.visible = d < 130;
       if (!l.h.object.visible || d > 90) continue;
       l.switchIn -= dt;
       if (l.switchIn <= 0) {

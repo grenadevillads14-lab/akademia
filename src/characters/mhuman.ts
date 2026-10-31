@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import type { Appearance } from './appearance';
 import { BONES, buildProp, type BoneName, type Dims, type Humanoid } from './humanoid';
 
@@ -400,7 +401,8 @@ export function buildRealHumanoid(a: Appearance, opts: { lite?: boolean } = {}):
     m.bind(skeleton);
     m.castShadow = shadows;
     m.receiveShadow = true;
-    m.frustumCulled = false;
+    // Off-screen culling with a fixed sphere around the figure (animation never leaves it).
+    m.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, a.height * 0.5, 0), a.height * 0.75);
     object.add(m);
     meshes.push(m);
     geoms.push(geo);
@@ -568,7 +570,14 @@ export function buildRealHumanoid(a: Appearance, opts: { lite?: boolean } = {}):
 
   // ---------------------------------------------------------------- 7. clothes from the helpers
   const clothes = buildClothes(k, a, P, posed, dims, hemY, baseGeo);
-  for (const g of clothes) bindMesh(g, clothMaterial(k), true, true);
+  if (clothes.length) {
+    // One draw call for all garments (they share the material and attribute layout).
+    const merged = clothes.length === 1 ? clothes[0]! : mergeGeometries(clothes, false);
+    if (merged) {
+      if (merged !== clothes[0]) for (const g of clothes) g.dispose();
+      bindMesh(merged, clothMaterial(k), true, true);
+    }
+  }
 
   // Petasos (traveller's hat) on the head bone.
   if (a.petasos) {
