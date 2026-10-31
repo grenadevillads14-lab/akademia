@@ -10,7 +10,10 @@
 | M3 Life (NPCs, dialogue, prologue) | ✅ done |
 | M4 Systems | ✅ done |
 | M5 Puzzles batch 1 + Act 1 (vertical slice complete) | ✅ done |
-| M6 Athletics | ⏭ next |
+| Visual overhaul (user feedback: "looks like 2000") | ✅ passes 1–3 done, continuing |
+| M6 Athletics | 🔨 built (races, torch race, throws, wrestling), being polished |
+| M7 Act 2 + Cave | 🔨 built (puzzles, story, Cave interlude) |
+| M8 Acts 3–4 | 🔨 built (debates, specimens, funeral, farewell; Lesbos stubbed) |
 | M7–M10 | — |
 
 ---|---|
@@ -23,6 +26,24 @@
 | M6–M10 | — |
 
 ---
+
+## Visual overhaul (2026-10-31)
+
+User feedback after trying the hosted build: "it looks like it was made in 2000". Work since then, biggest wins first:
+
+- **Realistic people** from CC0 MakeHuman data (`scripts/build_humans.py`, `src/characters/mhuman.ts`): blended body
+  targets per character, photographic skins, fitted hair/beards/brows/eyes, Greek clothes cut from MakeHuman's clothing
+  helpers with per-pixel hems and woven borders, bound to the existing 20-bone rig; low-poly bodies for crowds;
+  relaxed fingers baked in; hair with sheen.
+- **Photographic leaves** (`scripts/build_foliage.py`, CC0 ambientCG leaf sets) composed into per-species twig sprays.
+- **Material calibration:** many Poly Haven scans are shot very dark (white plaster mean albedo 0.17, roof tiles 0.05).
+  Building materials are now repainted to measured real-world albedos, keeping the photo detail. Whitewash is white.
+- **Weathering shader** for architecture (damp at wall bases following the terrain, rain streaks, bleaching, dust, lichen).
+- **Lighting:** sun dominates sky ambient; the environment map's ground half is lit earth (warm bounce); tighter, softer
+  shadows (4096 on high); lit cloud sheet with self-shadowing; impostor trees with rounded normals.
+- **Sharpness:** dynamic resolution up to the full Retina pixel ratio with contrast-adaptive sharpening; Apple M1 → High.
+- **Ground:** tufted curved grass with translucency, pebbles and fallen leaves around the player, farmland patchwork
+  (wheat, ploughed earth, vineyards, field boundaries) and six olive orchards on the plain.
 
 ## M5: Puzzles batch 1 and Act 1 (2026-10-31)
 

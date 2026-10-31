@@ -549,7 +549,7 @@ export class Game {
       p.sunDir.copy(sky.sunDir);
       p.sunColor.copy(sky.sunColor);
       p.fogColor.copy(sky.fogColor);
-      p.fogDensity = sky.fogDensity * 0.42;
+      p.fogDensity = sky.fogDensity * 0.3; // clearer distance: haze, not soup
       p.fogBase = 0;
       p.heightFalloff = 0.006;
       const el = Math.asin(Math.max(-1, Math.min(1, sky.sunDir.y))) * 57.3;

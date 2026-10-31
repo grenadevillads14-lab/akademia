@@ -40,6 +40,21 @@ const Rule = z.discriminatedUnion('type', [
     jitter: z.number().default(0),
   }),
   z.object({
+    /** Rotated rows of trees in a rectangle (orchards), with gaps, skipping paths, buildings and water. */
+    type: z.literal('orchard'),
+    species,
+    rect: z.tuple([z.number(), z.number(), z.number(), z.number()]),
+    rot: z.number().default(0),
+    dx: z.number(),
+    dz: z.number(),
+    fill: z.number().default(0.9),
+    jitter: z.number().default(0.8),
+    avoidPaths: z.number().default(5),
+    avoidWater: z.number().default(5),
+    exclude: z.array(circle).default([]),
+    seed: z.number().default(1),
+  }),
+  z.object({
     type: z.literal('scatter'),
     species,
     circle: circle.optional(),
@@ -149,6 +164,26 @@ export function planVegetation(plan: VegetationPlan, hf: Heightfield): Plant[] {
         for (let r = 0; r < rule.rows; r++) {
           for (let c = 0; c < rule.cols; c++) {
             push(rule.species, rule.origin[0] + c * rule.dx + (rng() - 0.5) * rule.jitter, rule.origin[1] + r * rule.dz + (rng() - 0.5) * rule.jitter);
+          }
+        }
+        break;
+      }
+      case 'orchard': {
+        const rng = mulberry32(rule.seed * 6151);
+        const [cx, cz, hw, hh] = rule.rect;
+        const c = Math.cos(rule.rot);
+        const sn = Math.sin(rule.rot);
+        for (let lz = -hh; lz <= hh; lz += rule.dz) {
+          for (let lx = -hw; lx <= hw; lx += rule.dx) {
+            if (rng() > rule.fill) continue;
+            const jx = lx + (rng() - 0.5) * rule.jitter;
+            const jz = lz + (rng() - 0.5) * rule.jitter;
+            const x = cx + jx * c - jz * sn;
+            const z = cz + jx * sn + jz * c;
+            if (!inBounds(x, z)) continue;
+            if (rule.exclude.some(([ex, ez, er]) => Math.hypot(x - ex, z - ez) < er)) continue;
+            if (nearPath(x, z, rule.avoidPaths) || nearFlat(x, z) || nearWater(x, z, rule.avoidWater)) continue;
+            push(rule.species, x, z);
           }
         }
         break;

@@ -6,7 +6,7 @@ const PORT = 5199;
 
 export default defineConfig({
   testDir: 'tests/e2e',
-  timeout: 120_000,
+  timeout: 300_000, // software WebGL with realistic characters is slow; tests wait on frames
   fullyParallel: false,
   workers: 1,
   reporter: [['list']],

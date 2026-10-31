@@ -145,7 +145,7 @@ export function createWoodMaterial(u: WorldUniforms, bark?: THREE.DataArrayTextu
          #ifdef PHOTO_BARK
            // Relief from the bark photo: fissures read as grooves in low sun.
            float barkFade = 1.0 - smoothstep(6.0, 22.0, length(vViewPosition));
-           normal = barkBump(-vViewPosition, normal, vec2(dFdx(barkH), dFdy(barkH)) * 0.7 * barkFade, faceDirection);
+           normal = barkBump(-vViewPosition, normal, vec2(dFdx(barkH), dFdy(barkH)) * 0.3 * barkFade, faceDirection);
          #endif`,
       );
   };
@@ -215,6 +215,15 @@ export function createLeafMaterial(u: WorldUniforms, leafAtlas: THREE.Texture, i
            lc *= gl_FrontFacing ? vec3(1.0) : vec3(1.08, 1.12, 0.9);
          }
          diffuseColor *= vec4(lc, leafTex.a);`,
+      )
+      .replace(
+        '#include <normal_fragment_maps>',
+        `#include <normal_fragment_maps>
+         if (vBill > 0.5) {
+           // Impostors: a rounded crown normal (view space) so distant trees shade as volumes, not paper.
+           vec2 lu = fract(vMapUv * 8.0);
+           normal = normalize(vec3((lu.x - 0.5) * 1.5, (lu.y - 0.42) * 1.3, 0.7));
+         }`,
       )
       .replace(
         '#include <emissivemap_fragment>',

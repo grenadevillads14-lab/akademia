@@ -307,6 +307,33 @@ function createPhotoTerrainMaterial(uniforms: WorldUniforms, layers: GroundLayer
         col = mix(vec3(lum), col, mix(0.78, 1.0, vSplatA.x)) * vec3(1.0, 0.98, 0.95);
         float macro = textureGrad(uDiff, vec3(vec2(vWorldPosT.x, -vWorldPosT.z) / 160.0, 1.0), gdx / 160.0, gdy / 160.0).r;
         col *= mix(0.85, 1.12, macro);
+        // Farmland beyond the precinct: a patchwork of parcels (wheat, ploughed earth, vineyards, fallow),
+        // edged by darker field boundaries. Only on open ground, fading in away from the Academy.
+        {
+          vec2 wp2 = vec2(vWorldPosT.x, vWorldPosT.z);
+          float away = smoothstep(260.0, 360.0, length(wp2 - vec2(-30.0, -60.0))) * smoothstep(110.0, 170.0, length(wp2 - vec2(445.0, 505.0)));
+          float open = (vSplatA.x + vSplatA.y) * (1.0 - vSplatB.w) * (1.0 - vSplatB.z);
+          float fw = away * open;
+          if (fw > 0.01) {
+            float ang = 0.35;
+            vec2 r = mat2(cos(ang), -sin(ang), sin(ang), cos(ang)) * wp2;
+            vec2 cellSize = vec2(95.0, 62.0);
+            vec2 cid = floor(r / cellSize);
+            vec2 f = fract(r / cellSize);
+            float hsh = fract(sin(dot(cid, vec2(127.1, 311.7))) * 43758.5453);
+            float hsh2 = fract(sin(dot(cid, vec2(269.5, 183.3))) * 43758.5453);
+            vec3 fieldC;
+            if (hsh < 0.3) fieldC = mix(vec3(0.62, 0.52, 0.27), vec3(0.7, 0.6, 0.33), hsh2);          // ripe wheat / barley
+            else if (hsh < 0.48) fieldC = mix(vec3(0.34, 0.25, 0.17), vec3(0.42, 0.31, 0.21), hsh2);  // ploughed earth
+            else if (hsh < 0.66) {                                                                       // vineyard rows
+              float rowS = smoothstep(0.35, 0.5, abs(fract(r.y / 2.2) - 0.5) * 2.0);
+              fieldC = mix(vec3(0.22, 0.28, 0.1), vec3(0.4, 0.31, 0.2), rowS);
+            } else fieldC = col;                                                                         // fallow pasture
+            float edge = min(min(f.x, 1.0 - f.x) * cellSize.x, min(f.y, 1.0 - f.y) * cellSize.y);
+            fieldC = mix(fieldC * 0.62, fieldC, smoothstep(0.6, 2.2, edge)); // hedge or rubble wall
+            col = mix(col, fieldC, fw * 0.85);
+          }
+        }
         col *= mix(1.0, 0.7, uWetness * (vSplatB.y + vSplatA.z + vSplatB.w));
         diffuseColor.rgb *= col;`)
       .replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>

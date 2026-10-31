@@ -555,15 +555,31 @@ export function buildRealHumanoid(a: Appearance, opts: { lite?: boolean } = {}):
       mat = new THREE.MeshStandardMaterial({ map: eyeTex, roughness: 0.15 });
     } else {
       const color = isBeard ? beardC : isBrow ? (a.sex === 'm' && a.beard.style !== 'none' ? beardC : hairC) : hairC;
-      mat = new THREE.MeshStandardMaterial({
-        map: p.texture,
-        color: color.clone().multiplyScalar(isHair || isBeard ? 2.4 : 1.6),
-        roughness: 0.85,
-        envMapIntensity: 0.35,
-        alphaTest: 0.45,
-        alphaToCoverage: true,
-        side: THREE.DoubleSide,
-      });
+      const base = color.clone().multiplyScalar(isHair || isBeard ? 2.4 : 1.6);
+      mat =
+        isHair || isBeard
+          ? new THREE.MeshPhysicalMaterial({
+              map: p.texture,
+              color: base,
+              roughness: 0.75,
+              envMapIntensity: 0.35,
+              // Soft rim highlight of hair fibres.
+              sheen: 0.7,
+              sheenRoughness: 0.45,
+              sheenColor: base.clone().lerp(new THREE.Color(1, 0.95, 0.85), 0.35),
+              alphaTest: 0.45,
+              alphaToCoverage: true,
+              side: THREE.DoubleSide,
+            })
+          : new THREE.MeshStandardMaterial({
+              map: p.texture,
+              color: base,
+              roughness: 0.85,
+              envMapIntensity: 0.35,
+              alphaTest: 0.45,
+              alphaToCoverage: true,
+              side: THREE.DoubleSide,
+            });
     }
     bindMesh(geo, mat, isHair || isBeard);
   });

@@ -88,11 +88,11 @@ export function createClouds(): Clouds {
         // Self-shadowing: march a little toward the sun across the sheet (bellies grey, tops bright).
         vec2 sd = normalize(uSunDir.xz + 1e-4) * (1.0 - clamp(uSunDir.y, 0.0, 0.95));
         float occ = density(p + sd * 300.0) * 0.5 + density(p + sd * 700.0) * 0.35 + density(p + sd * 1300.0) * 0.25;
-        float lightT = exp(-occ * 2.4 - d * 1.2);
+        float lightT = exp(-occ * 1.5 - d * 0.7);
         float cosA = dot(rd, uSunDir);
         float silver = pow(max(cosA, 0.0), 10.0) * (1.0 - d) * 2.5;
         vec3 ambient = mix(uSkyColor * 0.85, vec3(0.78, 0.8, 0.84), 0.35) * (1.0 - uNight * 0.85);
-        vec3 col = ambient * (0.62 + 0.25 * (1.0 - d)) + uSunColor * (lightT * 1.25 + silver) * (1.0 - uNight);
+        vec3 col = ambient * (0.9 + 0.25 * (1.0 - d)) + uSunColor * (lightT * 1.1 + silver) * (1.0 - uNight);
         float alpha = smoothstep(0.0, 0.55, d) * 0.95;
         // Distant clouds melt into the horizon haze.
         alpha *= smoothstep(0.012, 0.09, rd.y);
