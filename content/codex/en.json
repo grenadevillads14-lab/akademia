@@ -1,0 +1,125 @@
+{
+  "notes": "Codex entries unlocked in play. 'certainty' mirrors HISTORY_NOTES.md: documented | tradition | invented. Text paraphrases sources; no long quotations.",
+  "entries": {
+    "aristotle": {
+      "title": "Aristotle of Stagira",
+      "category": "people",
+      "certainty": "documented",
+      "sources": "Diogenes Laërtius 5.1–9",
+      "text": "Born in 384 BC at Stagira in the north, son of Nicomachus, physician to the Macedonian king. He came to Athens at seventeen and stayed at the Academy for some twenty years. Ancient writers remembered him as slight, with small eyes, a lisp, rings on his fingers and carefully cut hair."
+    },
+    "plato": {
+      "title": "Plato",
+      "category": "people",
+      "certainty": "documented",
+      "sources": "Diogenes Laërtius 3; the Seventh Letter",
+      "text": "Athenian, pupil of Socrates, founder of the Academy around 387 BC. In 367 he is about sixty and about to sail for Syracuse, where Dionysius the Younger has invited him. He teaches by questions, in conversation, and writes dialogues rather than treatises."
+    },
+    "speusippus": {
+      "title": "Speusippus",
+      "category": "people",
+      "certainty": "documented",
+      "sources": "Diogenes Laërtius 4.1–5",
+      "text": "Plato's nephew and, after Plato's death in 347, head of the Academy. Later writers called him quick-tempered. He set up statues of the Graces in the shrine of the Muses that Plato had founded."
+    },
+    "xenocrates": {
+      "title": "Xenocrates of Chalcedon",
+      "category": "people",
+      "certainty": "documented",
+      "sources": "Diogenes Laërtius 4.6–15",
+      "text": "Grave and slow of speech. Plato kept telling him to 'sacrifice to the Graces', and said that Xenocrates needed a spur and Aristotle a bridle. He would head the Academy from 339 BC, and was famous for being impossible to bribe."
+    },
+    "eudoxus": {
+      "title": "Eudoxus of Cnidus",
+      "category": "people",
+      "certainty": "documented",
+      "sources": "Diogenes Laërtius 8.86–91; Aristotle, Metaphysics Λ8",
+      "text": "Mathematician and astronomer: the theory of proportion, the method of exhaustion, and a model of the heavens made of nested rotating spheres. As a poor young man he lodged at the Piraeus and walked to the Academy every day. (That he ran the school while Plato was in Syracuse is a modern guess, not an ancient report.)"
+    },
+    "diogenes": {
+      "title": "Diogenes of Sinope",
+      "category": "people",
+      "certainty": "tradition",
+      "sources": "Diogenes Laërtius 6.20–81",
+      "text": "The Cynic, who lived in a storage jar and owned a cloak, a staff and a bag. He carried a lamp in daylight, 'looking for a human being'. Told that Plato had defined man as a featherless biped, he plucked a chicken and brought it in: 'Here is Plato's man.' Most stories about him are anecdotes, some surely invented in antiquity."
+    },
+    "academy": {
+      "title": "The Academy",
+      "category": "places",
+      "certainty": "documented",
+      "sources": "Plutarch, Cimon 13; Pausanias 1.29–30; Suda τ 733",
+      "text": "A sacred grove of the hero Hekademos outside the Dipylon. Hipparchus walled it; Cimon brought water, running tracks and shady walks. It held a gymnasium, altars, a shrine of the Muses, and the sacred olives. Plato taught here, and in a small garden of his own nearby."
+    },
+    "demosion_sema": {
+      "title": "The Demosion Sema",
+      "category": "places",
+      "certainty": "documented",
+      "sources": "Thucydides 2.34; Pausanias 1.29",
+      "text": "The state cemetery along the road from the Dipylon to the Academy. The war dead of each year were buried together, their names listed on stone by tribe, and a leading citizen gave a funeral speech. Pericles' speech of 431 BC is the most famous: the city itself, he said, was their monument."
+    },
+    "dexileos": {
+      "title": "The stele of Dexileos",
+      "category": "places",
+      "certainty": "documented",
+      "sources": "Kerameikos excavations; the stele's inscription",
+      "text": "A family monument for a young cavalryman, killed near Corinth in 394 BC at about twenty. The relief shows him riding down a fallen enemy. Unusually, the inscription gives his birth year, as if to answer anyone who blamed the cavalry for politics: he was too young to have been involved."
+    },
+    "torch_race": {
+      "title": "The torch race",
+      "category": "festivals",
+      "certainty": "documented",
+      "sources": "Pausanias 1.30.2",
+      "text": "At festivals runners lit torches at the altar of Prometheus in the Academy and raced to the city. Speed was not enough: if the leader's torch went out, victory passed to the next runner with a flame, and if every torch went out, no one won."
+    },
+    "geometry_rumour": {
+      "title": "The inscription that isn't there",
+      "category": "legends",
+      "certainty": "tradition",
+      "sources": "First attested in the 6th century AD (Elias, Philoponus)",
+      "text": "'Let no one ignorant of geometry enter.' Later writers claimed this stood over the door of the Academy, but no source from Plato's time mentions it. Mathematics mattered enormously here; the inscription is probably a legend."
+    },
+    "moriai": {
+      "title": "The sacred olives",
+      "category": "places",
+      "certainty": "documented",
+      "sources": "Lysias 7; Sophocles, Oedipus at Colonus 694–706",
+      "text": "Olive trees belonging to Athena, said to descend from her gift to the city. They were protected by law; a speech by Lysias defends a man accused of removing the stump of one. Sophocles praises the grey-leaved olive of Colonus that no enemy could destroy."
+    },
+    "mouseion": {
+      "title": "The shrine of the Muses",
+      "category": "places",
+      "certainty": "documented",
+      "sources": "Diogenes Laërtius 4.1; Pausanias 1.30",
+      "text": "Plato founded a shrine of the Muses in the Academy; Speusippus later added statues of the Graces. Pausanias also saw an altar of the Muses here. Its exact form and place are unknown; the game's shrine among cypresses is a reconstruction."
+    },
+    "palaestra": {
+      "title": "The palaestra",
+      "category": "places",
+      "certainty": "documented",
+      "sources": "Vitruvius 5.11; excavations of the square peristyle",
+      "text": "A courtyard of sand surrounded by porticoes, where young men wrestled, oiled and dusted. Vitruvius describes exedrae where philosophers sat and argued, and rooms for oil, dust, bathing and the punching bag. Athletes trained naked and scraped themselves clean with a strigil."
+    },
+    "cimon": {
+      "title": "Cimon's water",
+      "category": "places",
+      "certainty": "documented",
+      "sources": "Plutarch, Cimon 13.8",
+      "text": "In the 460s BC the general Cimon turned the Academy from a dry place into a watered grove, with clear running tracks and shady walks. The water came from the Cephissus. The layout of the channels in the game is invented."
+    },
+    "lyceum": {
+      "title": "The Lyceum",
+      "category": "places",
+      "certainty": "documented",
+      "sources": "Diogenes Laërtius 5.51–57; Rigillis Street excavation (1996)",
+      "text": "A public gymnasium in a sanctuary of Apollo Lykeios, east of the city by the Ilissos. Aristotle taught there from 335 BC. As a foreigner he could not own land; the school's garden, covered walk and shrine of the Muses are known from his successor Theophrastus' will."
+    }
+  },
+  "ideas": {
+    "wonder": { "title": "Philosophy begins in wonder", "sources": "Plato, Theaetetus 155d", "text": "Socrates tells the young Theaetetus that wonder is the feeling of the philosopher, and philosophy has no other beginning." },
+    "philosopher_kings": { "title": "Philosopher-kings", "sources": "Plato, Republic 473c–d", "text": "Cities will have no rest from trouble until philosophers rule, or rulers truly become philosophers." },
+    "ladder_of_love": { "title": "The ladder of love", "sources": "Plato, Symposium 210a–212a", "text": "Love leads from one beautiful body to beauty in all bodies, to beautiful souls, laws and knowledge, and finally to beauty itself, unchanging." },
+    "forms": { "title": "The Forms", "sources": "Plato, Phaedo, Republic", "text": "Beyond the many beautiful things there is Beauty itself, which they share in: unchanging, known by thought rather than sight." },
+    "recollection": { "title": "Learning as recollection", "sources": "Plato, Meno 81–86", "text": "An untaught boy, questioned step by step, finds the square double a given square. Socrates argues he was not taught but recalled what he already knew." },
+    "incommensurable": { "title": "Incommensurable lengths", "sources": "Plato, Meno 82–85; Theaetetus 147", "text": "The diagonal of a square cannot be measured by any unit that also measures its side exactly. Yet geometry can still construct it." }
+  }
+}

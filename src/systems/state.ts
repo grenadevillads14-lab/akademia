@@ -24,7 +24,7 @@ export interface GameStateData {
   xp: Record<Discipline, number>;
   skills: string[];
   quests: Record<string, QuestProgress>;
-  discovered: { herms: string[]; zones: string[]; codex: string[]; collectibles: Record<string, string[]> };
+  discovered: { herms: string[]; zones: string[]; codex: string[]; collectibles: Record<string, string[]>; fog: string };
   clock: { hours: number; day: number; season: 'spring' | 'summer' | 'autumn' | 'winter'; chapter: string };
   position: { world: string; x: number; z: number; heading: number } | null;
   ink: Record<string, string>;
@@ -43,7 +43,7 @@ export function newGameState(): GameStateData {
     xp: { logos: 0, mathesis: 0, gymnastike: 0, mousike: 0 },
     skills: [],
     quests: {},
-    discovered: { herms: [], zones: [], codex: [], collectibles: {} },
+    discovered: { herms: [], zones: [], codex: [], collectibles: {}, fog: '' },
     clock: { hours: 17.6, day: 0, season: 'spring', chapter: 'prologue' },
     position: null,
     ink: {},
@@ -51,6 +51,8 @@ export function newGameState(): GameStateData {
     playSeconds: 0,
   };
 }
+
+export const FOG_N = 64;
 
 /** XP needed for each discipline level (level 1 at 0 XP). */
 export const LEVEL_XP = [0, 60, 160, 320, 560, 900, 1350, 1950];
@@ -200,6 +202,35 @@ export class GameState {
         throw new Error(`Unknown command "${command}"`);
     }
     this.bus.emit('state:command', { command });
+  }
+
+  /** Fog of war: a FOG_N × FOG_N grid over the world bounds, '1' = seen. */
+  revealAround(x: number, z: number, radius: number, bounds: { minX: number; maxX: number; minZ: number; maxZ: number }): boolean {
+    const d = this.data.discovered;
+    if (d.fog.length !== FOG_N * FOG_N) d.fog = '0'.repeat(FOG_N * FOG_N);
+    const cw = (bounds.maxX - bounds.minX) / FOG_N;
+    const ch = (bounds.maxZ - bounds.minZ) / FOG_N;
+    const cells = d.fog.split('');
+    let changed = false;
+    const ci = Math.floor((x - bounds.minX) / cw);
+    const cj = Math.floor((z - bounds.minZ) / ch);
+    const ri = Math.ceil(radius / cw);
+    const rj = Math.ceil(radius / ch);
+    for (let j = cj - rj; j <= cj + rj; j++) {
+      for (let i = ci - ri; i <= ci + ri; i++) {
+        if (i < 0 || j < 0 || i >= FOG_N || j >= FOG_N) continue;
+        const cx = bounds.minX + (i + 0.5) * cw;
+        const cz = bounds.minZ + (j + 0.5) * ch;
+        if (Math.hypot(cx - x, cz - z) > radius) continue;
+        const k = j * FOG_N + i;
+        if (cells[k] !== '1') {
+          cells[k] = '1';
+          changed = true;
+        }
+      }
+    }
+    if (changed) d.fog = cells.join('');
+    return changed;
   }
 
   serialize(): string {

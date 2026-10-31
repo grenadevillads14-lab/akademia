@@ -27,7 +27,7 @@ export function createGrass(terrain: Terrain, u: WorldUniforms, opts: { density:
     const bx = rng() * TILE;
     const bz = rng() * TILE;
     const r = rng();
-    const h = 0.28 + Math.pow(rng(), 1.6) * 0.75;
+    const h = 0.1 + Math.pow(rng(), 2.2) * 0.62; // mostly ankle-high, a few tall stalks
     const w = 0.03 + rng() * 0.03;
     const a = rng() * Math.PI;
     const ca = Math.cos(a) * w;
@@ -96,7 +96,7 @@ export function createGrass(terrain: Terrain, u: WorldUniforms, opts: { density:
          float ground = texture2D(uHeight, tuv).r;
          float mask = texture2D(uMask, tuv).r;
          float dist = distance(wxz, uFocus.xz);
-         float fade = 1.0 - smoothstep(uRadius * 0.6, uRadius, dist);
+         float fade = 1.0 - smoothstep(uRadius * 0.4, uRadius, dist);
          float lodKeep = mix(1.0, 0.3, smoothstep(10.0, uRadius, dist)); // thin out with distance
          float alive = step(aBlade.z, mask * uDensity * lodKeep) * fade;
          float h = aBlade.w * alive * (0.6 + 0.6 * mask);

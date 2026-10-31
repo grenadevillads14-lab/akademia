@@ -3,6 +3,7 @@ import { t } from './core/i18n';
 import { loadSettings, PRESETS, type QualityPreset } from './core/settings';
 import { Game } from './game/game';
 import { initPhysics } from './physics/physics';
+import { showTitle } from './ui/title';
 import { createRenderer, detectGpu } from './render/renderer';
 
 /**
@@ -71,6 +72,15 @@ async function boot(): Promise<void> {
   const handle = window.__akademeia;
   handle.setCamera = (pos, target) => game.debugSetCamera(pos, target);
   handle.game = game;
+  // Title screen and character creation (skipped with ?title=0 for tests and screenshots).
+  if (params.get('title') !== '0' && !params.has('bench')) {
+    game.titleOpen = true;
+    void showTitle(app).then((res) => {
+      if (res.kind === 'new') game.newGame(res.choices);
+      else game.loadState(res.state);
+      game.titleOpen = false;
+    });
+  }
   const wait = () => {
     if (game.ready) {
       loading.classList.add('done');

@@ -31,8 +31,8 @@ const FOOT_OFFSET = HALF_HEIGHT + RADIUS; // capsule centre above the feet
 export type Locomotion = 'idle' | 'walk' | 'run' | 'sprint' | 'jump' | 'fall' | 'swim';
 
 export class Player {
-  readonly humanoid: Humanoid;
-  readonly animator: Animator;
+  humanoid: Humanoid;
+  animator: Animator;
   readonly body: RAPIER.RigidBody;
   readonly collider: RAPIER.Collider;
   private readonly controller: RAPIER.KinematicCharacterController;
@@ -195,6 +195,16 @@ export class Player {
       this.animator.play(this.locomotion);
     }
     this.animator.update(dt, hv);
+  }
+
+  /** Swap the visible body (character creation, costume changes). */
+  setAppearance(appearance: Appearance): void {
+    const parent = this.humanoid.object.parent;
+    parent?.remove(this.humanoid.object);
+    this.humanoid.dispose();
+    this.humanoid = buildHumanoid(appearance);
+    this.animator = new Animator(this.humanoid, 1.7);
+    parent?.add(this.humanoid.object);
   }
 
   /** Teleport (fast travel, cutscenes, respawn). */

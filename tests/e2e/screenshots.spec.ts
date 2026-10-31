@@ -34,7 +34,7 @@ for (const shot of shots) {
   if (ONLY && !shot.name.includes(ONLY)) continue;
   test(`screenshot ${shot.name}`, async ({ page }) => {
     await page.setViewportSize({ width: 1600, height: 900 });
-    await page.goto(`/?overlay=0&preset=${PRESET}&time=${shot.time}&timescale=0${shot.season ? `&season=${shot.season}` : ''}`);
+    await page.goto(`/?title=0&story=0&overlay=0&preset=${PRESET}&time=${shot.time}&timescale=0${shot.season ? `&season=${shot.season}` : ''}`);
     await page.waitForFunction(() => window.__akademeia?.ready === true, null, { timeout: 120_000 });
     if ('camera' in shot) {
       await page.evaluate(([p, t]) => window.__akademeia!.game!.debugSetCamera(p, t, true), [shot.camera.pos, shot.camera.target] as const);

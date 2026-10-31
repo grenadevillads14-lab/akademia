@@ -12,6 +12,18 @@ function watchConsole(page: Page): string[] {
   return errors;
 }
 
+/** Wait until the game has rendered `n` more frames (software GL can take seconds per frame). */
+async function frames(page: Page, n: number) {
+  const start = await page.evaluate(() => window.__akademeia!.game!.frames);
+  await page.waitForFunction((s) => window.__akademeia!.game!.frames >= s, start + n, { timeout: 180_000 });
+}
+
+/** Press a key so that exactly one frame sees it. */
+async function tap(page: Page, key: string) {
+  await page.keyboard.press(key);
+  await frames(page, 2);
+}
+
 async function boot(page: Page, url = '/') {
   await page.goto(url);
   await page.waitForFunction(() => window.__akademeia?.ready === true, null, { timeout: 120_000 });
@@ -19,7 +31,7 @@ async function boot(page: Page, url = '/') {
 
 test('the Academy loads, renders and runs without console errors', async ({ page }) => {
   const errors = watchConsole(page);
-  await boot(page, '/?overlay=1');
+  await boot(page, '/?title=0&overlay=1');
   const stats = await page.evaluate(() => window.__akademeia!.stats());
   expect(stats.drawCalls).toBeGreaterThan(0);
   expect(stats.triangles).toBeGreaterThan(1000);
@@ -28,13 +40,20 @@ test('the Academy loads, renders and runs without console errors', async ({ page
 });
 
 test('the player walks forward on the road and stays on the ground', async ({ page }) => {
-  await boot(page, '/?story=0');
+  await boot(page, '/?title=0&story=0');
   const before = await page.evaluate(() => {
     const g = window.__akademeia!.game!;
     return { x: g.player.position.x, y: g.player.position.y, z: g.player.position.z };
   });
   await page.keyboard.down('KeyW');
-  await page.waitForTimeout(2500);
+  await page.waitForFunction(
+    (b) => {
+      const p = window.__akademeia!.game!.player.position;
+      return Math.hypot(p.x - b.x, p.z - b.z) > 1;
+    },
+    before,
+    { timeout: 180_000 },
+  );
   await page.keyboard.up('KeyW');
   const after = await page.evaluate(() => {
     const g = window.__akademeia!.game!;
@@ -46,19 +65,19 @@ test('the player walks forward on the road and stays on the ground', async ({ pa
 });
 
 test('the player swims in the Cephissus', async ({ page }) => {
-  await boot(page, '/?story=0');
+  await boot(page, '/?title=0&story=0');
   await page.evaluate(() => {
     const g = window.__akademeia!.game!;
     // Middle of the river near the ford.
     g.debugPlacePlayer(-470, -80, 0);
   });
-  await page.waitForTimeout(1500);
+  await frames(page, 6);
   const swimming = await page.evaluate(() => window.__akademeia!.game!.player.swimming);
   expect(swimming).toBe(true);
 });
 
 test('benchmark mode produces a report at a fixed 1080p and hands control back', async ({ page }) => {
-  await boot(page, '/?bench=2');
+  await boot(page, '/?title=0&bench=2');
   await expect(page.getByTestId('bench-report')).toBeVisible({ timeout: 120_000 });
   const result = await page.evaluate(() => window.__akademeia!.bench);
   expect(result?.frames).toBeGreaterThan(0);
@@ -69,27 +88,20 @@ test('benchmark mode produces a report at a fixed 1080p and hands control back',
 });
 
 test('the prologue opens, and talking to Aristotle advances the quest', async ({ page }) => {
-  await boot(page);
+  await boot(page, '/?title=0');
   const dialogue = page.getByTestId('dialogue');
   await expect(dialogue).toBeVisible({ timeout: 30_000 });
   await expect(dialogue).toContainText('Dipylon');
-  // Close the arrival narration.
-  for (let i = 0; i < 4 && (await dialogue.isVisible()); i++) {
-    await page.keyboard.press('Enter');
-    await page.waitForTimeout(400);
-    await page.keyboard.press('Enter');
-    await page.waitForTimeout(400);
-  }
+  // Close the arrival narration (first Enter completes the typewriter, the next advances).
+  for (let i = 0; i < 6 && (await dialogue.isVisible()); i++) await tap(page, 'Enter');
   await expect(dialogue).toBeHidden();
   await expect(page.locator('.hud-prompt')).toContainText('Aristotle', { timeout: 20_000 });
-  await page.keyboard.press('KeyF');
-  await expect(dialogue).toContainText('Aristotle', { timeout: 20_000 });
-  // Skip the typewriter, then pick the first choice and run to the end.
-  for (let i = 0; i < 12 && (await dialogue.isVisible()); i++) {
-    await page.keyboard.press('Enter');
-    await page.waitForTimeout(300);
-    if (await page.locator('.dialogue-choice').count()) await page.keyboard.press('Digit1');
-    await page.waitForTimeout(300);
+  await tap(page, 'KeyF');
+  await expect(dialogue).toContainText('Aristotle', { timeout: 60_000 });
+  // Skip the typewriter, pick the first choice whenever one is offered, run to the end.
+  for (let i = 0; i < 20 && (await dialogue.isVisible()); i++) {
+    if (await page.locator('.dialogue-choice').count()) await tap(page, 'Digit1');
+    else await tap(page, 'Enter');
   }
   const step = await page.evaluate(() => window.__akademeia!.game!.state.quest('prologue')?.step);
   expect(step).toBe('walk_road');

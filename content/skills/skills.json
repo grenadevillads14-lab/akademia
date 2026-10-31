@@ -1,0 +1,36 @@
+{
+  "notes": "Discipline skill trees (design §5): each node changes how you play. 'requires' is the discipline level and optional parent node. One skill point per discipline level gained.",
+  "skills": [
+    { "id": "elenchus", "discipline": "logos", "level": 2, "title": "Elenchus", "text": "Challenge people's definitions. Unlocks [Challenge] choices in conversations." },
+    { "id": "irony", "discipline": "logos", "level": 2, "title": "Socratic irony", "text": "Profess ignorance: people explain more than they meant to. Extra information in many talks." },
+    { "id": "definition", "discipline": "logos", "level": 3, "parent": "elenchus", "title": "Sharp definitions", "text": "Debates: start with one more point of consistency." },
+    { "id": "peripatetic", "discipline": "logos", "level": 3, "title": "Walking dialectic", "text": "Conversations held while walking a peripatos earn double Logos." },
+    { "id": "shield", "discipline": "logos", "level": 4, "parent": "definition", "title": "Against the sophists", "text": "See through verbal tricks: fallacies are highlighted in debates." },
+    { "id": "maieutic", "discipline": "logos", "level": 5, "parent": "irony", "title": "Midwifery", "text": "Help others reach the answer themselves. New outcomes in side quests." },
+    { "id": "syllogism", "discipline": "logos", "level": 6, "parent": "shield", "title": "The syllogism", "text": "Aristotle's new logic: chain premises to force a conclusion in debates." },
+
+    { "id": "compass", "discipline": "mathesis", "level": 2, "title": "Compass and ruler", "text": "Geometry puzzles show construction guides." },
+    { "id": "proportion", "discipline": "mathesis", "level": 2, "title": "Proportion", "text": "Eudoxus' theory: compare magnitudes at a glance (hints on ratios)." },
+    { "id": "gnomon", "discipline": "mathesis", "level": 3, "parent": "compass", "title": "The gnomon", "text": "Measure the height of anything from its shadow. Unlocks the surveying tool." },
+    { "id": "stars", "discipline": "mathesis", "level": 3, "title": "Star reading", "text": "At night, constellations and planets are labelled in the sky." },
+    { "id": "exhaustion", "discipline": "mathesis", "level": 4, "parent": "proportion", "title": "Method of exhaustion", "text": "Approximate curved figures with polygons: new puzzle solutions." },
+    { "id": "spheres", "discipline": "mathesis", "level": 5, "parent": "stars", "title": "Homocentric spheres", "text": "Fine control on Eudoxus' armillary." },
+    { "id": "mechanics", "discipline": "mathesis", "level": 6, "parent": "exhaustion", "title": "Mechanical solutions", "text": "Use instruments, as Archytas did. Plato will not approve." },
+
+    { "id": "stamina", "discipline": "gymnastike", "level": 2, "title": "Wind", "text": "Sprinting and swimming tire you 30% less." },
+    { "id": "climber", "discipline": "gymnastike", "level": 2, "title": "Climber", "text": "Vault walls up to shoulder height." },
+    { "id": "swimmer", "discipline": "gymnastike", "level": 3, "parent": "stamina", "title": "Swimmer", "text": "Swim faster against the Cephissus current." },
+    { "id": "runner", "discipline": "gymnastike", "level": 3, "title": "Stadion runner", "text": "Faster sprint on tracks and roads." },
+    { "id": "wrestler", "discipline": "gymnastike", "level": 4, "parent": "climber", "title": "Wrestler", "text": "Wider timing window in wrestling." },
+    { "id": "torchbearer", "discipline": "gymnastike", "level": 5, "parent": "runner", "title": "Torchbearer", "text": "Your torch flame is steadier in the race." },
+    { "id": "pentathlete", "discipline": "gymnastike", "level": 6, "parent": "wrestler", "title": "Pentathlete", "text": "Discus and javelin power meters move more slowly." },
+
+    { "id": "memory", "discipline": "mousike", "level": 2, "title": "Memory palace", "text": "Store clues at places in the garden and recall them by walking there." },
+    { "id": "muses", "discipline": "mousike", "level": 2, "title": "Favour of the Muses", "text": "The Muses' herms reveal hidden scrolls nearby." },
+    { "id": "lyre", "discipline": "mousike", "level": 3, "parent": "muses", "title": "The lyre", "text": "Play the lyre: calm angry people, accompany festivals." },
+    { "id": "rhythm", "discipline": "mousike", "level": 3, "parent": "memory", "title": "Rhythm", "text": "Timed actions (athletics, lyre) show the beat." },
+    { "id": "epic", "discipline": "mousike", "level": 4, "parent": "memory", "title": "Homer by heart", "text": "Quote poets in debates: a well-placed line restores consistency." },
+    { "id": "chorus", "discipline": "mousike", "level": 5, "parent": "lyre", "title": "Chorus leader", "text": "Lead songs at festivals for reputation with everyone present." },
+    { "id": "hymn", "discipline": "mousike", "level": 6, "parent": "chorus", "title": "Hymn to the Muses", "text": "At the Mouseion, dawn hymns grant inspiration (double XP for an hour)." }
+  ]
+}

@@ -203,6 +203,29 @@ export class StoryDirector {
     }
   }
 
+  /** True if an interaction prompt is currently being offered. */
+  get hasTarget(): boolean {
+    return this.target !== null;
+  }
+
+  /** Re-place NPCs and reset per-session trigger memory (after loading a save). */
+  refresh(): void {
+    this.fired.clear();
+    for (const n of this.npcs.values()) n.object.userData.placement = undefined;
+    this.applyPlacements(true);
+  }
+
+  /** Quests for the journal. */
+  questList(): { id: string; title: string; step: string | null; state: string; steps: string[] }[] {
+    return Object.entries(this.data.quests)
+      .filter(([id]) => this.state.quest(id))
+      .map(([id, q]) => {
+        const st = this.state.quest(id)!;
+        const step = q.steps[st.step];
+        return { id, title: t(q.titleKey), step: step ? t(step.textKey) : null, state: st.state, steps: st.completed };
+      });
+  }
+
   get inDialogue(): boolean {
     return this.ui.open;
   }

@@ -299,6 +299,9 @@ function createPhotoTerrainMaterial(uniforms: WorldUniforms, layers: GroundLayer
         col = mix(col, col * uSeasonTint, vSplatA.x + vSplatA.y * 0.6);
         // Spring meadows: push the photo grass toward fresh green (the source photo is half dry).
         col = mix(col, col * vec3(0.78, 1.18, 0.62), uGreen * vSplatA.x * 0.85);
+        // Meadow seen from afar reads as the colour of its grass, not the soil between blades.
+        vec3 meadow = mix(vec3(0.20, 0.27, 0.09), vec3(0.42, 0.38, 0.2), 1.0 - uGreen);
+        col = mix(col, meadow, vSplatA.x * 0.55);
         // Pull photo albedo toward the painterly palette: a little less red, a little less saturated.
         float lum = dot(col, vec3(0.299, 0.587, 0.114));
         col = mix(vec3(lum), col, 0.78) * vec3(1.0, 0.98, 0.95);

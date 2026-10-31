@@ -18,6 +18,12 @@ import { MaterialLib } from '../render/materialLib';
 import { ModelLib } from '../render/modelLib';
 import { PostPipeline } from '../render/post';
 import { GameState } from '../systems/state';
+import { writeSave } from '../systems/save';
+import { Compass } from '../ui/compass';
+import { drawMap } from '../ui/map';
+import { PauseMenu } from '../ui/menu';
+import type { NewGameChoices } from '../ui/title';
+import { saveSettings } from '../core/settings';
 import { StoryDirector } from './story';
 import { onResize } from '../render/renderer';
 import { WorldClock, formatTime, type Season } from '../world/clock';
@@ -64,9 +70,19 @@ export class Game {
   private post: PostPipeline | null = null;
   readonly state = new GameState();
   story!: StoryDirector;
+  menu!: PauseMenu;
+  compass!: Compass;
+  /** True while the title screen or a menu covers the game. */
+  paused = false;
+  private fogTimer = 0;
+  private autosaveTimer = 180;
+  private travelEl: HTMLDivElement | null = null;
   private env: SkyEnvironment | null = null;
   private elapsed = 0;
   ready = false;
+  titleOpen = false;
+  /** Rendered frame counter (tests wait on frames, not wall time: software GL is very slow). */
+  frames = 0;
   benchResult: import('../debug/benchmark').BenchmarkResult | null = null;
 
   constructor(private readonly o: GameOptions) {
@@ -128,6 +144,27 @@ export class Game {
     this.story = new StoryDirector(o.app, this.state, this.player, this.tpCamera, this.world.pois, this.world.hf.height);
     this.scene.add(this.story.group);
     if (o.params.get('story') === '0') this.state.runCommand('flag seen_arrival');
+    this.compass = new Compass(o.app);
+    this.menu = new PauseMenu(o.app, {
+      state: () => this.state,
+      settings: o.settings,
+      quests: () => this.story.questList(),
+      drawMap: (c) =>
+        drawMap(c, this.world.layout, this.world.pois, this.state, { x: this.player.position.x, z: this.player.position.z, heading: this.player.heading }, this.story.objectiveMarker(), (k) => t(k)),
+      beforeSave: () => this.captureState(),
+      loadState: (s) => this.loadState(s),
+      applySettings: (st) => {
+        document.documentElement.style.setProperty('--text-scale', String(st.accessibility.textScale));
+        saveSettings(st);
+      },
+    });
+    document.documentElement.style.setProperty('--text-scale', String(o.settings.accessibility.textScale));
+    // Autosave whenever a quest moves on.
+    this.state.bus.on('state:quest', () => {
+      this.captureState();
+      writeSave('auto', this.state);
+    });
+    this.state.bus.on('state:herm', () => this.story.hud.toast(t('herm.discovered'), 'info'));
 
     o.renderer.domElement.addEventListener('click', () => {
       if (!this.bench || this.bench.finished) this.input.requestPointerLock();
@@ -139,6 +176,89 @@ export class Game {
 
     this.timer.connect(document);
     o.renderer.setAnimationLoop((time) => this.frame(time));
+  }
+
+  /** Copy live clock and position into the save data. */
+  captureState(): void {
+    const d = this.state.data;
+    d.clock.hours = this.clock.hours;
+    d.clock.day = this.clock.day;
+    d.clock.season = this.clock.season;
+    d.position = { world: this.world.id, x: this.player.position.x, z: this.player.position.z, heading: this.player.heading };
+  }
+
+  /** Start a new game with the character-creation choices. */
+  newGame(c: NewGameChoices): void {
+    const d = this.state.data;
+    d.player.name = c.name;
+    d.player.homeCity = c.homeCity;
+    const a = c.appearance;
+    const appearance = {
+      ...PLAYER_DEFAULT,
+      sex: a.sex,
+      skin: a.skin,
+      hair: { style: a.hairStyle, color: a.hair },
+      chiton: { color: a.chiton, length: 'knee', border: '#8c3b2a' },
+      chlamys: a.cloak,
+    };
+    d.player.appearance = appearance;
+    this.player.setAppearance(parseAppearance(appearance));
+  }
+
+  /** Replace the running state with a loaded save. */
+  loadState(s: GameState): void {
+    this.state.data = s.data;
+    const d = s.data;
+    if (d.player.appearance) this.player.setAppearance(parseAppearance(d.player.appearance));
+    this.clock.hours = d.clock.hours;
+    this.clock.day = d.clock.day;
+    this.clock.season = d.clock.season;
+    this.applySeason();
+    if (d.position) {
+      this.player.teleport(d.position.x, d.position.z, d.position.heading);
+      this.tpCamera.snapBehind(d.position.heading);
+    }
+    this.story.refresh();
+  }
+
+  /** Herm fast travel: list discovered herms. */
+  openTravel(): void {
+    if (this.travelEl) return;
+    const herms = (this.world.structures?.herms ?? []).filter((h) => this.state.data.discovered.herms.includes(h.id));
+    const root = document.createElement('div');
+    root.className = 'travel';
+    const box = document.createElement('div');
+    box.className = 'travel-box papyrus';
+    const h = document.createElement('h3');
+    h.textContent = t('travel.title');
+    box.appendChild(h);
+    const close = () => {
+      root.remove();
+      this.travelEl = null;
+      this.paused = false;
+    };
+    for (const hm of herms) {
+      const b = document.createElement('button');
+      b.className = 'menu-button';
+      b.textContent = t(`herm.${hm.id}`);
+      b.addEventListener('click', () => {
+        const back = new THREE.Vector3(Math.sin(this.player.heading), 0, Math.cos(this.player.heading));
+        this.player.teleport(hm.position.x - back.x * 2.5, hm.position.z - back.z * 2.5);
+        this.tpCamera.snapBehind(this.player.heading);
+        close();
+      });
+      box.appendChild(b);
+    }
+    const c = document.createElement('button');
+    c.className = 'menu-button';
+    c.textContent = t('travel.cancel');
+    c.addEventListener('click', close);
+    box.appendChild(c);
+    root.appendChild(box);
+    this.o.app.appendChild(root);
+    this.travelEl = root;
+    this.paused = true;
+    document.exitPointerLock?.();
   }
 
   /** Debug/screenshot helper: switch to the free camera at a fixed spot. */
@@ -225,6 +345,15 @@ export class Game {
       this.hint.textContent = this.freeFly.enabled ? t('hint.freefly') : t('hint.play');
     }
     if (input.wasPressed('toggleOverlay')) this.overlay.toggle();
+    if (this.menu && !this.story.inDialogue && !this.travelEl && !this.titleOpen) {
+      if (input.wasPressed('pause')) {
+        if (this.menu.open) this.menu.close();
+        else this.menu.show('journal');
+      }
+      else if (input.wasPressed('journal')) this.menu.toggle('journal');
+      else if (input.wasPressed('map')) this.menu.toggle('map');
+    }
+    const halted = this.paused || this.titleOpen || (this.menu?.open ?? false);
     if (input.wasPressed('debugTime')) this.clock.hours = (this.clock.hours + 2) % 24;
     if (input.wasPressed('debugRespawn')) {
       const s = this.world.layout.spawn;
@@ -239,14 +368,16 @@ export class Game {
       this.player.readInput(input, 0);
     }
     const physics = this.o.physics;
-    const step = this.fixed.advance(dt, (h) => {
-      this.player.fixedUpdate(h);
-      physics.step(h);
-    });
-    this.player.render(step.alpha, dt);
+    const step = halted
+      ? { alpha: 1 }
+      : this.fixed.advance(dt, (h) => {
+          this.player.fixedUpdate(h);
+          physics.step(h);
+        });
+    this.player.render(step.alpha, halted ? 0 : dt);
 
     // World.
-    this.clock.update(dt);
+    if (!halted) this.clock.update(dt);
     this.wind.update(dt);
     this.uniforms.playerPos.value.copy(this.player.position);
     const zone = this.world.zoneAt(this.player.position.x, this.player.position.z);
@@ -267,8 +398,40 @@ export class Game {
     this.world.grass.update(focus);
     this.world.water.update(dt);
     this.world.update(this.camera, dt);
-    if (!this.benchRunning) this.story.update(dt, input, this.camera.position, zone ? t(zone.nameKey) : null);
-    this.state.data.playSeconds += dt;
+    if (!this.benchRunning && !halted) {
+      this.story.update(dt, input, this.camera.position, zone ? t(zone.nameKey) : null);
+      this.state.data.playSeconds += dt;
+      // Fog of war, herm discovery, autosave.
+      this.fogTimer -= dt;
+      if (this.fogTimer <= 0) {
+        this.fogTimer = 0.5;
+        const b = this.world.layout.bounds;
+        this.state.revealAround(this.player.position.x, this.player.position.z, 70, b);
+        for (const h of this.world.structures?.herms ?? []) {
+          if (h.position.distanceTo(this.player.position) < 5) this.state.runCommand(`herm ${h.id}`);
+        }
+      }
+      this.autosaveTimer -= dt;
+      if (this.autosaveTimer <= 0) {
+        this.autosaveTimer = 180;
+        this.captureState();
+        writeSave('auto', this.state);
+      }
+      const nearHerm = (this.world.structures?.herms ?? []).find((h) => h.position.distanceTo(this.player.position) < 2.6);
+      if (nearHerm && !this.story.inDialogue && !this.story.hasTarget && this.state.data.discovered.herms.length > 1) {
+        this.story.hud.setPrompt(input.lastDevice === 'gamepad' ? 'X' : 'F', t('herm.prompt'));
+        if (input.wasPressed('interact')) this.openTravel();
+      }
+    }
+    if (this.compass) {
+      this.compass.visible = !halted && !this.story.inDialogue && !this.benchRunning;
+      const obj = this.story.objectiveMarker();
+      const marks: { x: number; z: number; label: string; kind: 'objective' | 'herm' }[] = obj ? [{ x: obj[0], z: obj[1], label: '', kind: 'objective' }] : [];
+      for (const h of this.world.structures?.herms ?? []) {
+        if (this.state.data.discovered.herms.includes(h.id) && h.position.distanceTo(this.player.position) < 300) marks.push({ x: h.position.x, z: h.position.z, label: h.id, kind: 'herm' });
+      }
+      this.compass.update(this.freeFly.enabled ? 0 : this.tpCamera.yaw, this.player.position, marks);
+    }
     const sky = this.world.sky;
     this.env?.update(dt, sky.sunDir, sky.fogColor.clone().multiplyScalar(0.45));
 
@@ -316,6 +479,7 @@ export class Game {
     }
 
     input.endFrame();
+    this.frames++;
     if (++this.framesRendered === 3) this.ready = true;
   }
 }
