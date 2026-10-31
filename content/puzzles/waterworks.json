@@ -1,0 +1,27 @@
+{
+  "notes": "Cimon's channels (Plutarch, Cimon 13.8; layout invented). Water splits equally among open outlets. Shares are fractions of the intake.",
+  "nodes": [
+    { "id": "intake", "kind": "source", "label": "Intake from the Cephissus" },
+    { "id": "J1", "kind": "junction", "label": "The great divide" },
+    { "id": "J2", "kind": "junction", "label": "Eastern divide" },
+    { "id": "J3", "kind": "junction", "label": "Western pipe" },
+    { "id": "baths", "kind": "sink", "need": 0.2, "max": 0.35, "label": "Palaestra baths" },
+    { "id": "planes_east", "kind": "sink", "need": 0.15, "max": 0.4, "label": "Eastern plane walk" },
+    { "id": "figs", "kind": "sink", "need": 0.15, "max": 0.3, "label": "Plato's fig orchard" },
+    { "id": "planes_west", "kind": "sink", "need": 0.15, "max": 0.4, "label": "Western plane walk" },
+    { "id": "reading", "kind": "sink", "max": 0, "label": "The reading spot (keep dry!)" }
+  ],
+  "edges": [
+    { "id": "e0", "from": "intake", "to": "J1", "channel": "intake" },
+    { "id": "e1", "from": "J1", "to": "baths", "sluice": "gym", "channel": "gym_branch" },
+    { "id": "e2", "from": "J1", "to": "J3", "sluice": "west", "channel": "plane_walk_west" },
+    { "id": "e3", "from": "J1", "to": "J2", "sluice": "east", "channel": "plane_walk_east" },
+    { "id": "e4", "from": "J2", "to": "figs", "sluice": "garden", "channel": "garden_branch" },
+    { "id": "e5", "from": "J2", "to": "planes_east" },
+    { "id": "e6", "from": "J3", "to": "reading", "pipe": ["pipe", "reading"], "channel": "reading_spot" },
+    { "id": "e7", "from": "J3", "to": "planes_west", "pipe": ["pipe", "grove"] }
+  ],
+  "pipes": { "pipe": ["reading", "grove"] },
+  "start": { "sluices": { "gym": true, "west": true, "east": false, "garden": true }, "pipes": { "pipe": "reading" } },
+  "onSolve": ["xp mathesis 40", "rep speusippus 2", "flag waterworks_solved", "codex cimon"]
+}

@@ -1,0 +1,32 @@
+{
+  "meno": {
+    "title": "The slave boy's square",
+    "intro": "Eudoxus draws a square in the dust with his stick: two feet each side. 'Plato asked a boy this once, in Meno's house. Draw me a square with exactly twice this area.'",
+    "feedback": {
+      "none": "Draw lines from point to point in the dust. Click a point, then another.",
+      "given": "That is the square we started with: two feet by two, four square feet. We want eight.",
+      "four_times": "You doubled the side. Count the small squares inside: sixteen, not eight. Four times as large! The boy made the same mistake.",
+      "nine": "Three feet a side gives nine square feet. Too big, though closer. And two gives four, too small. So the side lies between two and three: but where?",
+      "other": "Count its area carefully. Is it eight?",
+      "double": "Look: each small square is cut in half by your line, and four halves lie inside. Four halves of four squares... eight. The side is the diagonal of the first square, a length that no whole number of feet can measure. Yet you found it."
+    },
+    "hints": [
+      "Doubling the side quadruples the area. The answer is bigger than two feet a side, smaller than three.",
+      "Draw the diagonal of the little square. What does it cut the square into?",
+      "Build a square on four diagonals: join the middle points of the sides of the big four-by-four square."
+    ],
+    "onSolve": ["xp mathesis 60", "idea recollection", "idea incommensurable", "flag meno_solved", "rep eudoxus 2"]
+  },
+  "waterworks": {
+    "title": "Cimon's water",
+    "intro": "Speusippus unrolls a plan of the channels. 'The reading spot is a swamp and the eastern planes are dying. Water divides equally at every open junction. Make it right before my uncle sees.'",
+    "hints": [
+      "At a junction with three open outlets, each gets a third of what arrives. With two, a half.",
+      "Closing a gate does not destroy water: if a junction has no open way out, it overflows.",
+      "Turn the western pipe toward the grove, then open the eastern gate so the baths don't get half the river."
+    ],
+    "labels": { "open": "Open the sluices", "pipe": "Turn the pipe", "share": "share", "need": "needs", "max": "floods above", "solved": "The water runs where it should. Somewhere upstream, Cimon is pleased.", "close": "Leave" },
+    "problems": { "dry": "is dry", "short": "gets too little", "flood": "floods", "backup": "backs up and overflows" }
+  },
+  "ui": { "hint": "Hint", "erase": "Erase", "undo": "Undo", "leave": "Leave for now", "done": "Done", "consistency": "Consistency", "you": "You", "lesson": "What happened here", "locked": "Needs" }
+}

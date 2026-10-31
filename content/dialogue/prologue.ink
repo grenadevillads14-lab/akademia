@@ -91,7 +91,7 @@ student: Exactly. That is how they test you. # anim: gesture
 # shot: player
 An ancient olive, its trunk split and twisted into several stems. A boundary stone stands beside it. This is one of the moriai, the sacred olives of Athena; the law protects them, and to uproot one is a grave crime.
 {flag("met_aristotle"): aristotle: They say this grove descends from the very olive Athena gave the city. I would rather know why the leaves are silver underneath. }
-# cmd: collect moriai prologue_moria
+# cmd: collect moriai moria-1
 # cmd: codex moriai
 -> END
 
@@ -132,6 +132,7 @@ aristotle: We shall. # anim: gesture
 # cmd: rep plato 1
 # cmd: quest complete prologue
 # cmd: flag chapter act1
+# cmd: quest start act1 farewell
 -> END
 
 === diogenes_road ===

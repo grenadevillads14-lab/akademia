@@ -370,6 +370,9 @@ body {
 }
 .dialogue-hint { text-align: right; font-size: 0.75em; opacity: 0.55; margin-top: 4px; }
 
+/* The hidden attribute must win over the display rules of the overlays below. */
+[hidden] { display: none !important; }
+
 /* ---------- Pause menu ---------- */
 .menu {
   position: fixed;
@@ -503,3 +506,32 @@ body {
 .travel-box { padding: 16px 20px; border-radius: 4px; min-width: 300px; }
 .travel-box h3 { font-family: var(--font-display); color: var(--terracotta); margin: 0 0 10px; }
 .travel-box button { display: block; width: 100%; margin: 4px 0; }
+
+/* Puzzles (M5): Meno square, waterworks plan, debates, lore cards. */
+.puzzle { position: fixed; inset: 0; z-index: 42; display: grid; place-items: center; background: rgba(14, 10, 7, 0.55); padding: 16px; }
+.puzzle-box { padding: 18px 22px; border-radius: 4px; width: min(720px, 100%); max-height: calc(100vh - 32px); overflow: auto; font-size: calc(1rem * var(--text-scale, 1)); }
+.puzzle-box h2 { font-family: var(--font-display); color: var(--terracotta); margin: 0 0 8px; }
+.puzzle-intro { font-style: italic; margin: 0 0 12px; }
+.puzzle-feedback { min-height: 3em; margin: 10px 0 4px; }
+.puzzle-hint { color: #5a4630; font-size: 0.9em; min-height: 1.2em; margin: 4px 0; }
+.puzzle-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.meno-canvas, .water-canvas { display: block; width: 100%; max-width: 440px; margin: 0 auto; border-radius: 3px; box-shadow: inset 0 0 30px rgba(60, 40, 20, 0.5); cursor: crosshair; }
+.water-canvas { max-width: 760px; cursor: pointer; }
+.puzzle-water .puzzle-box { width: min(820px, 100%); }
+.water-status { margin-top: 8px; font-size: 0.9em; }
+.water-problem { color: #8c3b2a; }
+.water-ok { color: #4f6a3a; font-weight: bold; }
+.debate-meters { display: grid; gap: 4px; margin-bottom: 8px; }
+.debate-meter { display: flex; justify-content: space-between; align-items: center; font-size: 0.9em; }
+.debate-meter .pips i { display: inline-block; width: 14px; height: 14px; margin-left: 4px; border-radius: 50%; border: 1px solid var(--terracotta); }
+.debate-meter.opp .pips i.on { background: #8c3b2a; }
+.debate-meter.self .pips i.on { background: #4f6a3a; }
+.debate-log { max-height: 34vh; overflow: auto; padding: 8px; background: rgba(255, 250, 235, 0.35); border-radius: 3px; }
+.debate-line { margin: 4px 0; }
+.debate-line.player { color: #2f4a5c; padding-left: 1.2em; }
+.debate-moves { display: grid; gap: 6px; margin-top: 10px; }
+.debate-move { text-align: left; font: inherit; padding: 8px 10px; border-radius: 3px; border: 1px solid rgba(28, 20, 16, 0.3); background: rgba(255, 250, 235, 0.55); color: var(--ink); cursor: pointer; }
+.debate-move:hover:not(:disabled) { background: rgba(255, 250, 235, 0.95); border-color: var(--terracotta); }
+.debate-move.locked { opacity: 0.5; cursor: not-allowed; }
+.puzzle-lore .puzzle-box { width: min(480px, 100%); }
+.debate-moves > .menu-button { justify-self: start; }

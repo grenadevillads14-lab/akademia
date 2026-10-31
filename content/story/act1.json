@@ -1,0 +1,284 @@
+{
+  "notes": "Act 1: The outsider. Plato sails for Syracuse; Eudoxus sets four trials; the first lesson. Dialogue in content/dialogue/act1.ink.",
+  "order": 1,
+  "quests": {
+    "act1": {
+      "titleKey": "quest.act1",
+      "steps": {
+        "farewell": {
+          "textKey": "quest.act1.farewell",
+          "marker": [
+            160.5,
+            -260.5
+          ]
+        },
+        "eudoxus": {
+          "textKey": "quest.act1.eudoxus",
+          "marker": [
+            160.5,
+            -260.5
+          ]
+        },
+        "trials": {
+          "textKey": "quest.act1.trials"
+        },
+        "first_lesson": {
+          "textKey": "quest.act1.first_lesson",
+          "marker": [
+            160,
+            -262
+          ]
+        }
+      }
+    },
+    "trial_meno": {
+      "titleKey": "quest.trial_meno",
+      "steps": {
+        "solve": {
+          "textKey": "quest.trial_meno.solve",
+          "marker": [
+            160.5,
+            -260.5
+          ]
+        }
+      }
+    },
+    "trial_moriai": {
+      "titleKey": "quest.trial_moriai",
+      "steps": {
+        "find": {
+          "textKey": "quest.trial_moriai.find"
+        }
+      }
+    },
+    "trial_water": {
+      "titleKey": "quest.trial_water",
+      "steps": {
+        "fix": {
+          "textKey": "quest.trial_water.fix",
+          "marker": [
+            -54,
+            -113
+          ]
+        }
+      }
+    },
+    "trial_palaestra": {
+      "titleKey": "quest.trial_palaestra",
+      "steps": {
+        "debate": {
+          "textKey": "quest.trial_palaestra.debate",
+          "marker": [
+            26,
+            4
+          ]
+        },
+        "run": {
+          "textKey": "quest.trial_palaestra.run",
+          "marker": [
+            152,
+            8
+          ]
+        },
+        "back": {
+          "textKey": "quest.trial_palaestra.back",
+          "marker": [
+            26,
+            4
+          ]
+        }
+      }
+    }
+  },
+  "npcs": [
+    {
+      "npc": "eudoxus",
+      "when": {
+        "flag": "plato_departed"
+      },
+      "x": 160.5,
+      "z": -260.5,
+      "heading": 0.6,
+      "anim": "drawDirt"
+    },
+    {
+      "npc": "speusippus",
+      "when": {
+        "questActive": "trial_water"
+      },
+      "x": -54,
+      "z": -113,
+      "heading": -2.43,
+      "anim": "idle"
+    },
+    {
+      "npc": "speusippus",
+      "when": {
+        "questDone": "trial_water"
+      },
+      "ring": [
+        160,
+        -262,
+        6.3,
+        0.0
+      ],
+      "anim": "sit"
+    }
+  ],
+  "triggers": [
+    {
+      "id": "plato_farewell",
+      "type": "talk",
+      "npc": "plato",
+      "dialogue": "act1.plato_farewell",
+      "requires": {
+        "questStep": "act1:farewell"
+      }
+    },
+    {
+      "id": "eudoxus_trials",
+      "type": "talk",
+      "npc": "eudoxus",
+      "dialogue": "act1.eudoxus_trials",
+      "requires": {
+        "questStep": "act1:eudoxus"
+      }
+    },
+    {
+      "id": "eudoxus_meno",
+      "type": "talk",
+      "npc": "eudoxus",
+      "dialogue": "act1.eudoxus_meno",
+      "requires": {
+        "questStep": "trial_meno:solve",
+        "notFlag": "meno_solved"
+      }
+    },
+    {
+      "id": "meno_done",
+      "type": "auto",
+      "dialogue": "act1.meno_done",
+      "requires": {
+        "questStep": "trial_meno:solve",
+        "flag": "meno_solved"
+      }
+    },
+    {
+      "id": "moria_collect",
+      "type": "interact",
+      "poiKind": "moria",
+      "collect": "moriai",
+      "labelKey": "interact.moria",
+      "requires": {
+        "questDone": "prologue"
+      }
+    },
+    {
+      "id": "moriai_done",
+      "type": "auto",
+      "dialogue": "act1.moriai_done",
+      "requires": {
+        "questStep": "trial_moriai:find",
+        "collected": "moriai:4"
+      }
+    },
+    {
+      "id": "speusippus_water",
+      "type": "talk",
+      "npc": "speusippus",
+      "dialogue": "act1.speusippus_water",
+      "requires": {
+        "questStep": "trial_water:fix",
+        "notFlag": "waterworks_solved"
+      }
+    },
+    {
+      "id": "water_done",
+      "type": "auto",
+      "dialogue": "act1.water_done",
+      "requires": {
+        "questStep": "trial_water:fix",
+        "flag": "waterworks_solved"
+      }
+    },
+    {
+      "id": "gymnasiarch_talk",
+      "type": "talk",
+      "npc": "gymnasiarch",
+      "dialogue": "act1.gymnasiarch_talk",
+      "requires": {
+        "questStep": "trial_palaestra:debate",
+        "notFlag": "debate.courage"
+      }
+    },
+    {
+      "id": "debate_done",
+      "type": "auto",
+      "dialogue": "act1.debate_done",
+      "requires": {
+        "questStep": "trial_palaestra:debate",
+        "flag": "debate.courage"
+      }
+    },
+    {
+      "id": "xystos_end",
+      "type": "zone",
+      "circle": [
+        152,
+        8,
+        5
+      ],
+      "dialogue": "act1.xystos_end",
+      "requires": {
+        "questStep": "trial_palaestra:run"
+      }
+    },
+    {
+      "id": "palaestra_done",
+      "type": "talk",
+      "npc": "gymnasiarch",
+      "dialogue": "act1.palaestra_done",
+      "requires": {
+        "questStep": "trial_palaestra:back"
+      }
+    },
+    {
+      "id": "trials_done",
+      "type": "auto",
+      "dialogue": "act1.trials_done",
+      "requires": {
+        "questStep": "act1:trials",
+        "allQuestsDone": [
+          "trial_meno",
+          "trial_moriai",
+          "trial_water",
+          "trial_palaestra"
+        ]
+      }
+    },
+    {
+      "id": "first_lesson",
+      "type": "zone",
+      "circle": [
+        160,
+        -262,
+        9
+      ],
+      "dialogue": "act1.first_lesson",
+      "requires": {
+        "questStep": "act1:first_lesson"
+      }
+    },
+    {
+      "id": "aristotle_act1",
+      "type": "talk",
+      "npc": "aristotle",
+      "dialogue": "act1.aristotle_act1",
+      "requires": {
+        "questActive": "act1",
+        "flag": "plato_departed",
+        "notFlag": "ari_act1_talk"
+      }
+    }
+  ]
+}

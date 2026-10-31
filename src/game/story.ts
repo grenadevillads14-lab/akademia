@@ -26,12 +26,18 @@ const Requires = z
     notFlag: z.string().optional(),
     questDone: z.string().optional(),
     questActive: z.string().optional(),
+    /** Every one of these quests is done. */
+    allQuestsDone: z.array(z.string()).optional(),
+    /** "set:n": at least n items of a collectible set found. */
+    collected: z.string().optional(),
   })
   .default({});
 type Requires = z.infer<typeof Requires>;
 
 const StorySchema = z.object({
   notes: z.string().optional(),
+  /** Files merge in this order; later NPC placements win. */
+  order: z.number().default(0),
   quests: z.record(z.string(), z.object({ titleKey: z.string(), steps: z.record(z.string(), z.object({ textKey: z.string(), marker: z.tuple([z.number(), z.number()]).optional() })) })).default({}),
   npcs: z
     .array(
@@ -54,7 +60,10 @@ const StorySchema = z.object({
       z.object({
         id: z.string(),
         type: z.enum(['auto', 'zone', 'interact', 'talk']),
-        dialogue: z.string(),
+        /** Ink knot to play. Collect triggers may omit it. */
+        dialogue: z.string().optional(),
+        /** Interact with any POI of poiKind to add it to this collectible set (skips ones already found). */
+        collect: z.string().optional(),
         requires: Requires,
         set: z.string().optional(),
         npc: z.string().optional(),
@@ -72,12 +81,21 @@ type Trigger = StoryData['triggers'][number];
 
 const storyFiles = import.meta.glob('../../content/story/*.json', { eager: true, import: 'default' }) as Record<string, unknown>;
 import charactersData from '../../content/characters/characters.json';
+import codexData from '../../content/codex/en.json';
+
+const codexTitle = (kind: 'entries' | 'ideas', id: string, fallback: string): string =>
+  (codexData[kind] as Record<string, { title: string } | undefined>)[id]?.title ?? t(fallback);
 
 export function meets(state: GameState, r: Requires): boolean {
   if (r.flag && !state.flag(r.flag)) return false;
   if (r.notFlag && state.flag(r.notFlag)) return false;
   if (r.questDone && state.quest(r.questDone)?.state !== 'done') return false;
   if (r.questActive && state.quest(r.questActive)?.state !== 'active') return false;
+  if (r.allQuestsDone && !r.allQuestsDone.every((q) => state.quest(q)?.state === 'done')) return false;
+  if (r.collected) {
+    const [set, n] = r.collected.split(':');
+    if ((state.data.discovered.collectibles[set!]?.length ?? 0) < Number(n)) return false;
+  }
   if (r.questStep) {
     const [q, step] = r.questStep.split(':');
     const qs = state.quest(q!);
@@ -87,9 +105,9 @@ export function meets(state: GameState, r: Requires): boolean {
 }
 
 export function loadStory(): StoryData {
-  const merged: StoryData = { quests: {}, npcs: [], triggers: [], extras: {} };
-  for (const raw of Object.values(storyFiles)) {
-    const d = StorySchema.parse(raw);
+  const merged: StoryData = { order: 0, quests: {}, npcs: [], triggers: [], extras: {} };
+  const files = Object.values(storyFiles).map((raw) => StorySchema.parse(raw)).sort((a, b) => a.order - b.order);
+  for (const d of files) {
     Object.assign(merged.quests, d.quests);
     merged.npcs.push(...d.npcs);
     merged.triggers.push(...d.triggers);
@@ -160,8 +178,8 @@ export class StoryDirector {
       this.hud.toast(t('toast.xp', { amount: e.amount, discipline: d }), 'xp');
       if (e.levelUp) this.hud.toast(t('toast.levelup', { discipline: d, level: this.state.level(e.discipline) }), 'xp');
     });
-    b.on('state:idea', (e) => this.hud.toast(t('toast.idea', { idea: t(`idea.${e.idea}`) }), 'idea'));
-    b.on('state:codex', (e) => this.hud.toast(t('toast.codex', { entry: t(`codex.${e.entry}`) }), 'codex'));
+    b.on('state:idea', (e) => this.hud.toast(t('toast.idea', { idea: codexTitle('ideas', e.idea, `idea.${e.idea}`) }), 'idea'));
+    b.on('state:codex', (e) => this.hud.toast(t('toast.codex', { entry: codexTitle('entries', e.entry, `codex.${e.entry}`) }), 'codex'));
     b.on('state:collect', (e) => this.hud.toast(t('toast.collect', { set: t(`collect.${e.set}`), count: e.count }), 'item'));
     b.on('state:quest', (e) => {
       const q = this.data.quests[e.quest];
@@ -231,6 +249,11 @@ export class StoryDirector {
   }
 
   private start(trigger: Trigger, partner: Npc | null): void {
+    if (!trigger.dialogue) {
+      this.fired.add(trigger.id);
+      if (trigger.set) this.state.runCommand(`flag ${trigger.set}`);
+      return;
+    }
     this.activeTrigger = trigger;
     this.partner = partner;
     this.player.controlEnabled = false;
@@ -342,7 +365,9 @@ export class StoryDirector {
       } else if (tr.type === 'interact') {
         for (const poi of this.pois) {
           if (tr.poi ? poi.id !== tr.poi : poi.kind !== tr.poiKind) continue;
-          const score = consider(poi.position, 3.2);
+          if (tr.collect && this.state.data.discovered.collectibles[tr.collect]?.includes(poi.id)) continue;
+          // A trigger naming this exact POI wins over a generic one for its kind.
+          const score = consider(poi.position, 3.2) - (tr.poi ? 0.05 : 0);
           if (score >= 0 && score < best) {
             best = score;
             this.target = { kind: 'poi', poi, trigger: tr };
@@ -357,6 +382,12 @@ export class StoryDirector {
 
     if (this.target && input.wasPressed('interact')) {
       const tg = this.target;
+      if (tg.kind === 'poi' && tg.trigger.collect && !tg.trigger.dialogue) {
+        this.state.runCommand(`collect ${tg.trigger.collect} ${tg.poi.id}`);
+        this.target = null;
+        this.hud.setPrompt(null);
+        return;
+      }
       this.start(tg.trigger, tg.kind === 'npc' ? tg.npc : null);
     }
   }
@@ -377,7 +408,8 @@ export class StoryDirector {
   objectiveMarker(): [number, number] | null {
     for (const [id, q] of Object.entries(this.data.quests)) {
       const st = this.state.quest(id);
-      if (st?.state === 'active') return q.steps[st.step]?.marker ?? null;
+      const m = st?.state === 'active' ? q.steps[st.step]?.marker : undefined;
+      if (m) return m;
     }
     return null;
   }

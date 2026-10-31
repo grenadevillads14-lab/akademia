@@ -107,3 +107,28 @@ test('the prologue opens, and talking to Aristotle advances the quest', async ({
   expect(step).toBe('walk_road');
   await expect(page.locator('.hud-objective')).toContainText('Walk the road');
 });
+
+test('the Meno puzzle opens over a halted game, solves by drawing, and pays out', async ({ page }) => {
+  const errors = watchConsole(page);
+  await boot(page, '/?title=0&story=0&timescale=0');
+  await expect(page.getByTestId('menu')).toBeHidden();
+  await page.evaluate(() => window.__akademeia!.game!.state.runCommand('puzzle meno'));
+  const canvas = page.locator('.meno-canvas');
+  await expect(canvas).toBeVisible({ timeout: 180_000 });
+  const box = (await canvas.boundingBox())!;
+  const pt = (i: number, j: number): [number, number] => {
+    const pad = (50 / 440) * box.width;
+    const step = (box.width - 2 * pad) / 4;
+    return [box.x + pad + i * step, box.y + box.height - pad - j * step];
+  };
+  const corners: [number, number][] = [[2, 0], [4, 2], [2, 4], [0, 2], [2, 0]];
+  for (let k = 0; k < 4; k++) {
+    await page.mouse.click(...pt(...corners[k]!));
+    await page.mouse.click(...pt(...corners[k + 1]!));
+  }
+  await page.locator('.puzzle-actions').getByText('Done').click();
+  await expect(page.getByTestId('puzzle')).toHaveCount(0);
+  expect(await page.evaluate(() => window.__akademeia!.game!.state.flag('meno_solved'))).toBe(true);
+  expect(await page.evaluate(() => window.__akademeia!.game!.state.hasIdea('incommensurable'))).toBe(true);
+  expect(errors).toEqual([]);
+});

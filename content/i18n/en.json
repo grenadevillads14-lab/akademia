@@ -186,5 +186,21 @@
   "herm.herm-mouseion-3": "The Mouseion (south)",
   "herm.herm-mouseion-4": "The Mouseion (west)",
   "herm.herm-mouseion-5": "The Mouseion (north-east)",
-  "herm.herm-mouseion-6": "The Mouseion (south-west)"
+  "herm.herm-mouseion-6": "The Mouseion (south-west)",
+  "quest.act1": "The Outsider",
+  "quest.act1.farewell": "Speak to Plato in the teaching circle",
+  "quest.act1.eudoxus": "Speak to Eudoxus, who keeps the school while Plato is away",
+  "quest.act1.trials": "Complete Eudoxus' four trials",
+  "quest.act1.first_lesson": "Join Eudoxus' lesson in the teaching circle",
+  "quest.trial_meno": "A Problem in the Dust",
+  "quest.trial_meno.solve": "Ask Eudoxus for his problem, and double the square",
+  "quest.trial_moriai": "Athena's Olives",
+  "quest.trial_moriai.find": "Find at least four of the sacred olives (moriai) in the grove",
+  "quest.trial_water": "Cimon's Water",
+  "quest.trial_water.fix": "Help Speusippus at the great divide of the channels, west of the gymnasium",
+  "quest.trial_palaestra": "Words and Feet",
+  "quest.trial_palaestra.debate": "Speak to the gymnasiarch at the gymnasium",
+  "quest.trial_palaestra.run": "Run to the far end of the xystos, the covered track",
+  "quest.trial_palaestra.back": "Run back to the gymnasiarch",
+  "interact.moria": "Examine the sacred olive"
 }

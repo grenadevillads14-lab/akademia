@@ -112,14 +112,74 @@
       "certainty": "documented",
       "sources": "Diogenes Laërtius 5.51–57; Rigillis Street excavation (1996)",
       "text": "A public gymnasium in a sanctuary of Apollo Lykeios, east of the city by the Ilissos. Aristotle taught there from 335 BC. As a foreigner he could not own land; the school's garden, covered walk and shrine of the Muses are known from his successor Theophrastus' will."
+    },
+    "sicily": {
+      "title": "Plato in Sicily",
+      "category": "people",
+      "certainty": "documented",
+      "sources": "Plato, Seventh Letter 327b–330b; Plutarch, Dion 11–16",
+      "text": "In 367 BC Dionysius I of Syracuse died. His brother-in-law Dion persuaded Plato to come and educate the young heir, Dionysius II. Plato went, he wrote later, partly so as not to seem a man of words only. Within months Dion was exiled and Plato was kept at court almost as a prisoner. He returned to Athens about 365."
+    },
+    "eudoxus_pleasure": {
+      "title": "Eudoxus on pleasure",
+      "category": "ideas",
+      "certainty": "documented",
+      "sources": "Aristotle, Nicomachean Ethics X.2, 1172b9–35",
+      "text": "Eudoxus argued that pleasure is the good, because all creatures, rational and irrational, aim at it. Aristotle says people were convinced more by Eudoxus' character than by the argument, since he was thought exceptionally temperate. Plato's reply, in the Philebus, is that a life of pleasure joined with wisdom is better than pleasure alone, so pleasure cannot be the good itself. The scene where Eudoxus teaches it to newcomers is invented."
+    },
+    "laches": {
+      "title": "Plato's Laches",
+      "category": "ideas",
+      "certainty": "documented",
+      "sources": "Plato, Laches 190d–199e",
+      "text": "Two Athenian generals, Laches and Nicias, try to say what courage is. 'Standing firm in the line' fails against the Scythians who fight by retreating; 'endurance of the soul' fails because foolish endurance is not admirable; 'knowledge of what is to be feared' turns out to be all of virtue at once. The dialogue ends without an answer."
     }
   },
   "ideas": {
-    "wonder": { "title": "Philosophy begins in wonder", "sources": "Plato, Theaetetus 155d", "text": "Socrates tells the young Theaetetus that wonder is the feeling of the philosopher, and philosophy has no other beginning." },
-    "philosopher_kings": { "title": "Philosopher-kings", "sources": "Plato, Republic 473c–d", "text": "Cities will have no rest from trouble until philosophers rule, or rulers truly become philosophers." },
-    "ladder_of_love": { "title": "The ladder of love", "sources": "Plato, Symposium 210a–212a", "text": "Love leads from one beautiful body to beauty in all bodies, to beautiful souls, laws and knowledge, and finally to beauty itself, unchanging." },
-    "forms": { "title": "The Forms", "sources": "Plato, Phaedo, Republic", "text": "Beyond the many beautiful things there is Beauty itself, which they share in: unchanging, known by thought rather than sight." },
-    "recollection": { "title": "Learning as recollection", "sources": "Plato, Meno 81–86", "text": "An untaught boy, questioned step by step, finds the square double a given square. Socrates argues he was not taught but recalled what he already knew." },
-    "incommensurable": { "title": "Incommensurable lengths", "sources": "Plato, Meno 82–85; Theaetetus 147", "text": "The diagonal of a square cannot be measured by any unit that also measures its side exactly. Yet geometry can still construct it." }
+    "wonder": {
+      "title": "Philosophy begins in wonder",
+      "sources": "Plato, Theaetetus 155d",
+      "text": "Socrates tells the young Theaetetus that wonder is the feeling of the philosopher, and philosophy has no other beginning."
+    },
+    "philosopher_kings": {
+      "title": "Philosopher-kings",
+      "sources": "Plato, Republic 473c–d",
+      "text": "Cities will have no rest from trouble until philosophers rule, or rulers truly become philosophers."
+    },
+    "ladder_of_love": {
+      "title": "The ladder of love",
+      "sources": "Plato, Symposium 210a–212a",
+      "text": "Love leads from one beautiful body to beauty in all bodies, to beautiful souls, laws and knowledge, and finally to beauty itself, unchanging."
+    },
+    "forms": {
+      "title": "The Forms",
+      "sources": "Plato, Phaedo, Republic",
+      "text": "Beyond the many beautiful things there is Beauty itself, which they share in: unchanging, known by thought rather than sight."
+    },
+    "recollection": {
+      "title": "Learning as recollection",
+      "sources": "Plato, Meno 81–86",
+      "text": "An untaught boy, questioned step by step, finds the square double a given square. Socrates argues he was not taught but recalled what he already knew."
+    },
+    "incommensurable": {
+      "title": "Incommensurable lengths",
+      "sources": "Plato, Meno 82–85; Theaetetus 147",
+      "text": "The diagonal of a square cannot be measured by any unit that also measures its side exactly. Yet geometry can still construct it."
+    },
+    "ratio": {
+      "title": "Ratios of magnitudes",
+      "sources": "Euclid, Elements V (attributed to Eudoxus by a scholiast); Proclus",
+      "text": "Two lengths that share no common measure can still stand in a ratio, and ratios can be compared: Eudoxus defined when two ratios are equal without ever needing a common unit. It rescued geometry from the crisis of the incommensurable."
+    },
+    "pleasure_good": {
+      "title": "Is pleasure the good?",
+      "sources": "Aristotle, Nicomachean Ethics X.2; Plato, Philebus",
+      "text": "Eudoxus: everything seeks pleasure, so pleasure is the good. Plato: pleasure mixed with wisdom is better than pleasure alone, so pleasure is not the good itself."
+    },
+    "aporia": {
+      "title": "Aporia",
+      "sources": "Plato, Laches; Meno 80a",
+      "text": "A state of puzzlement, of having no way through. Socrates' questions often end there. Meno compared him to a stingray that numbs whoever it touches. Plato treats aporia as the start of inquiry: you look for what you know you lack."
+    }
   }
 }

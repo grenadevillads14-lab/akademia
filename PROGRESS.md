@@ -5,6 +5,16 @@
 | Milestone | Status |
 |---|---|
 | M0 Foundation | ✅ done |
+| M1 Walking in the grove | ✅ done |
+| M2 Academy graybox → first art pass | ✅ done (art polish continues) |
+| M3 Life (NPCs, dialogue, prologue) | ✅ done |
+| M4 Systems | ✅ done |
+| M5 Puzzles batch 1 + Act 1 (vertical slice complete) | ✅ done |
+| M6 Athletics | ⏭ next |
+| M7–M10 | — |
+
+---|---|
+| M0 Foundation | ✅ done |
 | M1 Walking in the grove | ⏭ next |
 | M2 Academy graybox → first art pass | — |
 | M3 Life (NPCs, dialogue, prologue) | — |
@@ -13,6 +23,54 @@
 | M6–M10 | — |
 
 ---
+
+## M5: Puzzles batch 1 and Act 1 (2026-10-31)
+
+- **Puzzles as pure, tested logic** in `src/puzzles/` with content in `content/puzzles/` and `content/debates/`:
+  - *Meno's square* (`meno.ts`): a lattice in the dust; any drawn square is detected (sides may be built from collinear pieces) and
+    its exact area shown. Feedback follows the slave boy's real wrong turns (side 4 → area 16, side 3 → 9), three hint levels.
+  - *Cimon's waterworks* (`waterworks.ts`): equal split at every open junction, needs and flood limits per outlet, a closed dead end
+    backs up. A test enumerates every setting: exactly one solution.
+  - *Socratic debate* (`debate.ts`): rounds, moves that commit you to claims, contradictions cost your own consistency, arguments
+    made too early are weak and can be retried. The first debate follows Plato's *Laches* (what is courage?).
+  - *Moriai*: twelve lore cards with source and certainty badge; four are needed for Act 1, all twelve finish the set.
+- **UI** (`src/puzzles/ui.ts`): canvas overlays on papyrus; the game halts while one is open. `PuzzleHost` (`src/game/puzzleHost.ts`)
+  queues puzzles and lore cards behind dialogue, applies rewards, and drives the 3D channels from the saved waterworks setting.
+- **Story engine additions:** `puzzle <id> [arg]` and `time <h> [next]` commands; `collect` interact triggers (any POI of a kind);
+  `allQuestsDone` and `collected: "set:n"` requirements; story files merge in `order`; the objective marker comes from the first
+  active quest that has one.
+- **Act 1 "The outsider"** (`content/dialogue/act1.ink`, `content/story/act1.json`): Plato's farewell before Syracuse (night passes),
+  Eudoxus sets four trials (Meno square, four moriai, Speusippus' water, the gymnasiarch's courage debate plus a run down the xystos),
+  then the first lesson: Eudoxus' argument that pleasure is the good, with Plato's *Philebus* reply and Aristotle's remark on Eudoxus'
+  temperance (NE X.2). A unit test plays the prologue and Act 1 start to finish through the real triggers.
+- **Bug fixed:** the pause menu's `display: grid` overrode the `hidden` attribute, so since M4 the menu was drawn over the game.
+  A global `[hidden] { display: none !important; }` rule fixes every overlay.
+
+## M4: Systems (2026-10-31)
+
+Game state with a small command language (flags, XP in four disciplines, reputation, ideas, items, quests, codex, collectibles,
+herms), saves (auto + three slots, JSON export/import), pause menu (journal, codex with certainty badges, map with fog of war,
+disciplines with a 28-node skill tree, settings, saves), compass with objective marker, title screen with character creation,
+herm fast travel.
+
+## M3: Life (2026-10-31)
+
+Procedural skinned characters (one draw call each, linen cloth shading), procedural animator, NPCs with pose / walk / patrol /
+follow modes, ink dialogue compiled at build time with `cmd:`/`anim:`/`shot:` tags, dialogue camera shots, story director with
+placements and talk / interact / zone / auto triggers, and the prologue (Dipylon → road of graves → grove → Plato's circle).
+
+## M2: Academy and the look pass (2026-10-31)
+
+Kerameikos and Academy architecture from a material-keyed kit (city wall, Dipylon, Sacred Gate, Pompeion, potters' quarter, grave
+terraces with stelai and reliefs, Doric stoa and gymnasium after Vitruvius, xystos, Mouseion, altars, Plato's house), Poly Haven
+photographic textures and models, custom HDR post pipeline (SSAO, height fog, aerial perspective, light shafts, bloom, AgX),
+image-based lighting from the sky, backdrop mountains at their true apparent heights with the Acropolis.
+
+## M1: Walking in the grove (2026-10-31)
+
+Analytic heightfield terrain with rivers and Cimon's channels, sky and day/night clock, wind, procedural tree species with LODs
+and impostors in two BatchedMeshes, GPU grass, Rapier kinematic player (walk, run, sprint, jump, swim), third-person camera with
+collision.
 
 ## M0: Foundation (2026-10-31)
 

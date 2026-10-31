@@ -53,6 +53,11 @@ Everything in the game that touches history is listed here under one of three he
 - The number and placement of herms used as fast-travel points.
 - Daily schedules of named historical people.
 - Specific events and quests (unless listed above).
+- **Act 1:** the four trials Eudoxus sets newcomers, and the scene of Plato's farewell, are invented. The arguments are real:
+  Plato's reason for going to Sicily (Seventh Letter 328c), the Meno square (Meno 82b–85b), Theodorus' irrationals (Theaetetus 147d),
+  Eudoxus on pleasure and Aristotle's remark about his temperance (NE X.2), Plato's mixed-life reply (Philebus 20e–22b; Aristotle
+  names it as Plato's answer to Eudoxus). Dating the *Philebus* to the 360s ("still writing") is a stretch: it is usually placed later.
+- The courage debate with the gymnasiarch transposes Plato's *Laches* (generals, about 424 BC) to an Academy gymnasiarch.
 - **Built environment (look-test stage):** the Dipylon's dimensions (34 × 20 m court, 9 m towers) are approximations of the
   excavated plan; tower windows and pyramid roofs follow better-preserved 4th-century towers elsewhere (e.g. Messene), not the
   Dipylon itself. House plans follow the Olynthus "pastas" type. The Pompeion is simplified to a walled court with porticoes.

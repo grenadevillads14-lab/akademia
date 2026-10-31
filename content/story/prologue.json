@@ -1,5 +1,6 @@
 {
   "notes": "Prologue: the road to the Academy (367 BC, spring). Triggers run ink knots from content/dialogue/prologue.ink. Requirements: questStep 'quest:step', flag, notFlag, questDone, questActive.",
+  "order": 0,
   "quests": {
     "prologue": {
       "titleKey": "quest.prologue",
@@ -101,7 +102,9 @@
     },
     {
       "npc": "plato",
-      "when": {},
+      "when": {
+        "notFlag": "plato_departed"
+      },
       "x": 160.5,
       "z": -260.5,
       "heading": 0.6,
@@ -274,7 +277,11 @@
       "type": "interact",
       "poi": "moria-1",
       "labelKey": "interact.examine",
-      "dialogue": "prologue.moria"
+      "dialogue": "prologue.moria",
+      "requires": {
+        "notFlag": "moria_seen"
+      },
+      "set": "moria_seen"
     },
     {
       "id": "speusippus",

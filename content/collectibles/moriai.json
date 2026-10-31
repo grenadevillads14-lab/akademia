@@ -1,0 +1,19 @@
+{
+  "notes": "The twelve sacred olives (moriai). Each carries a myth, law or historical fragment, paraphrased with its source.",
+  "set": "moriai",
+  "items": {
+    "moria-1": { "title": "The second olive", "certainty": "tradition", "source": "Pausanias 1.30.2; Herodotus 8.55", "text": "Pausanias was told this olive was the second ever to appear, after Athena's own on the Acropolis. When the Persians burned the Acropolis in 480, Athena's olive sprouted a new shoot a cubit long the very next day." },
+    "moria-2": { "title": "A capital matter", "certainty": "documented", "source": "Lysias 7, On the Olive Stump", "text": "A landowner was prosecuted before the Areopagus for removing the stump of a sacred olive. The penalty could be exile and the loss of his property. Lysias wrote his defence." },
+    "moria-3": { "title": "Oil for the victors", "certainty": "documented", "source": "Aristotle, Constitution of the Athenians 60", "text": "Oil from the sacred olives filled the painted amphorae given as prizes at the Panathenaic games. An archon collected it from the owners of land where moriai grew." },
+    "moria-4": { "title": "The contest for Athens", "certainty": "tradition", "source": "Herodotus 8.55; Apollodorus 3.14.1", "text": "Athena and Poseidon competed for the city. Poseidon struck the rock and a salt spring welled up; Athena planted the olive. The olive was judged the better gift." },
+    "moria-5": { "title": "The tree no spear can kill", "certainty": "documented", "source": "Sophocles, Oedipus at Colonus 694–706", "text": "The chorus of Colonus sings of the grey-leaved olive, self-renewing, a terror to enemy spears, that neither young nor old can destroy, watched by Zeus of the Moriai and Athena." },
+    "moria-6": { "title": "Zeus of the Moriai", "certainty": "documented", "source": "Sophocles, Oedipus at Colonus 705", "text": "The sacred olives had their own guardian: Zeus Morios, whose unsleeping eye watched over them alongside grey-eyed Athena." },
+    "moria-7": { "title": "Olive wood for Epidaurus", "certainty": "documented", "source": "Herodotus 5.82", "text": "When the Epidaurians needed statues to end a famine, the Delphic oracle told them to carve them from cultivated olive wood. Athens alone had such olives, and gave them wood in return for yearly offerings." },
+    "moria-8": { "title": "The suppliant's branch", "certainty": "documented", "source": "Aeschylus, Suppliants; Sophocles, Oedipus the King 3", "text": "Suppliants carried olive branches wound with wool to show they came in peace and asked for protection." },
+    "moria-9": { "title": "Beating the branches", "certainty": "documented", "source": "Black-figure amphora by the Antimenes Painter (British Museum)", "text": "Harvesters beat the branches with long poles while a boy climbs into the tree and another gathers fallen olives from the ground, as painted on a vase of about 520 BC." },
+    "moria-10": { "title": "Oil for body and lamp", "certainty": "documented", "source": "Various; daily life", "text": "Oil fed the lamps, dressed the food, and was rubbed into athletes' skin before exercise, then scraped off with the dust using a bronze strigil." },
+    "moria-11": { "title": "Old as the city", "certainty": "documented", "source": "Theophrastus, Enquiry into Plants 4.13", "text": "Theophrastus noted that the olive is among the longest-lived of trees and that, cut down, it sends up new shoots from the stump." },
+    "moria-12": { "title": "A hundred and forty jars", "certainty": "documented", "source": "IG II² 2311 (Panathenaic prize list)", "text": "An inscription lists the prizes: the winner of the boys' stadion race received fifty amphorae of oil, and the men's chariot race up to a hundred and forty. A fortune, from Athena's trees." }
+  },
+  "complete": ["xp mousike 60", "flag moriai_complete", "codex moriai"]
+}

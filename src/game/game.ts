@@ -24,6 +24,7 @@ import { drawMap } from '../ui/map';
 import { PauseMenu } from '../ui/menu';
 import type { NewGameChoices } from '../ui/title';
 import { saveSettings } from '../core/settings';
+import { PuzzleHost } from './puzzleHost';
 import { StoryDirector } from './story';
 import { onResize } from '../render/renderer';
 import { WorldClock, formatTime, type Season } from '../world/clock';
@@ -70,6 +71,7 @@ export class Game {
   private post: PostPipeline | null = null;
   readonly state = new GameState();
   story!: StoryDirector;
+  puzzles!: PuzzleHost;
   menu!: PauseMenu;
   compass!: Compass;
   /** True while the title screen or a menu covers the game. */
@@ -143,6 +145,7 @@ export class Game {
     this.hint.textContent = t('hint.play');
     this.story = new StoryDirector(o.app, this.state, this.player, this.tpCamera, this.world.pois, this.world.hf.height);
     this.scene.add(this.story.group);
+    this.puzzles = new PuzzleHost(this.state, this.world.water, (id) => this.story.nameOf(id), () => this.story.inDialogue || this.titleOpen);
     if (o.params.get('story') === '0') this.state.runCommand('flag seen_arrival');
     this.compass = new Compass(o.app);
     this.menu = new PauseMenu(o.app, {
@@ -163,6 +166,10 @@ export class Game {
     this.state.bus.on('state:quest', () => {
       this.captureState();
       writeSave('auto', this.state);
+    });
+    this.state.bus.on('state:time', (e) => {
+      if (e.nextDay || e.hours < this.clock.hours) this.clock.day += 1;
+      this.clock.hours = e.hours;
     });
     this.state.bus.on('state:herm', () => this.story.hud.toast(t('herm.discovered'), 'info'));
 
@@ -219,6 +226,7 @@ export class Game {
       this.tpCamera.snapBehind(d.position.heading);
     }
     this.story.refresh();
+    this.puzzles.applyWater();
   }
 
   /** Herm fast travel: list discovered herms. */
@@ -345,7 +353,8 @@ export class Game {
       this.hint.textContent = this.freeFly.enabled ? t('hint.freefly') : t('hint.play');
     }
     if (input.wasPressed('toggleOverlay')) this.overlay.toggle();
-    if (this.menu && !this.story.inDialogue && !this.travelEl && !this.titleOpen) {
+    this.puzzles?.update();
+    if (this.menu && !this.story.inDialogue && !this.travelEl && !this.titleOpen && !this.puzzles.open) {
       if (input.wasPressed('pause')) {
         if (this.menu.open) this.menu.close();
         else this.menu.show('journal');
@@ -353,7 +362,7 @@ export class Game {
       else if (input.wasPressed('journal')) this.menu.toggle('journal');
       else if (input.wasPressed('map')) this.menu.toggle('map');
     }
-    const halted = this.paused || this.titleOpen || (this.menu?.open ?? false);
+    const halted = this.paused || this.titleOpen || (this.menu?.open ?? false) || (this.puzzles?.open ?? false);
     if (input.wasPressed('debugTime')) this.clock.hours = (this.clock.hours + 2) % 24;
     if (input.wasPressed('debugRespawn')) {
       const s = this.world.layout.spawn;

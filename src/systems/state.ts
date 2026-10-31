@@ -74,6 +74,8 @@ export interface StateEvents {
   'state:herm': { id: string };
   'state:toast': { text: string };
   'state:command': { command: string };
+  'state:puzzle': { id: string; arg?: string };
+  'state:time': { hours: number; nextDay: boolean };
 }
 
 export class GameState {
@@ -115,6 +117,8 @@ export class GameState {
    *   collect <set> <id>
    *   herm <id>
    *   toast <text…>
+   *   time <hours> [next]        set the clock (next = the following day), e.g. after a night passes
+   *   puzzle <id> [arg]          open a puzzle (meno, waterworks, debate <id>); the game applies its rewards
    * Unknown commands throw (content bugs should be loud in tests).
    */
   runCommand(command: string): void {
@@ -197,6 +201,12 @@ export class GameState {
         break;
       case 'toast':
         this.bus.emit('state:toast', { text: [a, b, ...rest].filter(Boolean).join(' ') });
+        break;
+      case 'time':
+        this.bus.emit('state:time', { hours: Number(a), nextDay: b === 'next' });
+        break;
+      case 'puzzle':
+        this.bus.emit('state:puzzle', { id: a!, ...(b ? { arg: b } : {}) });
         break;
       default:
         throw new Error(`Unknown command "${command}"`);

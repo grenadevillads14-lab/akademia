@@ -41,6 +41,9 @@ content/                       ALL game content as data (validated with zod at l
   world/academy.structures.json city wall, gates, districts, grave road, Academy buildings, enclosures, herms, props, rocks
   assets/polyhaven.json        Poly Haven asset manifest (CC0)
   i18n/en.json                 every player-facing string
+  story/*.json                 quests, NPC placements, triggers (merged by `order`; later placements win)
+  dialogue/*.ink               dialogue (compiled at build time; knots are addressed as `file.knot`)
+  puzzles/, debates/, collectibles/, codex/, skills/, characters/
 src/
   main.ts                      boot → Game
   game/game.ts                 owns the loop: input → fixed-step sim → world → camera → post → UI
@@ -55,7 +58,13 @@ src/
                                post pipeline (SSAO, height fog, aerial perspective, shafts, bloom, grade), sky environment (IBL)
   characters/                  appearance schema, procedural skinned humanoid (one draw call, linen cloth), procedural animator
   player/                      Rapier kinematic controller (walk/run/sprint/jump/swim), third-person camera with collision
-  npc/crowd.ts                 ambient crowd (walkers, groups) until the schedule system (M3)
+  npc/                         ambient crowd (walkers, groups) and story NPCs (pose / walk / patrol / follow)
+  dialogue/                    ink runner (cmd:/anim:/shot: tags, external functions) and the dialogue UI
+  systems/                     GameState + command language (flag, xp, rep, idea, item, quest, codex, collect, herm, toast, time, puzzle), saves
+  game/story.ts                story director: placements, triggers (auto/zone/talk/interact/collect), requirements, objective
+  game/puzzleHost.ts           queues puzzles and lore cards, applies rewards, drives Cimon's channels from the waterworks setting
+  puzzles/                     pure logic (meno, waterworks, debate) + canvas overlays (ui.ts)
+  ui/                          HUD, pause menu (journal, codex, map, disciplines, settings, saves), compass, title
   debug/                       overlay, frame stats, free camera, benchmark
 tests/unit                     Vitest (pure logic: world data, plans, kit maths, noise, sun, input, settings…)
 tests/e2e                      Playwright smoke + screenshot specs

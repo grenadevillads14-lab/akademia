@@ -1,0 +1,49 @@
+{
+  "id": "courage",
+  "title": "What is courage?",
+  "opponent": "gymnasiarch",
+  "question": "The gymnasiarch says the young men need courage, not words. You ask him what courage is.",
+  "opponentConsistency": 4,
+  "playerConsistency": 3,
+  "start": "r1",
+  "rounds": [
+    {
+      "id": "r1",
+      "claim": "Courage? Simple. A man who stands his ground in the line and does not run from the enemy is brave.",
+      "moves": [
+        { "id": "scythians", "text": "What of the Scythian horsemen, who fight by retreating? Or the Spartans at Plataea, who fell back, broke the Persian line and then turned to fight?", "hit": 1, "reply": "Horsemen and tricks... Well. Courage is something broader than not running, then.", "next": "r2" },
+        { "id": "everywhere", "text": "Is courage only for soldiers? What about courage at sea, in sickness, in poverty, or against pleasure?", "hit": 1, "commits": ["courage_everywhere"], "reply": "In all of those too, I suppose. A brave man is brave everywhere.", "next": "r2" },
+        { "id": "agree", "text": "So whoever does not run is brave?", "hit": 0, "reply": "Exactly. Now go and wrestle." }
+      ]
+    },
+    {
+      "id": "r2",
+      "claim": "Then courage is a kind of endurance. A steadfastness of the soul.",
+      "moves": [
+        { "id": "noble", "text": "Would you say courage is a fine and noble thing?", "hit": 0, "commits": ["courage_noble"], "reply": "Of course. Among the very finest." },
+        { "id": "foolish", "text": "And foolish endurance, that holds on when it should let go: is that noble, or harmful?", "hit": 1, "needsCommit": ["courage_noble"], "weakReply": "Harmful, maybe. What has that to do with courage?", "reply": "Harmful. So it cannot be courage, if courage is noble. Courage must be wise endurance.", "next": "r3" },
+        { "id": "mule", "text": "Then the mule that refuses to move is the bravest creature in Attica?", "hit": 0, "reply": "Don't be absurd. A mule has no soul to speak of." }
+      ]
+    },
+    {
+      "id": "r3",
+      "claim": "Courage is wise endurance: holding firm when you know what is to be gained.",
+      "moves": [
+        { "id": "reinforcements", "text": "Two men hold a position. One knows reinforcements are coming and that his side is stronger. The other knows none are coming. Which is braver?", "hit": 2, "reply": "The second... the one who knows less. But then the less wise endurance is the braver. And foolish endurance was not courage at all. I... do not know what courage is.", "next": "r4" },
+        { "id": "not_noble", "text": "So perhaps courage is not noble after all?", "hit": 0, "contradicts": ["courage_noble"], "reply": "You said yourself it was." },
+        { "id": "share", "text": "Before we judge any brave act, shouldn't we know what all brave acts share?", "hit": 1, "requires": { "skill": "elenchus" }, "reply": "That is what we have been failing to find, isn't it." }
+      ]
+    },
+    {
+      "id": "r4",
+      "claim": "Very well. I do not know. And neither, I notice, do you.",
+      "moves": [
+        { "id": "admit", "text": "I don't. But now we both know that we don't know, which is more than we knew this morning.", "hit": 1, "reply": "Hm. Plato would like you. Come back tomorrow and tell me what you've found." },
+        { "id": "boast", "text": "I knew all along. I was testing you.", "hit": 0, "contradicts": ["courage_everywhere", "courage_noble"], "reply": "Then tell me what it is." }
+      ]
+    }
+  ],
+  "onWin": ["xp logos 50", "rep gymnasiarch 2", "idea aporia", "flag debate_courage_won", "codex laches"],
+  "onLose": ["xp logos 15", "flag debate_courage_tried"],
+  "lesson": "This debate follows Plato's Laches, where two generals fail to define courage. Each definition falls to a counterexample or a contradiction. Ending in aporia, a puzzlement, was the point: it clears away false confidence so real inquiry can begin."
+}
