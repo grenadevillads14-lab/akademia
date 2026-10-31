@@ -17,6 +17,7 @@
   "overlay.preset": "Preset",
   "overlay.gpu": "GPU",
   "overlay.camera": "Camera",
+  "bench.start": "Run benchmark (20 s)",
   "bench.running": "Benchmark running… {seconds}s left. Please don't touch anything.",
   "bench.title": "Benchmark result",
   "bench.copy": "Copy result",

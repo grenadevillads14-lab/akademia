@@ -14,6 +14,8 @@ export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify(`${pkg.version}+${commit}`),
   },
+  // Relative base so the build runs from any folder or static host (GitHub Pages, claude.ai artifact, itch.io).
+  base: './',
   server: { port: 5173, host: true },
   preview: { port: 4173 },
   build: {

@@ -12,9 +12,10 @@ Third-person 3D exploration and story game set at Plato's Academy, Athens, 367â€
 | `npm run check` | Typecheck + lint + unit tests (run before every commit) |
 | `npm test` | Vitest unit tests (`tests/unit/**`) |
 | `npm run test:e2e` | Playwright smoke tests (boots the game in headless Chromium) |
+| `npm run build:artifact` | Build + write `dist/artifact.html` for the hosted claude.ai page (https://claude.ai/artifact/UHr1NTKJf2f1pbcwGsXMQx). Republish it with the asset JS files the script prints |
 | `npm run screenshots` | Writes `docs/screenshots/$MILESTONE/*.png` (default `m0`), e.g. `MILESTONE=m1 npm run screenshots` |
 
-URL parameters for debugging: `?bench[=seconds]`, `?preset=low|medium|high|ultra`, `?stress=N`, `?overlay=0`, `?settle`.
+URL parameters for debugging (the hosted page can't take query strings, so it has a **Run benchmark** button and `#bench`): `?bench[=seconds]`, `?preset=low|medium|high|ultra`, `?stress=N`, `?overlay=0`, `?settle`.
 In game: **F2** free-fly camera (click to capture the mouse), **F3** or **`** stats overlay, **R** re-drop sandbox props.
 
 ## Environment caveats

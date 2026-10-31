@@ -20,7 +20,8 @@ Controls (debug build): **F2** free-fly camera (click to look; WASD, E/Q, Shift,
 
 ## Measure performance on your machine
 
-Open http://localhost:5173/?bench, wait 20 seconds without touching anything, click **Copy result**, and paste it into the chat.
+Click **Run benchmark** (top right), wait 20 seconds without touching anything, click **Copy result**, and paste it into the chat.
+It works on the hosted build or on a local `npm run dev` (http://localhost:5173 only works on the computer where you ran that command).
 The report includes your GPU's name, so you don't need to look it up.
 
 ![M0 sandbox](docs/screenshots/m0/colonnade.png)

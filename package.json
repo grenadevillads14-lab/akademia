@@ -14,7 +14,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test --project=smoke",
     "screenshots": "playwright test --project=screenshots",
-    "check": "npm run typecheck && npm run lint && npm run test"
+    "check": "npm run typecheck && npm run lint && npm run test",
+    "build:artifact": "node scripts/build-artifact.mjs"
   },
   "dependencies": {
     "@dimforge/rapier3d-compat": "^0.21.0",

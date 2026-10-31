@@ -86,10 +86,26 @@ async function boot(): Promise<void> {
     cam.lookAt(0, 2.5, -10);
   };
   let bench: Benchmark | null = null;
-  if (params.has('bench')) {
-    const secs = Number(params.get('bench')) || 20;
+  const startBenchmark = (secs: number) => {
+    if (bench && !bench.finished) return;
+    if (freeFly.enabled) setCameraMode('showcase');
+    document.querySelector('.bench-report')?.remove();
     bench = new Benchmark(app, benchPath, { scene: 'm0-sandbox', gpu, preset: gfx.preset }, secs);
+    benchButton.hidden = true;
     bus.emit('bench:started', { durationSec: secs });
+  };
+
+  // Visible button so players can benchmark without typing URL parameters (and in hosts,
+  // like the claude.ai preview, where query strings can't be passed).
+  const benchButton = document.createElement('button');
+  benchButton.className = 'bench-button';
+  benchButton.type = 'button';
+  benchButton.textContent = t('bench.start');
+  benchButton.addEventListener('click', () => startBenchmark(20));
+  app.appendChild(benchButton);
+
+  if (params.has('bench') || location.hash === '#bench') {
+    startBenchmark(Number(params.get('bench')) || 20);
   }
 
   renderer.domElement.addEventListener('click', () => {
@@ -160,6 +176,7 @@ async function boot(): Promise<void> {
     if (bench && !bench.finished) {
       const result = bench.update(dt, camera, renderer.info);
       if (result) {
+        benchButton.hidden = false;
         handle.bench = result;
         bus.emit('bench:finished', { result });
         console.info('[bench]', JSON.stringify(result));
