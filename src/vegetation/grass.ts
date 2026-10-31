@@ -1,0 +1,160 @@
+import * as THREE from 'three';
+import { mulberry32 } from '../procgen/rng';
+import { WIND_GLSL } from '../world/wind';
+import type { Terrain } from '../world/terrain';
+import type { WorldUniforms } from '../world/uniforms';
+
+/**
+ * GPU grass: tiles of blades instanced around the player. Blades read terrain height and a grass-density
+ * mask from the terrain's baked textures, sway with the global wind, bend away from the player, and
+ * shrink to nothing at the edge of the radius (no popping). One draw call.
+ */
+export interface Grass {
+  readonly mesh: THREE.InstancedMesh;
+  update(focus: THREE.Vector3): void;
+  dispose(): void;
+}
+
+const TILE = 8; // metres
+
+export function createGrass(terrain: Terrain, u: WorldUniforms, opts: { density: number; radius: number }): Grass {
+  const blades = Math.round(900 * opts.density); // per tile
+  const rng = mulberry32(77);
+  const pos: number[] = [];
+  const blade: number[] = []; // per vertex: local x, z, random, height factor
+  const idx: number[] = [];
+  for (let b = 0; b < blades; b++) {
+    const bx = rng() * TILE;
+    const bz = rng() * TILE;
+    const r = rng();
+    const h = 0.25 + rng() * 0.45;
+    const w = 0.035 + rng() * 0.03;
+    const a = rng() * Math.PI;
+    const ca = Math.cos(a) * w;
+    const sa = Math.sin(a) * w;
+    const base = pos.length / 3;
+    // 5 vertices: two pairs along the blade and a tip. y holds height fraction 0..1.
+    const levels = [0, 0.45, 1] as const;
+    for (const lv of levels) {
+      if (lv === 1) {
+        pos.push(0, 1, 0);
+        blade.push(bx, bz, r, h);
+      } else {
+        const taper = 1 - lv * 0.6;
+        pos.push(-ca * taper, lv, -sa * taper, ca * taper, lv, sa * taper);
+        blade.push(bx, bz, r, h, bx, bz, r, h);
+      }
+    }
+    idx.push(base, base + 1, base + 2, base + 1, base + 3, base + 2, base + 2, base + 3, base + 4);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('aBlade', new THREE.Float32BufferAttribute(blade, 4));
+  geo.setIndex(idx);
+  geo.boundingSphere = new THREE.Sphere(new THREE.Vector3(TILE / 2, 0, TILE / 2), 1e5); // positioned on GPU
+
+  const tilesAcross = Math.ceil((opts.radius * 2) / TILE) + 1;
+  const count = tilesAcross * tilesAcross;
+  const mat = new THREE.MeshStandardMaterial({ roughness: 0.85, side: THREE.DoubleSide });
+  const uRadius = { value: opts.radius };
+  const uDensity = { value: Math.min(1, opts.density) };
+  mat.onBeforeCompile = (shader) => {
+    shader.uniforms.uTime = u.time;
+    shader.uniforms.uWindDir = u.windDir;
+    shader.uniforms.uWindStrength = u.windStrength;
+    shader.uniforms.uGust = u.gust;
+    shader.uniforms.uPlayer = u.playerPos;
+    shader.uniforms.uHeight = { value: terrain.heightTexture };
+    shader.uniforms.uMask = { value: terrain.grassTexture };
+    shader.uniforms.uRect = { value: terrain.textureRect };
+    shader.uniforms.uRadius = uRadius;
+    shader.uniforms.uDensity = uDensity;
+    shader.uniforms.uSeasonTint = u.seasonTint;
+    shader.vertexShader = shader.vertexShader
+      .replace(
+        '#include <common>',
+        `#include <common>
+         ${WIND_GLSL}
+         attribute vec4 aBlade;
+         uniform vec3 uPlayer;
+         uniform sampler2D uHeight;
+         uniform sampler2D uMask;
+         uniform vec4 uRect;
+         uniform float uRadius;
+         uniform float uDensity;
+         varying float vTipT;
+         varying float vRand;`,
+      )
+      .replace(
+        '#include <begin_vertex>',
+        `vec3 tileOrigin = (instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
+         vec2 wxz = tileOrigin.xz + aBlade.xy;
+         vec2 tuv = (wxz - uRect.xy) / uRect.zw;
+         float ground = texture2D(uHeight, tuv).r;
+         float mask = texture2D(uMask, tuv).r;
+         float dist = distance(wxz, uPlayer.xz);
+         float fade = 1.0 - smoothstep(uRadius * 0.6, uRadius, dist);
+         float alive = step(aBlade.z, mask * uDensity) * fade;
+         float h = aBlade.w * alive * (0.6 + 0.6 * mask);
+         vec3 transformed = vec3(position.x, position.y * h, position.z);
+         // Wind and the player's feet push blades over; the tip moves most.
+         vec2 sway = windSway(vec3(wxz.x, ground, wxz.y), position.y, 1.4) * 0.35;
+         vec2 away = wxz - uPlayer.xz;
+         float push = (1.0 - smoothstep(0.2, 1.3, length(away))) * step(abs(uPlayer.y - ground), 2.0);
+         sway += normalize(away + 1e-4) * push * 0.55;
+         transformed.xz += sway * position.y * h * 2.0;
+         transformed.y -= length(sway) * position.y * h * 0.5;
+         transformed += vec3(wxz.x, ground, wxz.y) - tileOrigin;
+         vTipT = position.y;
+         vRand = aBlade.z;`,
+      )
+      .replace('#include <beginnormal_vertex>', 'vec3 objectNormal = vec3(0.0, 1.0, 0.0);');
+    shader.fragmentShader = shader.fragmentShader
+      .replace(
+        '#include <common>',
+        `#include <common>
+         uniform vec3 uSeasonTint;
+         varying float vTipT;
+         varying float vRand;`,
+      )
+      .replace(
+        '#include <map_fragment>',
+        `vec3 rootC = vec3(0.16, 0.24, 0.08);
+         vec3 tipC = mix(vec3(0.42, 0.55, 0.20), vec3(0.62, 0.58, 0.30), vRand * 0.6);
+         diffuseColor.rgb = mix(rootC, tipC, vTipT) * uSeasonTint;`,
+      );
+  };
+
+  const mesh = new THREE.InstancedMesh(geo, mat, count);
+  mesh.name = 'grass';
+  mesh.receiveShadow = true;
+  mesh.castShadow = false;
+  mesh.frustumCulled = false;
+  const m = new THREE.Matrix4();
+  let lastX = Infinity;
+  let lastZ = Infinity;
+
+  return {
+    mesh,
+    update(focus) {
+      const cx = Math.floor(focus.x / TILE);
+      const cz = Math.floor(focus.z / TILE);
+      if (cx === lastX && cz === lastZ) return;
+      lastX = cx;
+      lastZ = cz;
+      const half = Math.floor(tilesAcross / 2);
+      let k = 0;
+      for (let j = -half; j < tilesAcross - half; j++) {
+        for (let i = -half; i < tilesAcross - half; i++) {
+          m.makeTranslation((cx + i) * TILE, 0, (cz + j) * TILE);
+          mesh.setMatrixAt(k++, m);
+        }
+      }
+      mesh.instanceMatrix.needsUpdate = true;
+    },
+    dispose() {
+      geo.dispose();
+      mat.dispose();
+    },
+  };
+}

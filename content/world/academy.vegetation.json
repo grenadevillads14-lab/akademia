@@ -1,0 +1,66 @@
+{
+  "notes": "Planting plan for the Academy. Species and settings from docs/RESEARCH.md: moriai in the grove, plane walks along Cimon's channels, cypresses on the road of the dead and at the Mouseion, figs and pomegranates in Plato's garden, reeds on the Cephissus.",
+  "rules": [
+    {
+      "type": "points",
+      "species": "moria",
+      "items": [
+        { "id": "moria-1", "x": -60, "z": 122, "scale": 1.25 },
+        { "id": "moria-2", "x": 18, "z": 128, "scale": 1.0 },
+        { "id": "moria-3", "x": 64, "z": 172, "scale": 1.05 },
+        { "id": "moria-4", "x": -118, "z": 186, "scale": 0.95 },
+        { "id": "moria-5", "x": -168, "z": 92, "scale": 1.1 },
+        { "id": "moria-6", "x": -22, "z": 196, "scale": 1.0 },
+        { "id": "moria-7", "x": 104, "z": 236, "scale": 0.9 },
+        { "id": "moria-8", "x": -80, "z": 15, "scale": 1.0 },
+        { "id": "moria-9", "x": -206, "z": 150, "scale": 1.05 },
+        { "id": "moria-10", "x": -236, "z": 18, "scale": 0.95 },
+        { "id": "moria-11", "x": 6, "z": 250, "scale": 1.0 },
+        { "id": "moria-12", "x": -150, "z": 236, "scale": 1.1 }
+      ]
+    },
+    { "type": "points", "species": "plane_ancient", "items": [{ "id": "teaching-plane", "x": 160, "z": -262, "scale": 1.0 }] },
+    { "type": "along", "species": "plane", "path": "peripatos", "spacing": 15, "offset": 5, "sides": "both", "jitter": 1.5 },
+    { "type": "along", "species": "plane", "path": "gate_to_gym", "spacing": 16, "offset": 5, "sides": "both", "jitter": 1.5 },
+    { "type": "along", "species": "plane", "channel": "plane_walk_west", "spacing": 14, "offset": 3.5, "sides": "both", "jitter": 1.0 },
+    { "type": "along", "species": "plane", "channel": "plane_walk_east", "spacing": 14, "offset": 3.5, "sides": "both", "jitter": 1.0 },
+    { "type": "along", "species": "plane", "path": "dromos", "spacing": 18, "offset": 6, "sides": "left", "jitter": 1.0 },
+    { "type": "along", "species": "cypress", "path": "road_academy", "spacing": 24, "offset": 12, "sides": "both", "jitter": 1.5 },
+    { "type": "ring", "species": "cypress", "center": [-120, 122], "radius": 10, "count": 7, "jitter": 1.2 },
+    { "type": "ring", "species": "cypress", "center": [330, -480], "radius": 22, "count": 5, "jitter": 3 },
+    { "type": "rows", "species": "fig", "origin": [112, -300], "rows": 3, "cols": 5, "dx": 7.5, "dz": 8, "jitter": 0.8 },
+    { "type": "scatter", "species": "pomegranate", "rect": [205, -236, 22, 16], "count": 12, "minSpacing": 4, "avoidPaths": 2, "seed": 4 },
+    { "type": "scatter", "species": "pomegranate", "rect": [125, -235, 16, 10], "count": 6, "minSpacing": 4, "avoidPaths": 2, "seed": 5 },
+    {
+      "type": "scatter",
+      "species": "olive",
+      "circle": [-30, 150, 190],
+      "count": 90,
+      "minSpacing": 9,
+      "avoidPaths": 4,
+      "avoidFlats": true,
+      "avoidWater": 4,
+      "exclude": [[-30, -60, 105]],
+      "seed": 11
+    },
+    {
+      "type": "scatter",
+      "species": "olive",
+      "rect": [0, 0, 680, 720],
+      "count": 420,
+      "minSpacing": 14,
+      "avoidPaths": 6,
+      "avoidFlats": true,
+      "avoidWater": 6,
+      "exclude": [[-30, -60, 120], [0, 0, 60], [165, -270, 90], [420, 480, 70], [-30, 150, 190]],
+      "seed": 12
+    },
+    { "type": "scatter", "species": "myrtle", "circle": [-40, -70, 120], "count": 45, "minSpacing": 5, "avoidPaths": 2.5, "avoidFlats": true, "avoidWater": 1.5, "seed": 21 },
+    { "type": "scatter", "species": "laurel", "circle": [-40, -70, 130], "count": 30, "minSpacing": 6, "avoidPaths": 3, "avoidFlats": true, "avoidWater": 2, "seed": 22 },
+    { "type": "scatter", "species": "laurel", "circle": [330, -480, 140], "count": 25, "minSpacing": 8, "avoidPaths": 3, "avoidFlats": true, "seed": 23 },
+    { "type": "scatter", "species": "olive", "circle": [330, -480, 150], "count": 30, "minSpacing": 11, "avoidPaths": 4, "avoidFlats": true, "seed": 24 },
+    { "type": "riverbank", "species": "reed", "river": "cephissus", "count": 520, "band": [-3, 8], "minSpacing": 2.2, "seed": 31 },
+    { "type": "riverbank", "species": "reed", "river": "eridanos", "count": 70, "band": [-0.5, 3], "minSpacing": 2.2, "seed": 32 },
+    { "type": "riverbank", "species": "plane", "river": "cephissus", "count": 26, "band": [10, 22], "minSpacing": 18, "seed": 33 }
+  ]
+}

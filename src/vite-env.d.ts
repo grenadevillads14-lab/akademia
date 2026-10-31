@@ -16,6 +16,7 @@ interface AkademeiaDebugHandle {
   };
   /** Place the camera; used by Playwright to take repeatable screenshots. */
   setCamera(pos: [number, number, number], target: [number, number, number]): void;
+  game?: import('./game/game').Game;
 }
 
 interface Window {

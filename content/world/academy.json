@@ -1,0 +1,94 @@
+{
+  "id": "academy",
+  "nameKey": "world.academy",
+  "seed": 367,
+  "bounds": { "minX": -700, "maxX": 700, "minZ": -700, "maxZ": 760 },
+  "cellSize": 4,
+  "terrain": {
+    "noiseAmp": 1.4,
+    "noiseScale": 0.006,
+    "slopeX": 0.004,
+    "slopeZ": 0.003,
+    "base": 2
+  },
+  "spawn": { "x": 412, "z": 470, "heading": -2.4 },
+  "hills": [
+    { "id": "colonus", "x": 330, "z": -480, "radius": 150, "height": 22, "rocky": 0.6 },
+    { "id": "rise_city", "x": 650, "z": 700, "radius": 380, "height": 9, "rocky": 0 },
+    { "id": "knoll_west", "x": -330, "z": -560, "radius": 120, "height": 6, "rocky": 0.2 }
+  ],
+  "rivers": [
+    {
+      "id": "cephissus",
+      "points": [[-560, -760], [-500, -520], [-530, -300], [-470, -80], [-505, 140], [-455, 360], [-500, 580], [-470, 800]],
+      "width": 20,
+      "depth": 2.4,
+      "bank": 14,
+      "waterLevelOffset": -0.6
+    },
+    {
+      "id": "eridanos",
+      "points": [[700, 560], [560, 540], [470, 530], [380, 560], [250, 620], [80, 700], [-60, 780]],
+      "width": 5,
+      "depth": 1.2,
+      "bank": 5,
+      "waterLevelOffset": -0.4
+    }
+  ],
+  "channels": [
+    { "id": "intake", "points": [[-488, -160], [-300, -160], [-140, -150], [-60, -120]], "width": 1.4, "depth": 0.7 },
+    { "id": "gym_branch", "points": [[-60, -120], [-30, -60], [-27, -24]], "width": 1.0, "depth": 0.6 },
+    { "id": "plane_walk_west", "points": [[-60, -120], [-120, -40], [-130, 60], [-90, 140]], "width": 1.0, "depth": 0.6 },
+    { "id": "plane_walk_east", "points": [[-60, -120], [20, -140], [70, -120], [104, -60], [110, 60], [128, 150]], "width": 1.0, "depth": 0.6 },
+    { "id": "garden_branch", "points": [[20, -140], [80, -190], [130, -240], [200, -250]], "width": 0.9, "depth": 0.55 },
+    { "id": "reading_spot", "points": [[-90, 140], [-60, 160]], "width": 0.8, "depth": 0.5 }
+  ],
+  "paths": [
+    { "id": "road_academy", "surface": "road", "width": 16, "points": [[430, 478], [380, 430], [320, 372], [255, 300], [196, 236], [150, 190]] },
+    { "id": "sacred_way", "surface": "road", "width": 10, "points": [[384, 540], [300, 585], [180, 650], [40, 720], [-120, 790]] },
+    { "id": "gate_to_gym", "surface": "dirt", "width": 5, "points": [[150, 190], [110, 140], [70, 90], [30, 30]] },
+    { "id": "peripatos", "surface": "dirt", "width": 4, "points": [[30, 30], [-60, 70], [-110, 30], [-110, -70], [-40, -110], [40, -100], [90, -40], [80, 50], [30, 30]] },
+    { "id": "to_mouseion", "surface": "dirt", "width": 3, "points": [[-60, 70], [-95, 95], [-115, 120]] },
+    { "id": "to_kepidion", "surface": "dirt", "width": 3.5, "points": [[40, -100], [80, -160], [120, -215], [150, -240]] },
+    { "id": "kepidion_inner", "surface": "dirt", "width": 2.5, "points": [[150, -240], [168, -268], [200, -300]] },
+    { "id": "to_colonus", "surface": "dirt", "width": 3, "points": [[200, -300], [250, -370], [300, -430], [330, -478]] },
+    { "id": "to_ford", "surface": "dirt", "width": 3, "points": [[-110, -70], [-240, -40], [-380, -50], [-470, -80]] },
+    { "id": "dromos", "surface": "track", "width": 7, "points": [[56, 100], [56, -85]] },
+    { "id": "grove_loop", "surface": "dirt", "width": 2.5, "points": [[110, 140], [20, 160], [-60, 160], [-140, 120], [-170, 20]] },
+    { "id": "kerameikos_lane", "surface": "dirt", "width": 4, "points": [[360, 420], [430, 380], [500, 360]] }
+  ],
+  "flats": [
+    { "id": "gymnasium", "x": 0, "z": 0, "hw": 26, "hd": 26, "margin": 10, "surface": "paving" },
+    { "id": "palaestra_sand", "x": 0, "z": 0, "hw": 15, "hd": 15, "margin": 0.5, "surface": "sand" },
+    { "id": "dipylon_court", "x": 425, "z": 482, "hw": 22, "hd": 34, "rot": -0.75, "margin": 12, "surface": "paving" },
+    { "id": "academy_gate", "x": 150, "z": 190, "hw": 12, "hd": 8, "rot": -0.75, "margin": 8, "surface": "dirt" },
+    { "id": "prometheus_altar", "x": 118, "z": 150, "hw": 7, "hd": 7, "margin": 6, "surface": "dirt" },
+    { "id": "mouseion", "x": -120, "z": 122, "hw": 12, "hd": 12, "margin": 8, "surface": "dirt" },
+    { "id": "kepidion", "x": 165, "z": -270, "hw": 70, "hd": 55, "margin": 14, "surface": "grass" },
+    { "id": "teaching_circle", "x": 160, "z": -262, "hw": 10, "hd": 10, "margin": 4, "surface": "dirt" },
+    { "id": "colonus_top", "x": 330, "z": -480, "hw": 14, "hd": 10, "margin": 10, "surface": "rock" },
+    { "id": "xystos", "x": 72, "z": 8, "hw": 6, "hd": 96, "margin": 4, "surface": "track" }
+  ],
+  "zones": [
+    { "id": "kerameikos", "nameKey": "zone.kerameikos", "center": [380, 470], "radius": 140, "music": "exploration", "ambience": "city_edge" },
+    { "id": "sema_road", "nameKey": "zone.sema", "center": [280, 330], "radius": 120, "music": "exploration", "ambience": "road" },
+    { "id": "moriai", "nameKey": "zone.moriai", "center": [-20, 140], "radius": 150, "music": "garden", "ambience": "olive_grove" },
+    { "id": "plane_walks", "nameKey": "zone.planes", "center": [-30, -60], "radius": 130, "music": "garden", "ambience": "plane_walk", "canopy": true },
+    { "id": "gymnasium", "nameKey": "zone.gymnasium", "center": [10, 0], "radius": 55, "music": "gymnasium", "ambience": "gymnasium" },
+    { "id": "mouseion", "nameKey": "zone.mouseion", "center": [-120, 122], "radius": 30, "music": "garden", "ambience": "olive_grove" },
+    { "id": "kepidion", "nameKey": "zone.kepidion", "center": [165, -270], "radius": 85, "music": "garden", "ambience": "garden" },
+    { "id": "colonus", "nameKey": "zone.colonus", "center": [330, -480], "radius": 160, "music": "exploration", "ambience": "hill" },
+    { "id": "cephissus", "nameKey": "zone.cephissus", "center": [-480, -40], "radius": 170, "music": "exploration", "ambience": "river" }
+  ],
+  "backdrop": {
+    "acropolis": { "x": 1500, "z": 1720, "radius": 160, "height": 70 },
+    "lycabettus": { "x": 2700, "z": 900, "radius": 420, "height": 260 },
+    "ranges": [
+      { "id": "aigaleo", "points": [[-3600, 2400], [-3200, 0], [-3000, -2600]], "height": 420, "width": 1400 },
+      { "id": "parnes", "points": [[-2600, -4200], [0, -5200], [2800, -4600]], "height": 900, "width": 2200 },
+      { "id": "hymettus", "points": [[3800, -600], [4300, 2000], [3900, 4400]], "height": 900, "width": 2000 },
+      { "id": "pentelikon", "points": [[3000, -4200], [4600, -2600]], "height": 1000, "width": 2200 }
+    ],
+    "sea": { "x": 1200, "z": 7000, "radius": 4500 }
+  }
+}
