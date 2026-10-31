@@ -27,6 +27,8 @@ export interface Plant {
 export interface Forest {
   readonly group: THREE.Group;
   readonly plants: readonly Required<Omit<Plant, 'id'>>[];
+  /** The leaf-spray atlas (shared with ground clutter). */
+  readonly leafAtlas: THREE.Texture;
   update(camera: THREE.Camera): void;
   /** Debug/benchmark counters. */
   stats(): { plants: number; lod: [number, number, number, number, number] };
@@ -177,6 +179,7 @@ export function buildForest(
   return {
     group,
     plants,
+    leafAtlas,
     update(camera) {
       camera.getWorldPosition(camPos);
       counts.fill(0);

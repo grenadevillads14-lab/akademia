@@ -8,7 +8,7 @@ describe('pickDefaultPreset', () => {
     ['ANGLE (Intel, Intel(R) UHD Graphics 620 Direct3D11 vs_5_0 ps_5_0, D3D11)', 'medium'],
     ['ANGLE (Intel, Intel(R) Iris(R) Xe Graphics Direct3D11)', 'medium'],
     ['ANGLE (AMD, AMD Radeon(TM) Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)', 'medium'],
-    ['Apple M1', 'medium'],
+    ['Apple M1', 'high'], // dynamic resolution holds the frame rate
     ['ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU Direct3D11)', 'high'],
     ['Apple M3 Pro', 'high'],
     ['something unknown', 'medium'],

@@ -42,7 +42,7 @@ export const PRESETS: Record<QualityPreset, GraphicsSettings> = {
   medium: {
     preset: 'medium',
     renderScale: 1,
-    maxPixelRatio: 1,
+    maxPixelRatio: 2,
     antialias: true,
     shadows: true,
     shadowMapSize: 2048,
@@ -53,10 +53,10 @@ export const PRESETS: Record<QualityPreset, GraphicsSettings> = {
   high: {
     preset: 'high',
     renderScale: 1,
-    maxPixelRatio: 1.5,
+    maxPixelRatio: 2,
     antialias: true,
     shadows: true,
-    shadowMapSize: 2048,
+    shadowMapSize: 4096,
     vegetationDensity: 0.85,
     drawDistance: 900,
     post: { ao: true, bloom: true, godRays: true, dof: true },
@@ -81,7 +81,8 @@ export const PRESETS: Record<QualityPreset, GraphicsSettings> = {
 export function pickDefaultPreset(gpu: string): QualityPreset {
   const g = gpu.toLowerCase();
   if (/swiftshader|llvmpipe|software|microsoft basic render/.test(g)) return 'low';
-  if (/(intel|uhd|iris|mali|adreno|powervr|apple m1\b|radeon\(tm\) graphics|radeon graphics)/.test(g)) {
+  if (/apple m\d/.test(g)) return 'high'; // dynamic resolution keeps 60 fps on Apple silicon
+  if (/(intel|uhd|iris|mali|adreno|powervr|radeon\(tm\) graphics|radeon graphics)/.test(g)) {
     return 'medium';
   }
   if (/(rtx|radeon rx|apple m[2-9]|apple m1 (pro|max|ultra)|geforce gtx 1[6-9]|arc a)/.test(g)) return 'high';

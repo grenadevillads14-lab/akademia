@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { createClouds } from './clouds';
 import { Sky } from 'three/addons/objects/Sky.js';
 import { mulberry32 } from '../procgen/rng';
 import { moonDirection, sunDirection, type WorldClock } from './clock';
@@ -91,10 +92,13 @@ export function createSky(
   su.rayleigh!.value = 1.6;
   su.mieCoefficient!.value = 0.006;
   su.mieDirectionalG!.value = 0.82;
-  su.cloudCoverage!.value = 0.22;
-  su.cloudDensity!.value = 0.35;
+  // The sky shader's own flat clouds are replaced by the lit cloud layer (clouds.ts).
+  su.cloudCoverage!.value = 0;
+  su.cloudDensity!.value = 0;
   su.cloudElevation!.value = 0.55;
   scene.add(sky);
+  const clouds = createClouds();
+  scene.add(clouds.mesh);
 
   // Stars: fixed random field on a sphere, faded in at night.
   const rng = mulberry32(343);
@@ -161,7 +165,8 @@ export function createSky(
   const sun = new THREE.DirectionalLight(0xffffff, 3);
   sun.castShadow = opts.shadows;
   sun.shadow.mapSize.set(opts.shadowMapSize, opts.shadowMapSize);
-  const span = 70;
+  // Tighter around the player with bigger maps: about 2–3 cm per shadow texel nearby instead of 7.
+  const span = opts.shadowMapSize >= 4096 ? 55 : opts.shadowMapSize >= 2048 ? 48 : 40;
   sun.shadow.camera.left = -span;
   sun.shadow.camera.right = span;
   sun.shadow.camera.top = span;
@@ -169,7 +174,8 @@ export function createSky(
   sun.shadow.camera.near = 1;
   sun.shadow.camera.far = 400;
   sun.shadow.bias = -0.0005;
-  sun.shadow.normalBias = 0.04;
+  sun.shadow.normalBias = 0.03;
+  sun.shadow.radius = opts.shadowMapSize >= 2048 ? 2.5 : 1.5; // soft PCF edges
   scene.add(sun);
   scene.add(sun.target);
 
@@ -207,7 +213,6 @@ export function createSky(
       stars.position.copy(camera.position);
       su.sunPosition!.value.copy(sunDir).multiplyScalar(450000);
       su.time!.value = uniforms.time.value;
-      su.cloudCoverage!.value = 0.22 + system.overcast * 0.6;
       su.turbidity!.value = 4.2 + system.overcast * 6;
 
       const nightness = THREE.MathUtils.smoothstep(-el, -2, 12);
@@ -248,9 +253,11 @@ export function createSky(
         fog.density = system.fogDensity;
       }
       renderer.toneMappingExposure = key.exposure;
+      clouds.update(camera, sunDir, system.sunColor, key.sky, uniforms.time.value, 0.32 + system.overcast * 0.55, nightness);
     },
     dispose() {
-      for (const o of [sky, stars, moon, hemi, sun, sun.target, moonLight, moonLight.target]) scene.remove(o);
+      for (const o of [sky, stars, moon, hemi, sun, sun.target, moonLight, moonLight.target, clouds.mesh]) scene.remove(o);
+      clouds.dispose();
       scene.fog = null;
       sky.geometry.dispose();
       sky.material.dispose();

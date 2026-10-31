@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { applyWeathering, TEX_MEAN, type WeatherKind } from '../render/weathering';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import type { MaterialLib, TexId } from '../render/materialLib';
 
@@ -230,14 +231,45 @@ export async function resolveMaterial(lib: MaterialLib, key: MatKey): Promise<TH
   const spec = MATERIALS[key];
   let m: THREE.MeshStandardMaterial;
   if (spec.tex) {
-    m = await lib.material(spec.tex, { metres: spec.metres, ...(spec.tint !== undefined ? { tint: spec.tint } : {}), ...(spec.normalScale !== undefined ? { normalScale: spec.normalScale } : {}), ...(spec.roughness !== undefined ? { roughness: spec.roughness } : {}) });
+    // Calibrated materials take their colour from the target albedo, not the tint.
+    const calibrated = ALBEDO[key] !== undefined && TEX_MEAN[spec.tex] !== undefined;
+    m = await lib.material(spec.tex, { metres: spec.metres, ...(spec.tint !== undefined && !calibrated ? { tint: spec.tint } : {}), ...(spec.normalScale !== undefined ? { normalScale: spec.normalScale } : {}), ...(spec.roughness !== undefined ? { roughness: spec.roughness } : {}) });
   } else {
     m = plainCache.get(key) ?? new THREE.MeshStandardMaterial({ color: spec.color ?? 0xffffff, roughness: spec.roughness ?? 0.9, metalness: key === 'bronze' ? 0.8 : 0 });
     plainCache.set(key, m);
   }
   m.vertexColors = true;
+  const weather = WEATHER[key];
+  const albedo = ALBEDO[key];
+  const texMean = spec.tex ? TEX_MEAN[spec.tex] : undefined;
+  if (weather || (albedo && texMean)) applyWeathering(m, weather ?? 'none', albedo && texMean ? { albedo, texMean } : undefined);
   return m;
 }
+
+/** Real-world target albedos (linear) for photo-textured materials. */
+const ALBEDO: Partial<Record<MatKey, [number, number, number]>> = {
+  whitewash: [0.74, 0.72, 0.66],
+  mudbrick: [0.52, 0.43, 0.32],
+  marble: [0.8, 0.78, 0.73],
+  ashlar: [0.55, 0.49, 0.4],
+  ashlarBig: [0.5, 0.45, 0.37],
+  drystone: [0.38, 0.33, 0.27],
+  roof: [0.44, 0.18, 0.085],
+  paving: [0.56, 0.51, 0.43],
+  wood: [0.24, 0.16, 0.1],
+  terracotta: [0.47, 0.21, 0.1],
+};
+
+const WEATHER: Partial<Record<MatKey, WeatherKind>> = {
+  ashlar: 'wall',
+  ashlarBig: 'wall',
+  drystone: 'wall',
+  mudbrick: 'wall',
+  whitewash: 'wall',
+  marble: 'wall',
+  paving: 'floor',
+  roof: 'roof',
+};
 
 /** A local 2D frame on the ground: origin, rotation about Y, base height. Local +Z = "forward". */
 export class Frame {

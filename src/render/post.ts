@@ -188,6 +188,8 @@ const COMPOSITE_FRAG = /* glsl */ `
   uniform float time;
   uniform float useAO;
   uniform float debugMode;
+  uniform vec2 texel;
+  uniform float sharpen;
   // (tonemapping_pars and colorspace_pars are prepended by three for ShaderMaterial.)
   float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233)) + time) * 43758.5453); }
   void main() {
@@ -196,6 +198,18 @@ const COMPOSITE_FRAG = /* glsl */ `
       #include <tonemapping_fragment>
       #include <colorspace_fragment>
       return; }
+    // Contrast-adaptive sharpening: crisper detail without haloing edges that are already contrasty.
+    if (sharpen > 0.0) {
+      vec3 n0 = texture2D(tColor, vUv + vec2(texel.x, 0.0)).rgb;
+      vec3 n1 = texture2D(tColor, vUv - vec2(texel.x, 0.0)).rgb;
+      vec3 n2 = texture2D(tColor, vUv + vec2(0.0, texel.y)).rgb;
+      vec3 n3 = texture2D(tColor, vUv - vec2(0.0, texel.y)).rgb;
+      vec3 mn = min(c, min(min(n0, n1), min(n2, n3)));
+      vec3 mx = max(c, max(max(n0, n1), max(n2, n3)));
+      vec3 amp = sqrt(clamp(min(mn, 2.0 - mx) / max(mx, vec3(1e-4)), 0.0, 1.0));
+      vec3 w = -amp * sharpen * 0.2;
+      c = max((c + (n0 + n1 + n2 + n3) * w) / (1.0 + 4.0 * w), 0.0);
+    }
     float d = rawDepth(vUv);
     bool sky = d >= 0.99999;
     vec3 vp = viewPos(vUv, sky ? 0.9999 : d);
@@ -317,6 +331,8 @@ export class PostPipeline {
         time: { value: 0 },
         useAO: { value: 1 },
         debugMode: { value: Number(new URLSearchParams(location.search).get('postdebug') ?? 0) },
+        texel: { value: new THREE.Vector2(1, 1) },
+        sharpen: { value: 0.6 },
       },
       true,
     );
@@ -449,6 +465,7 @@ export class PostPipeline {
     u.heightFalloff!.value = p.heightFalloff;
     u.horizonHaze!.value = p.horizonHaze;
     u.warmth!.value = p.warmth;
+    u.texel!.value.set(1 / this.w, 1 / this.h);
     u.saturation!.value = p.saturation;
     u.contrast!.value = p.contrast;
     u.time!.value = time % 100;

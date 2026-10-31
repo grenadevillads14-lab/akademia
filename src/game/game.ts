@@ -30,6 +30,7 @@ import { AthleticsHost } from './athletics';
 import { PuzzleHost } from './puzzleHost';
 import { StoryDirector } from './story';
 import { onResize } from '../render/renderer';
+import { DynamicResolution } from '../render/dynres';
 import { WorldClock, formatTime, type Season } from '../world/clock';
 import { createWorldUniforms, type WorldUniforms } from '../world/uniforms';
 import { Wind } from '../world/wind';
@@ -88,6 +89,7 @@ export class Game {
   private travelEl: HTMLDivElement | null = null;
   private env: SkyEnvironment | null = null;
   private elapsed = 0;
+  private dynres: DynamicResolution | null = null;
   ready = false;
   titleOpen = false;
   /** Rendered frame counter (tests wait on frames, not wall time: software GL is very slow). */
@@ -212,8 +214,16 @@ export class Game {
       if (!this.bench || this.bench.finished) this.input.requestPointerLock();
     });
     window.addEventListener('resize', () => {
-      if (!this.benchRunning) onResize(o.renderer, this.camera, o.settings.graphics);
+      if (this.benchRunning) return;
+      onResize(o.renderer, this.camera, o.settings.graphics);
+      this.dynres?.apply();
     });
+    {
+      // Dynamic resolution between 75% of CSS pixels and the display's full pixel ratio (preset cap).
+      const g = o.settings.graphics;
+      const cap = Math.min(window.devicePixelRatio || 1, g.maxPixelRatio) * g.renderScale;
+      if (cap > 0.8 && o.params.get('dynres') !== '0' && !o.params.has('bench')) this.dynres = new DynamicResolution(o.renderer, Math.min(0.75, cap), cap, Math.max(1, cap * 0.8));
+    }
     if (o.params.has('bench') || location.hash === '#bench') this.startBenchmark(Number(o.params.get('bench')) || 20);
 
     this.timer.connect(document);
@@ -484,6 +494,7 @@ export class Game {
     this.world.sky.update(this.clock, this.camera, focus, dt);
     this.world.forest.update(this.camera);
     this.world.grass.update(focus);
+    this.world.clutter.update(focus);
     this.world.water.update(dt);
     this.specimens?.update(this.camera, this.elapsed);
     this.world.update(this.camera, dt);
@@ -527,7 +538,7 @@ export class Game {
     // The lower half of the reflected environment is the land: warm earth and grass, not blue haze.
     // Sunlit ground bounces a lot of light onto walls and the undersides of eaves: scale it with the sun.
     const sunUp = THREE.MathUtils.clamp(sky.sunDir.y * 1.6, 0, 1);
-    this.env?.update(dt, sky.sunDir, new THREE.Color(0.42, 0.37, 0.25).lerp(sky.fogColor, 0.2).multiplyScalar(0.4 + 2.6 * sunUp));
+    this.env?.update(dt, sky.sunDir, new THREE.Color(0.5, 0.36, 0.24).lerp(sky.fogColor, 0.12).multiplyScalar(0.4 + 2.6 * sunUp));
 
     // Render.
     const r = this.o.renderer;
@@ -555,6 +566,7 @@ export class Game {
       workMs = performance.now() - frameStart;
     }
     this.stats.push(rawDt * 1000);
+    if (!this.benchRunning && !halted) this.dynres?.update(rawDt * 1000);
     this.overlay.update(dt, this.stats, r.info, {
       bodies: physics.bodyCount,
       preset: this.o.settings.graphics.preset,

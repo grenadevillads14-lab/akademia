@@ -269,6 +269,52 @@ def proxy(zf: zipfile.ZipFile, folder: str, out_name: str, nbase: int, gray=Fals
     return out_name
 
 
+def rot(axis, ang):
+    axis = axis / np.linalg.norm(axis)
+    x, y, z = axis
+    c, s_ = np.cos(ang), np.sin(ang)
+    C = 1 - c
+    return np.array([[c + x * x * C, x * y * C - z * s_, x * z * C + y * s_],
+                     [y * x * C + z * s_, c + y * y * C, y * z * C - x * s_],
+                     [z * x * C - y * s_, z * y * C + x * s_, c + z * z * C]])
+
+
+def relax_fingers(V, sk, wfile):
+    """Curl the fingers into a relaxed hand by linear-blend skinning the finger bones (palm faces down in the rest pose)."""
+    V = V.copy()
+    n = len(V)
+    joint = lambda name: V[sk['joints'][name]].mean(0)
+    curl = {1: (0.12, 0.15, 0.1), 2: (0.22, 0.32, 0.22), 3: (0.26, 0.36, 0.25), 4: (0.3, 0.4, 0.28), 5: (0.34, 0.42, 0.3)}
+    for side in 'LR':
+        for f in range(1, 6):
+            M_parent = np.eye(4)
+            chain = [f'finger{f}-{k}.{side}' for k in (1, 2, 3)]
+            # Weights of every bone below each chain link (link k moves links k..3).
+            for k, bone in enumerate(chain):
+                b = sk['bones'][bone]
+                head = joint(b['head'])
+                tail = joint(b['tail'])
+                d = tail - head
+                d /= np.linalg.norm(d)
+                # Flexion axis: horizontal and perpendicular to the finger; sign chosen so the tip goes down (toward the palm).
+                axis = np.cross(d, np.array([0.0, 1.0, 0.0]))
+                if np.linalg.norm(axis) < 1e-4:
+                    continue
+                ang = curl[f][k]
+                R = rot(axis, ang)
+                if (R @ d)[1] > d[1]:
+                    R = rot(axis, -ang)
+                # Apply to this link and everything after it in the chain.
+                w = np.zeros(n)
+                for later in chain[k:]:
+                    for vi, wt in wfile.get(later, []):
+                        w[vi] += wt
+                w = np.clip(w, 0, 1)
+                moved = (V - head) @ R.T + head
+                V = V + (moved - V) * w[:, None]
+    return V
+
+
 def main():
     zips = fetch()
     os.makedirs(os.path.join(OUT, 'tex'), exist_ok=True)
@@ -306,6 +352,10 @@ def main():
     tw /= tw.sum(1, keepdims=True)
     skin_idx = top.astype(np.uint8)
     skin_w = np.round(tw * 255).astype(np.uint8)
+
+    # --- Relax the hands: MakeHuman's rest pose has stiff, splayed fingers. Curl each joint a little. ---
+    allV = np.array([list(map(float, l.split()[1:4])) for l in base_text.splitlines() if l.startswith('v ')])
+    allV = relax_fingers(allV, sk, wfile)
 
     # --- Joints (each game bone's pivot = mean of these base vertices) ---
     joints = {}
@@ -347,7 +397,7 @@ def main():
         'units': 'decimetres',
         'bones': BONES,
         'count': n0,
-        'base': b64(np.array([list(map(float, l.split()[1:4])) for l in base_text.splitlines() if l.startswith('v ')], dtype=np.float32)),
+        'base': b64(allV.astype(np.float32)),
         'vRef': b64(vo.astype(np.uint16)),
         'uv': b64(VT[vt].astype(np.float32)),
         'index': b64(idx.astype(np.uint16)),

@@ -6,6 +6,8 @@ import { loadTextureArray, phTextureUrl, type MaterialLib, type TexId } from '..
 import type { ModelLib } from '../render/modelLib';
 import { buildForest, type Forest } from '../vegetation/forest';
 import { loadLeafPhoto } from '../vegetation/leafAtlas';
+import { weatherUniforms } from '../render/weathering';
+import { createClutter, type Clutter } from '../vegetation/clutter';
 import { createGrass, type Grass } from '../vegetation/grass';
 import { buildBackdrop } from './backdrop';
 import { createHeightfield, type Heightfield } from './heightfield';
@@ -29,6 +31,7 @@ export interface World {
   readonly water: WaterSystem;
   readonly forest: Forest;
   readonly grass: Grass;
+  readonly clutter: Clutter;
   readonly sky: SkySystem;
   readonly structures: Structures | null;
   readonly crowd: Crowd;
@@ -95,6 +98,8 @@ export async function buildWorld(
   await step('loading.terrain');
   const ground = await loadGroundLayers();
   const terrain = buildTerrain(hf, ctx.physics, ctx.uniforms, ground);
+  weatherUniforms.uGroundH.value = terrain.heightTexture;
+  weatherUniforms.uGroundRect.value.copy(terrain.textureRect);
   const root = new THREE.Group();
   root.name = `world-${id}`;
   root.add(terrain.group);
@@ -127,6 +132,8 @@ export async function buildWorld(
   // Same blade budget as before, concentrated nearer the player: denser where you look at it.
   const grass = createGrass(terrain, ctx.uniforms, { density: Math.min(1, g.vegetationDensity * 1.55), radius: g.preset === 'low' ? 18 : g.preset === 'medium' ? 26 : 38, sunDir: sky.sunDir });
   root.add(grass.mesh);
+  const clutter = createClutter(hf, forest.leafAtlas, { radius: g.preset === 'low' ? 12 : g.preset === 'medium' ? 18 : 26, density: g.preset === 'low' ? 0.5 : 1 });
+  root.add(clutter.group);
 
   await step('loading.city');
   const detail = g.preset === 'low' ? 0.5 : g.preset === 'medium' ? 0.8 : 1;
@@ -160,6 +167,7 @@ export async function buildWorld(
     water,
     forest,
     grass,
+    clutter,
     sky,
     structures,
     crowd,
@@ -187,6 +195,7 @@ export async function buildWorld(
       water.dispose();
       forest.dispose();
       grass.dispose();
+      clutter.dispose();
       sky.dispose();
       structures?.dispose();
       crowd.dispose();
