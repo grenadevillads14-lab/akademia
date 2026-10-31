@@ -5,6 +5,7 @@ import { Crowd } from '../npc/crowd';
 import { loadTextureArray, phTextureUrl, type MaterialLib, type TexId } from '../render/materialLib';
 import type { ModelLib } from '../render/modelLib';
 import { buildForest, type Forest } from '../vegetation/forest';
+import { loadLeafPhoto } from '../vegetation/leafAtlas';
 import { createGrass, type Grass } from '../vegetation/grass';
 import { buildBackdrop } from './backdrop';
 import { createHeightfield, type Heightfield } from './heightfield';
@@ -118,11 +119,13 @@ export async function buildWorld(
     drawDistance: g.drawDistance,
     shadows: g.shadows,
     bark,
+    leafPhoto: await loadLeafPhoto(),
   });
   root.add(forest.group);
 
   await step('loading.grass');
-  const grass = createGrass(terrain, ctx.uniforms, { density: g.vegetationDensity, radius: g.preset === 'low' ? 24 : g.preset === 'medium' ? 34 : 48 });
+  // Same blade budget as before, concentrated nearer the player: denser where you look at it.
+  const grass = createGrass(terrain, ctx.uniforms, { density: Math.min(1, g.vegetationDensity * 1.55), radius: g.preset === 'low' ? 18 : g.preset === 'medium' ? 26 : 38, sunDir: sky.sunDir });
   root.add(grass.mesh);
 
   await step('loading.city');

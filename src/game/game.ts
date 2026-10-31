@@ -140,8 +140,9 @@ export class Game {
       this.scene.fog = null; // the post pipeline's height fog replaces three's fog
     }
     this.env = new SkyEnvironment(o.renderer, this.world.sky.skyMesh, this.scene);
-    this.scene.environmentIntensity = 0.38;
-    this.world.sky.ambientScale = 0.4;
+    // Sunlight should dominate: strong sky ambient flattens everything and turns the ground blue-grey.
+    this.scene.environmentIntensity = 0.3;
+    this.world.sky.ambientScale = 0.3;
     await o.setLoading(t('loading.player'));
     const spawn = { ...this.world.layout.spawn };
     const at = o.params.get('at');
@@ -523,7 +524,10 @@ export class Game {
       this.compass.update(this.freeFly.enabled ? 0 : this.tpCamera.yaw, this.player.position, marks);
     }
     const sky = this.world.sky;
-    this.env?.update(dt, sky.sunDir, sky.fogColor.clone().multiplyScalar(0.45));
+    // The lower half of the reflected environment is the land: warm earth and grass, not blue haze.
+    // Sunlit ground bounces a lot of light onto walls and the undersides of eaves: scale it with the sun.
+    const sunUp = THREE.MathUtils.clamp(sky.sunDir.y * 1.6, 0, 1);
+    this.env?.update(dt, sky.sunDir, new THREE.Color(0.42, 0.37, 0.25).lerp(sky.fogColor, 0.2).multiplyScalar(0.4 + 2.6 * sunUp));
 
     // Render.
     const r = this.o.renderer;

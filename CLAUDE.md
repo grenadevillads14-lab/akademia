@@ -17,6 +17,7 @@ Third-person 3D exploration and story game set at Plato's Academy, Athens, 367â€
 | `npm run build:artifact` | Build + `dist/artifact.html` for the hosted page (https://claude.ai/artifact/UHr1NTKJf2f1pbcwGsXMQx). Republish with the asset files it prints |
 | `python3 -I scripts/fetch_polyhaven.py` | Download the Poly Haven assets in `content/assets/polyhaven.json` (WebP-encoded) |
 | `node scripts/optimize-models.mjs` | Simplify fetched models into `public/assets/ph/game/<id>/lod{0,1}.gltf` |
+| `python3 -I scripts/build_foliage.py` | Compose the photographic leaf-spray atlas (CC0 ambientCG leaf sets) into `public/assets/foliage/leaves.webp` |
 | `python3 -I scripts/build_humans.py` | Bake the CC0 MakeHuman body, targets, skins, hair, beards into `public/assets/humans/` |
 
 URL parameters: `?bench[=s]` (also the **Run benchmark** button, `#bench`), `?preset=low|medium|high|ultra`, `?time=18.3`, `?season=summer`,

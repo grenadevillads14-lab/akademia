@@ -84,6 +84,14 @@ export function createWoodMaterial(u: WorldUniforms, bark?: THREE.DataArrayTextu
          #ifdef PHOTO_BARK
            uniform mediump sampler2DArray uBark;
          #endif
+         float barkH = 0.5;
+         vec3 barkBump(vec3 surfPos, vec3 surfNorm, vec2 dHdxy, float faceDir) {
+           vec3 vSigmaX = dFdx(surfPos); vec3 vSigmaY = dFdy(surfPos); vec3 vN = surfNorm;
+           vec3 R1 = cross(vSigmaY, vN); vec3 R2 = cross(vN, vSigmaX);
+           float fDet = dot(vSigmaX, R1) * faceDir;
+           vec3 vGrad = sign(fDet) * (dHdxy.x * R1 + dHdxy.y * R2);
+           return normalize(abs(fDet) * surfNorm - vGrad);
+         }
          float vh(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
          float vn(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
            return mix(mix(vh(i),vh(i+vec2(1,0)),f.x), mix(vh(i+vec2(0,1)),vh(i+vec2(1,1)),f.x), f.y); }
@@ -123,11 +131,22 @@ export function createWoodMaterial(u: WorldUniforms, bark?: THREE.DataArrayTextu
            if (vBark < 1.5 || (vBark > 2.5 && vBark < 4.5)) {
              float layer = (vBark > 0.5 && vBark < 1.5) ? 1.0 : 0.0;
              vec3 photo = texture(uBark, vec3(vBarkUv * vec2(2.0, 0.7), layer)).rgb;
+             // Relief from a blurrier mip so it doesn't alias into speckle.
+             barkH = dot(texture(uBark, vec3(vBarkUv * vec2(2.0, 0.7), layer), 2.5).rgb, vec3(0.333));
              if (layer < 0.5) photo = mix(vec3(dot(photo, vec3(0.33))), photo, 0.35) * (vBark > 2.5 ? vec3(1.25, 1.24, 1.2) : vec3(1.05, 1.03, 1.0));
              bc = mix(bc, photo, 0.85);
            }
          #endif
          diffuseColor.rgb *= bc;`,
+      )
+      .replace(
+        '#include <normal_fragment_maps>',
+        `#include <normal_fragment_maps>
+         #ifdef PHOTO_BARK
+           // Relief from the bark photo: fissures read as grooves in low sun.
+           float barkFade = 1.0 - smoothstep(6.0, 22.0, length(vViewPosition));
+           normal = barkBump(-vViewPosition, normal, vec2(dFdx(barkH), dFdy(barkH)) * 0.7 * barkFade, faceDirection);
+         #endif`,
       );
   };
   return mat;
@@ -188,9 +207,10 @@ export function createLeafMaterial(u: WorldUniforms, leafAtlas: THREE.Texture, i
          vec3 lc = leafTex.rgb;
          if (vLeaf.x > -0.5 && vLeaf.x < 0.5) {
            // Olive: dark glossy green on top; the underside (back face or flipped by wind) is silver-grey.
-           float under = gl_FrontFacing ? vFlip : max(0.75, vFlip);
-           vec3 silver = vec3(dot(lc, vec3(0.3,0.5,0.2))) * vec3(1.55, 1.6, 1.5) + vec3(0.12, 0.13, 0.12);
-           lc = mix(lc * vec3(0.85, 0.95, 0.8), silver, under);
+           // (Cards show both faces, so a back face is not necessarily an underside: keep the silver subtle.)
+           float under = gl_FrontFacing ? vFlip : max(0.3, vFlip);
+           vec3 silver = vec3(dot(lc, vec3(0.3,0.5,0.2))) * vec3(1.35, 1.42, 1.32) + vec3(0.06, 0.07, 0.06);
+           lc = mix(lc, silver, under * 0.8);
          } else if (vLeaf.x > 0.5 && vLeaf.x < 1.5) {
            lc *= gl_FrontFacing ? vec3(1.0) : vec3(1.08, 1.12, 0.9);
          }

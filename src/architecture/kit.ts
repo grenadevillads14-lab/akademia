@@ -39,7 +39,7 @@ export const MATERIALS: Record<MatKey, MatSpec> = {
   drystone: { tex: 'stacked_stone_wall', metres: 2.4, tint: 0xd8c8b0 },
   mudbrick: { tex: 'white_plaster_rough_01', metres: 3.2, tint: 0xe8dcc6, normalScale: 1.6 },
   whitewash: { tex: 'white_plaster_rough_01', metres: 2.5, tint: 0xf4efe4 },
-  roof: { tex: 'clay_roof_tiles', metres: 2.2, tint: 0xd47a4f },
+  roof: { tex: 'clay_roof_tiles', metres: 2.2, tint: 0xd47a4f, roughness: 0.95 },
   marble: { tex: 'white_plaster_rough_01', metres: 1.4, tint: 0xf6f3ee, roughness: 0.55, normalScale: 0.35 },
   paving: { tex: 'marble_01', metres: 3.0, tint: 0xe6dccb },
   wood: { tex: 'wood_plank_wall', metres: 1.6, tint: 0xb08a68 },

@@ -14,6 +14,20 @@ Bodies are blended at runtime from the macro targets; textures are re-encoded to
 | Skins (young/middle-aged/old, caucasian and african), eyes, eyebrows 001/006/010, eyelashes 01, hair short01–04, long01, bob02, braid01, ponytail01, low-poly bodies male1591/female1605 | [MakeHuman system assets pack](https://files2.makehumancommunity.org/asset_packs/makehuman_system_assets/) (`makehuman_system_assets_cc0.zip`) | MakeHuman team | skin, faces, hair; low-poly bodies for crowds |
 | Scruffy beard (WDG), Viking beard (RehmanPolanski), Sigmund beard (Grinsegold) | [bodyparts05 pack](https://files2.makehumancommunity.org/asset_packs/bodyparts05/) (CC0 per pack metadata) | WDG, RehmanPolanski, Grinsegold | beards |
 
+## ambientCG (CC0 1.0): https://ambientcg.com
+
+Leaf photographs (colour + opacity) cut into individual leaves and composed into twig sprays by
+`python3 -I scripts/build_foliage.py` → `public/assets/foliage/leaves.webp` (downloads cached in `assets-src/ambientcg/`).
+
+| Asset | Used for |
+|---|---|
+| [LeafSet013](https://ambientcg.com/view?id=LeafSet013) | olive (tinted grey-green) |
+| [LeafSet029](https://ambientcg.com/view?id=LeafSet029) | oriental plane and fig (lobed leaves) |
+| [LeafSet020](https://ambientcg.com/view?id=LeafSet020) | pomegranate |
+| [LeafSet019](https://ambientcg.com/view?id=LeafSet019) | Mediterranean cypress sprays |
+| [LeafSet001](https://ambientcg.com/view?id=LeafSet001) | myrtle |
+| [LeafSet022](https://ambientcg.com/view?id=LeafSet022) | laurel |
+
 ## Poly Haven (CC0 1.0): https://polyhaven.com
 
 Fetched by `python3 -I scripts/fetch_polyhaven.py` (manifest: `content/assets/polyhaven.json`), re-encoded to WebP.

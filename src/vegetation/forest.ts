@@ -56,6 +56,8 @@ export function buildForest(
     shadows: boolean;
     /** Photographic bark layers [olive-grey, plane]. */
     bark?: THREE.DataArrayTexture;
+    /** Photographic leaf sprays (see loadLeafPhoto); painted leaves otherwise. */
+    leafPhoto?: HTMLImageElement | null;
   },
 ): Forest {
   const variantsPer = opts.variants ?? 3;
@@ -74,7 +76,7 @@ export function buildForest(
 
   const usedSpecies = [...new Set(plants.map((p) => p.species))];
   const geos = new Map<string, VariantGeo>();
-  const leafAtlas = createLeafAtlas();
+  const leafAtlas = createLeafAtlas(opts.leafPhoto ?? null);
   const impostorRT = new THREE.WebGLRenderTarget(IMPOSTOR_ATLAS, IMPOSTOR_ATLAS, {
     colorSpace: THREE.SRGBColorSpace,
     generateMipmaps: true,

@@ -281,12 +281,28 @@ const painters: Record<LeafCell, (g: Ctx, rng: Rng) => void> = {
   },
 };
 
-export function createLeafAtlas(): THREE.CanvasTexture {
+/** Cells the photographic atlas provides (everything except the reed, which stays painted). */
+const PHOTO_CELLS = new Set<LeafCell>(['olive', 'plane', 'fig', 'pomegranate', 'cypress', 'myrtle', 'laurel']);
+
+/** Load the photographic leaf sprays (public/assets/foliage/leaves.webp, built from CC0 ambientCG leaf sets). */
+export function loadLeafPhoto(): Promise<HTMLImageElement | null> {
+  if (typeof document === 'undefined') return Promise.resolve(null);
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = `${import.meta.env.BASE_URL}assets/foliage/leaves.webp`;
+  });
+}
+
+export function createLeafAtlas(photo: HTMLImageElement | null = null): THREE.CanvasTexture {
   const canvas = document.createElement('canvas');
   canvas.width = canvas.height = ATLAS_SIZE;
   const g = canvas.getContext('2d')!;
   g.clearRect(0, 0, ATLAS_SIZE, ATLAS_SIZE);
+  if (photo) g.drawImage(photo, 0, 0, photo.width, photo.height, 0, 0, ATLAS_SIZE, (ATLAS_SIZE * photo.height) / photo.width);
   ORDER.forEach((cell, i) => {
+    if (photo && PHOTO_CELLS.has(cell)) return;
     g.save();
     g.translate((i % 4) * CELL, Math.floor(i / 4) * CELL);
     g.beginPath();
