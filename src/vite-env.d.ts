@@ -22,3 +22,8 @@ interface AkademeiaDebugHandle {
 interface Window {
   __akademeia?: AkademeiaDebugHandle;
 }
+
+declare module '*.ink' {
+  const story: Record<string, unknown>;
+  export default story;
+}

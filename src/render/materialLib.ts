@@ -9,14 +9,13 @@ import * as THREE from 'three';
  */
 export type TexId =
   | 'white_sandstone_blocks_02'
-  | 'large_sandstone_blocks'
   | 'stacked_stone_wall'
   | 'clay_plaster'
   | 'white_plaster_rough_01'
   | 'clay_roof_tiles'
   | 'marble_01'
-  | 'gravel_road'
-  | 'stony_dirt_path'
+  | 'rocky_trail'
+  | 'gravelly_sand'
   | 'sparse_grass'
   | 'dry_ground_01'
   | 'rock_face'

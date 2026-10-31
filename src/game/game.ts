@@ -17,6 +17,8 @@ import { SkyEnvironment } from '../render/environment';
 import { MaterialLib } from '../render/materialLib';
 import { ModelLib } from '../render/modelLib';
 import { PostPipeline } from '../render/post';
+import { GameState } from '../systems/state';
+import { StoryDirector } from './story';
 import { onResize } from '../render/renderer';
 import { WorldClock, formatTime, type Season } from '../world/clock';
 import { createWorldUniforms, type WorldUniforms } from '../world/uniforms';
@@ -38,7 +40,7 @@ export interface GameOptions {
   setLoading: (text: string) => Promise<void>;
 }
 
-const SEASON_TINT: Record<Season, number> = { spring: 0xffffff, summer: 0xe8dca8, autumn: 0xd9c690, winter: 0xb9c9a8 };
+const SEASON_TINT: Record<Season, number> = { spring: 0xf4ffd8, summer: 0xf0e2b0, autumn: 0xe0cc98, winter: 0xc4d4b0 };
 
 export class Game {
   readonly bus = new EventBus<GameEvents>();
@@ -60,6 +62,8 @@ export class Game {
   private readonly timer = new THREE.Timer();
   private framesRendered = 0;
   private post: PostPipeline | null = null;
+  readonly state = new GameState();
+  story!: StoryDirector;
   private env: SkyEnvironment | null = null;
   private elapsed = 0;
   ready = false;
@@ -121,6 +125,9 @@ export class Game {
     this.tpCamera.snapBehind(this.player.heading);
     this.applySeason();
     this.hint.textContent = t('hint.play');
+    this.story = new StoryDirector(o.app, this.state, this.player, this.tpCamera, this.world.pois, this.world.hf.height);
+    this.scene.add(this.story.group);
+    if (o.params.get('story') === '0') this.state.runCommand('flag seen_arrival');
 
     o.renderer.domElement.addEventListener('click', () => {
       if (!this.bench || this.bench.finished) this.input.requestPointerLock();
@@ -161,6 +168,7 @@ export class Game {
 
   applySeason(): void {
     this.uniforms.seasonTint.value.set(SEASON_TINT[this.clock.season]);
+    this.uniforms.greenness.value = { spring: 1, summer: 0.15, autumn: 0.35, winter: 0.7 }[this.clock.season];
   }
 
   /** Benchmark: a fixed flight from the Dipylon down the road of the dead into the grove at golden hour. */
@@ -224,7 +232,7 @@ export class Game {
     }
 
     // Simulation.
-    if (!this.freeFly.enabled && !this.benchRunning) {
+    if (!this.freeFly.enabled && !this.benchRunning && !this.story.inDialogue) {
       this.tpCamera.handleInput(input, input.pointerLocked, dt);
       this.player.readInput(input, this.tpCamera.yaw);
     } else {
@@ -253,11 +261,14 @@ export class Game {
     else this.tpCamera.update(this.player.position, dt, this.player.collider);
 
     const focus = this.freeFly.enabled || this.benchRunning ? this.camera.position : this.player.position;
+    this.uniforms.focusPos.value.copy(focus);
     this.world.sky.update(this.clock, this.camera, focus, dt);
     this.world.forest.update(this.camera);
     this.world.grass.update(focus);
     this.world.water.update(dt);
     this.world.update(this.camera, dt);
+    if (!this.benchRunning) this.story.update(dt, input, this.camera.position, zone ? t(zone.nameKey) : null);
+    this.state.data.playSeconds += dt;
     const sky = this.world.sky;
     this.env?.update(dt, sky.sunDir, sky.fogColor.clone().multiplyScalar(0.45));
 
@@ -270,7 +281,7 @@ export class Game {
       p.sunDir.copy(sky.sunDir);
       p.sunColor.copy(sky.sunColor);
       p.fogColor.copy(sky.fogColor);
-      p.fogDensity = sky.fogDensity * 0.55;
+      p.fogDensity = sky.fogDensity * 0.42;
       p.fogBase = 0;
       p.heightFalloff = 0.006;
       const el = Math.asin(Math.max(-1, Math.min(1, sky.sunDir.y))) * 57.3;

@@ -18,7 +18,7 @@ export interface Grass {
 const TILE = 8; // metres
 
 export function createGrass(terrain: Terrain, u: WorldUniforms, opts: { density: number; radius: number }): Grass {
-  const blades = Math.round(900 * opts.density); // per tile
+  const blades = Math.round(2400 * opts.density); // per tile (≈ 37 per m² at full density)
   const rng = mulberry32(77);
   const pos: number[] = [];
   const blade: number[] = []; // per vertex: local x, z, random, height factor
@@ -27,8 +27,8 @@ export function createGrass(terrain: Terrain, u: WorldUniforms, opts: { density:
     const bx = rng() * TILE;
     const bz = rng() * TILE;
     const r = rng();
-    const h = 0.25 + rng() * 0.45;
-    const w = 0.035 + rng() * 0.03;
+    const h = 0.28 + Math.pow(rng(), 1.6) * 0.75;
+    const w = 0.03 + rng() * 0.03;
     const a = rng() * Math.PI;
     const ca = Math.cos(a) * w;
     const sa = Math.sin(a) * w;
@@ -64,6 +64,7 @@ export function createGrass(terrain: Terrain, u: WorldUniforms, opts: { density:
     shader.uniforms.uWindStrength = u.windStrength;
     shader.uniforms.uGust = u.gust;
     shader.uniforms.uPlayer = u.playerPos;
+    shader.uniforms.uFocus = u.focusPos;
     shader.uniforms.uHeight = { value: terrain.heightTexture };
     shader.uniforms.uMask = { value: terrain.grassTexture };
     shader.uniforms.uRect = { value: terrain.textureRect };
@@ -77,13 +78,15 @@ export function createGrass(terrain: Terrain, u: WorldUniforms, opts: { density:
          ${WIND_GLSL}
          attribute vec4 aBlade;
          uniform vec3 uPlayer;
+         uniform vec3 uFocus;
          uniform sampler2D uHeight;
          uniform sampler2D uMask;
          uniform vec4 uRect;
          uniform float uRadius;
          uniform float uDensity;
          varying float vTipT;
-         varying float vRand;`,
+         varying float vRand;
+         varying vec2 vGrassXZ;`,
       )
       .replace(
         '#include <begin_vertex>',
@@ -92,9 +95,10 @@ export function createGrass(terrain: Terrain, u: WorldUniforms, opts: { density:
          vec2 tuv = (wxz - uRect.xy) / uRect.zw;
          float ground = texture2D(uHeight, tuv).r;
          float mask = texture2D(uMask, tuv).r;
-         float dist = distance(wxz, uPlayer.xz);
+         float dist = distance(wxz, uFocus.xz);
          float fade = 1.0 - smoothstep(uRadius * 0.6, uRadius, dist);
-         float alive = step(aBlade.z, mask * uDensity) * fade;
+         float lodKeep = mix(1.0, 0.3, smoothstep(10.0, uRadius, dist)); // thin out with distance
+         float alive = step(aBlade.z, mask * uDensity * lodKeep) * fade;
          float h = aBlade.w * alive * (0.6 + 0.6 * mask);
          // Dead or faded blades collapse to a point (a zero-height blade still rasterises as a dark sliver).
          float widthK = alive > 0.0 ? 1.0 : 0.0;
@@ -108,7 +112,8 @@ export function createGrass(terrain: Terrain, u: WorldUniforms, opts: { density:
          transformed.y -= length(sway) * position.y * h * 0.5;
          transformed += vec3(wxz.x, ground, wxz.y) - tileOrigin;
          vTipT = position.y;
-         vRand = aBlade.z;`,
+         vRand = aBlade.z;
+         vGrassXZ = wxz;`,
       )
       .replace('#include <beginnormal_vertex>', 'vec3 objectNormal = vec3(0.0, 1.0, 0.0);');
     shader.fragmentShader = shader.fragmentShader
@@ -117,13 +122,26 @@ export function createGrass(terrain: Terrain, u: WorldUniforms, opts: { density:
         `#include <common>
          uniform vec3 uSeasonTint;
          varying float vTipT;
-         varying float vRand;`,
+         varying float vRand;
+         varying vec2 vGrassXZ;
+         float gh(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453); }
+         float gn(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
+           return mix(mix(gh(i),gh(i+vec2(1,0)),f.x), mix(gh(i+vec2(0,1)),gh(i+vec2(1,1)),f.x), f.y); }`,
       )
       .replace(
         '#include <map_fragment>',
-        `vec3 rootC = vec3(0.16, 0.24, 0.08);
-         vec3 tipC = mix(vec3(0.42, 0.55, 0.20), vec3(0.62, 0.58, 0.30), vRand * 0.6);
-         diffuseColor.rgb = mix(rootC, tipC, vTipT) * uSeasonTint;`,
+        `// Patches: lush green near water and shade, straw-dry elsewhere; per-blade jitter.
+         float patchN = gn(vGrassXZ * 0.08) * 0.7 + gn(vGrassXZ * 0.35) * 0.3;
+         vec3 rootC = vec3(0.10, 0.16, 0.05);
+         vec3 green = mix(vec3(0.30, 0.48, 0.12), vec3(0.45, 0.58, 0.18), vRand);
+         vec3 dry = mix(vec3(0.62, 0.55, 0.28), vec3(0.75, 0.66, 0.38), vRand);
+         vec3 tipC = mix(green, dry, smoothstep(0.45, 0.8, patchN) * 0.85);
+         vec3 c = mix(rootC, tipC, smoothstep(0.0, 0.9, vTipT)) * uSeasonTint;
+         // Spring flowers on a few blade tips: poppies, chamomile, wild anise (docs/RESEARCH.md §12).
+         float flower = step(0.985, vRand) * step(0.82, vTipT);
+         float kind = fract(vRand * 97.0);
+         vec3 fc = kind < 0.4 ? vec3(0.85, 0.12, 0.08) : kind < 0.75 ? vec3(0.95, 0.94, 0.88) : vec3(0.92, 0.82, 0.25);
+         diffuseColor.rgb = mix(c, fc, flower * uSeasonTint.g);`,
       );
   };
 

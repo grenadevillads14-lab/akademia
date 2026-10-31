@@ -1,0 +1,323 @@
+{
+  "notes": "Prologue: the road to the Academy (367 BC, spring). Triggers run ink knots from content/dialogue/prologue.ink. Requirements: questStep 'quest:step', flag, notFlag, questDone, questActive.",
+  "quests": {
+    "prologue": {
+      "titleKey": "quest.prologue",
+      "steps": {
+        "meet": {
+          "textKey": "quest.prologue.meet",
+          "marker": [
+            449.6,
+            509.4
+          ]
+        },
+        "walk_road": {
+          "textKey": "quest.prologue.walk_road",
+          "marker": [
+            158,
+            208
+          ]
+        },
+        "enter_grove": {
+          "textKey": "quest.prologue.enter_grove",
+          "marker": [
+            138,
+            166
+          ]
+        },
+        "find_plato": {
+          "textKey": "quest.prologue.find_plato",
+          "marker": [
+            160,
+            -262
+          ]
+        }
+      }
+    }
+  },
+  "npcs": [
+    {
+      "npc": "aristotle",
+      "when": {
+        "notFlag": "met_aristotle"
+      },
+      "x": 449.6,
+      "z": 509.4,
+      "heading": 0.8,
+      "anim": "read"
+    },
+    {
+      "npc": "aristotle",
+      "when": {
+        "flag": "met_aristotle",
+        "questActive": "prologue"
+      },
+      "follow": 1.3
+    },
+    {
+      "npc": "aristotle",
+      "when": {
+        "questDone": "prologue"
+      },
+      "x": 166.3,
+      "z": -257.5,
+      "heading": -2.3,
+      "anim": "sit"
+    },
+    {
+      "npc": "diogenes",
+      "when": {},
+      "patrol": [
+        [
+          300,
+          352
+        ],
+        [
+          262,
+          306
+        ],
+        [
+          212,
+          252
+        ]
+      ],
+      "speed": 0.9
+    },
+    {
+      "npc": "speusippus",
+      "when": {},
+      "x": 136,
+      "z": 164,
+      "heading": -2.4,
+      "anim": "idle"
+    },
+    {
+      "npc": "student_rumour",
+      "when": {},
+      "x": 126,
+      "z": 170,
+      "heading": 0.8,
+      "anim": "gesture"
+    },
+    {
+      "npc": "plato",
+      "when": {},
+      "x": 160.5,
+      "z": -260.5,
+      "heading": 0.6,
+      "anim": "drawDirt"
+    },
+    {
+      "npc": "xenocrates",
+      "when": {},
+      "ring": [
+        160,
+        -262,
+        6.3,
+        0.9
+      ],
+      "anim": "sit"
+    },
+    {
+      "npc": "eudoxus",
+      "when": {},
+      "ring": [
+        160,
+        -262,
+        6.3,
+        1.8
+      ],
+      "anim": "sit"
+    },
+    {
+      "npc": "heraclides",
+      "when": {},
+      "ring": [
+        160,
+        -262,
+        6.3,
+        2.7
+      ],
+      "anim": "sit"
+    },
+    {
+      "npc": "philip",
+      "when": {},
+      "ring": [
+        160,
+        -262,
+        6.3,
+        3.6
+      ],
+      "anim": "write"
+    },
+    {
+      "npc": "axiothea",
+      "when": {},
+      "ring": [
+        160,
+        -262,
+        6.3,
+        4.5
+      ],
+      "anim": "sit"
+    },
+    {
+      "npc": "lasthenia",
+      "when": {},
+      "ring": [
+        160,
+        -262,
+        6.3,
+        5.4
+      ],
+      "anim": "sit"
+    },
+    {
+      "npc": "kallias",
+      "when": {},
+      "x": 494,
+      "z": 452,
+      "heading": 2.0,
+      "anim": "dig"
+    },
+    {
+      "npc": "gymnasiarch",
+      "when": {},
+      "x": 26,
+      "z": 4,
+      "heading": -1.5,
+      "anim": "idle"
+    }
+  ],
+  "triggers": [
+    {
+      "id": "arrival",
+      "type": "auto",
+      "dialogue": "prologue.arrival",
+      "requires": {
+        "notFlag": "seen_arrival"
+      },
+      "set": "seen_arrival"
+    },
+    {
+      "id": "meet_aristotle",
+      "type": "talk",
+      "npc": "aristotle",
+      "dialogue": "prologue.meet_aristotle",
+      "requires": {
+        "questStep": "prologue:meet"
+      }
+    },
+    {
+      "id": "stele_list",
+      "type": "interact",
+      "poiKind": "casualty_list",
+      "labelKey": "interact.read",
+      "dialogue": "prologue.stele_casualty"
+    },
+    {
+      "id": "stele_dexileos",
+      "type": "interact",
+      "poi": "dexileos",
+      "labelKey": "interact.read",
+      "dialogue": "prologue.stele_dexileos"
+    },
+    {
+      "id": "road_talk",
+      "type": "zone",
+      "circle": [
+        300,
+        345,
+        22
+      ],
+      "dialogue": "prologue.road_talk",
+      "requires": {
+        "flag": "met_aristotle",
+        "notFlag": "road_talk"
+      }
+    },
+    {
+      "id": "diogenes",
+      "type": "talk",
+      "npc": "diogenes",
+      "dialogue": "prologue.diogenes_road",
+      "requires": {
+        "notFlag": "met_diogenes"
+      }
+    },
+    {
+      "id": "altar_eros",
+      "type": "zone",
+      "circle": [
+        158,
+        208,
+        9
+      ],
+      "dialogue": "prologue.altar_eros",
+      "requires": {
+        "questStep": "prologue:walk_road"
+      }
+    },
+    {
+      "id": "rumour",
+      "type": "talk",
+      "npc": "student_rumour",
+      "dialogue": "prologue.rumour",
+      "requires": {
+        "notFlag": "rumour_heard"
+      },
+      "set": "rumour_heard"
+    },
+    {
+      "id": "moria",
+      "type": "interact",
+      "poi": "moria-1",
+      "labelKey": "interact.examine",
+      "dialogue": "prologue.moria"
+    },
+    {
+      "id": "speusippus",
+      "type": "talk",
+      "npc": "speusippus",
+      "dialogue": "prologue.speusippus_welcome",
+      "requires": {
+        "questStep": "prologue:enter_grove"
+      }
+    },
+    {
+      "id": "plato",
+      "type": "zone",
+      "circle": [
+        160,
+        -262,
+        11
+      ],
+      "dialogue": "prologue.plato_circle",
+      "requires": {
+        "questStep": "prologue:find_plato"
+      }
+    }
+  ],
+  "extras": {
+    "student_rumour": {
+      "nameKey": "char.student",
+      "appearance": {
+        "height": 1.68,
+        "age": "youth",
+        "skin": "#d8a882",
+        "hair": {
+          "style": "curly",
+          "color": "#3a2618"
+        },
+        "chiton": {
+          "color": "#c9922e",
+          "length": "knee"
+        },
+        "himation": {
+          "color": "#efe6d2"
+        }
+      }
+    }
+  }
+}

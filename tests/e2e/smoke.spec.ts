@@ -28,7 +28,7 @@ test('the Academy loads, renders and runs without console errors', async ({ page
 });
 
 test('the player walks forward on the road and stays on the ground', async ({ page }) => {
-  await boot(page);
+  await boot(page, '/?story=0');
   const before = await page.evaluate(() => {
     const g = window.__akademeia!.game!;
     return { x: g.player.position.x, y: g.player.position.y, z: g.player.position.z };
@@ -46,7 +46,7 @@ test('the player walks forward on the road and stays on the ground', async ({ pa
 });
 
 test('the player swims in the Cephissus', async ({ page }) => {
-  await boot(page);
+  await boot(page, '/?story=0');
   await page.evaluate(() => {
     const g = window.__akademeia!.game!;
     // Middle of the river near the ford.
@@ -66,4 +66,32 @@ test('benchmark mode produces a report at a fixed 1080p and hands control back',
   expect(result?.avgWorkMs).toBeGreaterThan(0);
   const w = await page.evaluate(() => document.querySelector('canvas')!.width);
   expect(w).not.toBe(1920);
+});
+
+test('the prologue opens, and talking to Aristotle advances the quest', async ({ page }) => {
+  await boot(page);
+  const dialogue = page.getByTestId('dialogue');
+  await expect(dialogue).toBeVisible({ timeout: 30_000 });
+  await expect(dialogue).toContainText('Dipylon');
+  // Close the arrival narration.
+  for (let i = 0; i < 4 && (await dialogue.isVisible()); i++) {
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(400);
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(400);
+  }
+  await expect(dialogue).toBeHidden();
+  await expect(page.locator('.hud-prompt')).toContainText('Aristotle', { timeout: 20_000 });
+  await page.keyboard.press('KeyF');
+  await expect(dialogue).toContainText('Aristotle', { timeout: 20_000 });
+  // Skip the typewriter, then pick the first choice and run to the end.
+  for (let i = 0; i < 12 && (await dialogue.isVisible()); i++) {
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    if (await page.locator('.dialogue-choice').count()) await page.keyboard.press('Digit1');
+    await page.waitForTimeout(300);
+  }
+  const step = await page.evaluate(() => window.__akademeia!.game!.state.quest('prologue')?.step);
+  expect(step).toBe('walk_road');
+  await expect(page.locator('.hud-objective')).toContainText('Walk the road');
 });

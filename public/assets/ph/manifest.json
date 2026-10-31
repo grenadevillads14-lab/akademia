@@ -12,18 +12,6 @@
     "Rob Tuytel"
    ]
   },
-  "large_sandstone_blocks": {
-   "role": "big ashlar courses: Dipylon gate piers, city wall",
-   "files": {
-    "diff": 172392,
-    "nor": 192486,
-    "arm": 84014
-   },
-   "name": "Large Sandstone Blocks",
-   "authors": [
-    "Rob Tuytel"
-   ]
-  },
   "stacked_stone_wall": {
    "role": "dry-stone walls (Kepidion, field walls)",
    "files": {
@@ -82,30 +70,6 @@
    "name": "Marble 01",
    "authors": [
     "Rob Tuytel"
-   ]
-  },
-  "gravel_road": {
-   "role": "the road to the Academy",
-   "files": {
-    "diff": 94228,
-    "nor": 342108,
-    "arm": 19604
-   },
-   "name": "Gravel Road",
-   "authors": [
-    "Amal Kumar"
-   ]
-  },
-  "stony_dirt_path": {
-   "role": "footpaths and the Dipylon court",
-   "files": {
-    "diff": 411890,
-    "nor": 621618,
-    "arm": 129306
-   },
-   "name": "Stony Dirt Path",
-   "authors": [
-    "eye-candy.xyz"
    ]
   },
   "sparse_grass": {
@@ -216,13 +180,63 @@
    "authors": [
     "Dimitrios Savva"
    ]
+  },
+  "rough_linen": {
+   "role": "linen weave for chitons and himatia",
+   "files": {
+    "diff": 248534,
+    "nor": 399892,
+    "arm": 386312
+   },
+   "name": "Rough Linen",
+   "authors": [
+    "colormass",
+    "Rico Cilliers"
+   ]
+  },
+  "hessian_230": {
+   "role": "coarse wool/hemp (the Cynic tribon, sacks)",
+   "files": {
+    "diff": 314090,
+    "nor": 409616,
+    "arm": 318272
+   },
+   "name": "Hessian 230",
+   "authors": [
+    "colormass",
+    "Rico Cilliers"
+   ]
+  },
+  "rocky_trail": {
+   "role": "pale dusty roads",
+   "files": {
+    "diff": 332966,
+    "nor": 619744,
+    "arm": 263864
+   },
+   "name": "Rocky Trail",
+   "authors": [
+    "Amal Kumar"
+   ]
+  },
+  "gravelly_sand": {
+   "role": "packed earth paths",
+   "files": {
+    "diff": 330728,
+    "nor": 618908,
+    "arm": 119758
+   },
+   "name": "Gravelly Sand",
+   "authors": [
+    "Dario Barresi"
+   ]
   }
  },
  "models": {
   "namaqualand_boulder_02": {
    "role": "boulder",
    "files": {
-    "gltf": 3072667
+    "gltf": 1915
    },
    "name": "Namaqualand Boulder 02",
    "authors": [
@@ -233,27 +247,17 @@
   "namaqualand_boulder_04": {
    "role": "boulder",
    "files": {
-    "gltf": 1933989
+    "gltf": 1915
    },
    "name": "Namaqualand Boulder 04",
    "authors": [
     "Jenelle van Heerden"
    ]
   },
-  "boulder_01": {
-   "role": "boulder",
-   "files": {
-    "gltf": 3731812
-   },
-   "name": "Boulder 01",
-   "authors": [
-    "Rico Cilliers"
-   ]
-  },
   "stone_01": {
    "role": "small stone",
    "files": {
-    "gltf": 1843539
+    "gltf": 1847
    },
    "name": "Stone 01",
    "authors": [
@@ -261,20 +265,10 @@
     "Rico Cilliers"
    ]
   },
-  "shrub_01": {
-   "role": "shrub",
-   "files": {
-    "gltf": 5570794
-   },
-   "name": "Shrub 01",
-   "authors": [
-    "Rico Cilliers"
-   ]
-  },
   "shrub_02": {
    "role": "shrub",
    "files": {
-    "gltf": 968662
+    "gltf": 5320
    },
    "name": "Shrub 02",
    "authors": [
@@ -284,7 +278,7 @@
   "shrub_04": {
    "role": "shrub",
    "files": {
-    "gltf": 941629
+    "gltf": 1929
    },
    "name": "Shrub 04",
    "authors": [
@@ -294,7 +288,7 @@
   "wild_rooibos_bush": {
    "role": "low scrub (stands in for thyme and rosemary)",
    "files": {
-    "gltf": 1515549
+    "gltf": 15131
    },
    "name": "Wild Rooibos Bush",
    "authors": [
@@ -305,7 +299,7 @@
   "grass_medium_01": {
    "role": "grass tuft",
    "files": {
-    "gltf": 1565515
+    "gltf": 17529
    },
    "name": "Grass Medium 01",
    "authors": [
@@ -316,57 +310,17 @@
   "grass_medium_02": {
    "role": "grass tuft",
    "files": {
-    "gltf": 357411
+    "gltf": 5787
    },
    "name": "Grass Medium 02",
    "authors": [
     "Rico Cilliers"
    ]
   },
-  "antique_ceramic_vase_01": {
-   "role": "pottery",
-   "files": {
-    "gltf": 365798
-   },
-   "name": "Antique Ceramic Vase 01",
-   "authors": [
-    "James Ray Cock"
-   ]
-  },
-  "ceramic_vase_01": {
-   "role": "pottery",
-   "files": {
-    "gltf": 322881
-   },
-   "name": "Ceramic Vase 01",
-   "authors": [
-    "James Ray Cock"
-   ]
-  },
-  "planter_pot_clay": {
-   "role": "pottery",
-   "files": {
-    "gltf": 332970
-   },
-   "name": "Planter Pot Clay",
-   "authors": [
-    "Amal Kumar"
-   ]
-  },
-  "wicker_basket_01": {
-   "role": "basket",
-   "files": {
-    "gltf": 1021375
-   },
-   "name": "Wicker Basket 01",
-   "authors": [
-    "Kuutti Siitonen"
-   ]
-  },
   "marble_bust_01": {
    "role": "herm head",
    "files": {
-    "gltf": 736964
+    "gltf": 1876
    },
    "name": "Marble Bust 01",
    "authors": [

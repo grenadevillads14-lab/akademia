@@ -17,6 +17,8 @@ import {
   tower,
   type GraveSlot,
 } from '../architecture/greek';
+import { altar, benchRing, enclosure, gymnasium, heroon, platoHouse, shrine, slabBridge, type LocalBox } from '../architecture/academy';
+import { stoa } from '../architecture/doric';
 import { inscription, relief } from '../architecture/reliefs';
 import type { Physics } from '../physics/physics';
 import { closestOnPolyline, polylineLength, samplePolyline } from '../procgen/geometry2d';
@@ -63,6 +65,23 @@ const StructuresSchema = z.object({
   rocks: z.array(scatter).default([]),
   shrubs: z.array(scatter).default([]),
   tufts: z.array(scatter).default([]),
+  buildings: z
+    .array(
+      z.object({
+        type: z.enum(['gymnasium', 'xystos', 'shrine', 'altar', 'altarStepped', 'benchRing', 'platoHouse', 'heroon']),
+        id: z.string(),
+        x: z.number(),
+        z: z.number(),
+        rot: z.number(),
+        length: z.number().optional(),
+        depth: z.number().optional(),
+        radius: z.number().optional(),
+      }),
+    )
+    .default([]),
+  enclosures: z
+    .array(z.object({ id: z.string(), style: z.enum(['drystone', 'ashlar']), height: z.number(), gateWidth: z.number(), points: z.array(v2), gates: z.array(v2) }))
+    .default([]),
 });
 export type StructuresData = z.infer<typeof StructuresSchema>;
 
@@ -71,8 +90,16 @@ export interface Structures {
   readonly models: ModelField;
   /** Herm positions (fast travel later). */
   readonly herms: { id: string; position: THREE.Vector3 }[];
+  /** Points of interest for interactions and the map: stelai, herms, buildings. */
+  readonly pois: Poi[];
   update(camera: THREE.Camera, dt: number): void;
   dispose(): void;
+}
+
+export interface Poi {
+  id: string;
+  kind: string;
+  position: THREE.Vector3;
 }
 
 interface Collider {
@@ -95,6 +122,8 @@ export async function buildStructures(
   const group = new THREE.Group();
   group.name = 'structures';
   const colliders: Collider[] = [];
+  const pois: Poi[] = [];
+  const poi = (id: string, kind: string, x: number, zz: number) => pois.push({ id, kind, position: new THREE.Vector3(x, ground(x, zz), zz) });
   const collide = (f: Frame, lx: number, ly: number, lz: number, sx: number, sy: number, sz: number) => {
     const [x, zz] = f.toWorld(lx, lz);
     colliders.push({ x, y: f.y + ly, z: zz, sx, sy, sz, rot: f.rot });
@@ -172,6 +201,68 @@ export async function buildStructures(
   }
   group.add(await fort.build(ctx.lib, 'fortifications', { castShadow: ctx.shadows }));
 
+  // --- Academy buildings, enclosure walls and channel bridges ---
+  const academyB = new Builder();
+  const rngA = mulberry32(19);
+  const addBoxes = (f: Frame, boxes: LocalBox[]) => {
+    for (const [lx, ly, lz, sx, sy, sz] of boxes) collide(f, lx, ly, lz, sx, sy, sz);
+  };
+  for (const bd of S.buildings) {
+    const f = new Frame(bd.x, bd.z, bd.rot, ground(bd.x, bd.z));
+    poi(bd.id, bd.type, bd.x, bd.z);
+    switch (bd.type) {
+      case 'gymnasium':
+        addBoxes(f, gymnasium(academyB, f, rngA));
+        break;
+      case 'xystos':
+        stoa(academyB, f, bd.length ?? 120, bd.depth ?? 7, { D: 0.55, H: 3.4 }, { detail: 1 });
+        collide(f, 0, 2.5, -(bd.depth ?? 7) / 2, bd.length ?? 120, 5, 0.8);
+        break;
+      case 'shrine':
+        addBoxes(f, shrine(academyB, f));
+        break;
+      case 'altar':
+        addBoxes(f, altar(academyB, f, 'small'));
+        break;
+      case 'altarStepped':
+        addBoxes(f, altar(academyB, f, 'stepped'));
+        break;
+      case 'benchRing':
+        addBoxes(f, benchRing(academyB, f, bd.radius ?? 6.5));
+        break;
+      case 'platoHouse':
+        addBoxes(f, platoHouse(academyB, f, rngA));
+        break;
+      case 'heroon':
+        addBoxes(f, heroon(academyB, f));
+        break;
+    }
+  }
+  for (const en of S.enclosures) {
+    const segs = enclosure(academyB, ground, en.points as [number, number][], { height: en.height, style: en.style, gates: en.gates as [number, number][], gateWidth: en.gateWidth });
+    for (const sg of segs) collide(new Frame(sg.x, sg.z, sg.rot, ground(sg.x, sg.z)), 0, en.height / 2, 0, sg.len, en.height + 0.6, 0.9);
+  }
+  // Footbridges wherever a path crosses one of Cimon's channels.
+  for (const ch of hf.layout.channels) {
+    for (const p of hf.layout.paths) {
+      for (let i = 0; i < p.points.length - 1; i++) {
+        const [ax, az] = p.points[i]!;
+        const [bx, bz] = p.points[i + 1]!;
+        const len = Math.hypot(bx - ax, bz - az);
+        for (let sdist = 0; sdist < len; sdist += 0.8) {
+          const x = ax + ((bx - ax) * sdist) / len;
+          const zz = az + ((bz - az) * sdist) / len;
+          if (closestOnPolyline(x, zz, ch.points).dist < ch.width / 2 + 0.1) {
+            const rot = Math.atan2(bx - ax, bz - az);
+            slabBridge(academyB, new Frame(x, zz, rot, ground(x, zz) + ch.depth * 0.05), ch.width + 1.4, Math.min(p.width, 4));
+            sdist += 6;
+          }
+        }
+      }
+    }
+  }
+  group.add(await academyB.build(ctx.lib, 'academy', { castShadow: ctx.shadows }));
+
   // --- Districts of houses ---
   const houses = new Builder();
   const nearWater = (x: number, zz: number, m: number) => hf.layout.rivers.some((r) => closestOnPolyline(x, zz, r.points).dist < r.width / 2 + m);
@@ -180,8 +271,10 @@ export async function buildStructures(
   for (const d of S.districts) {
     const rng = mulberry32(d.seed);
     const F = new Frame(d.frame.x, d.frame.z, d.frame.rot, 0);
-    for (let u = d.uRange[0]; u < d.uRange[1]; u += d.blockU + d.street) {
-      for (let v = d.vRange[0]; v < d.vRange[1]; v += d.blockV + d.street) {
+    // Blocks of varying size and alley width: Athens grew organically, not on a Hippodamian grid.
+    for (let u = d.uRange[0]; u < d.uRange[1]; u += d.blockU * range(rng, 0.7, 1.3) + d.street * range(rng, 0.6, 1.6)) {
+      for (let v = d.vRange[0]; v < d.vRange[1]; v += d.blockV * range(rng, 0.75, 1.25) + d.street * range(rng, 0.6, 1.5)) {
+        if (rng() < 0.06) continue; // an open square or garden plot
         // Two rows of lots back to back per block, facing the streets on either side.
         for (const row of [0, 1]) {
           let lu = u;
@@ -247,6 +340,10 @@ export async function buildStructures(
           // A public monument: casualty lists by tribe, set before a polyandrion mound.
           nextList += gr.publicListsEvery;
           casualtyList(graves, f.sub(0, td / 2 - 1.2));
+          {
+            const [px, pz] = f.toWorld(0, td / 2 - 1.2 + 1.2);
+            poi(`casualty-list-${pois.filter((q) => q.kind === 'casualty_list').length + 1}`, 'casualty_list', px, pz);
+          }
           decals.push({ kind: 'list', f: f.sub(0, td / 2 - 1.2 + 0.125), w: 2.5, h: 2.3, y: 0.5 + 1.3, z: 0, seed: Math.floor(rng() * 1e6) });
           collide(f, 0, 1.6, td / 2 - 1.2, 3.4, 3.2, 1);
           const mound = new THREE.SphereGeometry(td * 0.5, 14, 6, 0, Math.PI * 2, 0, Math.PI / 2);
@@ -257,7 +354,15 @@ export async function buildStructures(
         }
         const slots = graveTerrace(graves, f, tw, td, rng);
         collide(f, 0, 0.6, 0, tw, 1.6, td);
-        for (const slot of slots) placeMonument(graves, slot, decals, !dexileosPlaced && side === -1 && s > 70 ? ((dexileosPlaced = true), 'rider') : undefined);
+        for (const slot of slots) {
+          const rider = !dexileosPlaced && side === -1 && s > 70;
+          if (rider) {
+            dexileosPlaced = true;
+            const [px, pz] = new Frame(slot.x, slot.z, slot.rot, slot.y).toWorld(0, 1.4);
+            poi('dexileos', 'stele', px, pz);
+          }
+          placeMonument(graves, slot, decals, rider ? 'rider' : undefined);
+        }
       }
     }
   }
@@ -275,6 +380,7 @@ export async function buildStructures(
     colliders.push({ x: h.x, y: y + 0.8, z: h.z, sx: 0.6, sy: 1.6, sz: 0.6, rot: h.rot });
     hermPlacements.push({ x: h.x, y: y + 1.54, z: h.z, rot: h.rot + Math.PI, scale: 1.0 });
     herms.push({ id: h.id, position: new THREE.Vector3(h.x, y, h.z) });
+    poi(h.id, 'herm', h.x, h.z);
   }
   if (S.herms.length) group.add(await hermB.build(ctx.lib, 'herms', { castShadow: ctx.shadows }));
 
@@ -350,6 +456,7 @@ export async function buildStructures(
     group,
     models: field,
     herms,
+    pois,
     update(camera, dt) {
       field.update(camera, dt);
     },

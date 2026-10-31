@@ -24,6 +24,21 @@ export function atlasRect(cell: LeafCell): [number, number, number, number] {
 
 type Ctx = CanvasRenderingContext2D;
 
+/** Multiply an rgb(...) / #hex colour's brightness. */
+function shade(c: string, k: number): string {
+  let r = 0, g = 0, b = 0;
+  const m = c.match(/rgba?\(([^)]+)\)/);
+  if (m) [r, g, b] = m[1]!.split(',').map((v) => parseFloat(v)) as [number, number, number];
+  else if (c.startsWith('#')) {
+    const n = parseInt(c.slice(1), 16);
+    r = (n >> 16) & 255;
+    g = (n >> 8) & 255;
+    b = n & 255;
+  }
+  const f = (v: number) => Math.max(0, Math.min(255, Math.round(v * k)));
+  return `rgb(${f(r)},${f(g)},${f(b)})`;
+}
+
 function leafPath(g: Ctx, len: number, width: number, lobes: number, lobeDepth: number): void {
   // A leaf pointing along +x from the origin.
   g.beginPath();
@@ -55,8 +70,24 @@ function drawLeaf(g: Ctx, x: number, y: number, angle: number, len: number, widt
   g.translate(x, y);
   g.rotate(angle);
   leafPath(g, len, width, lobes, lobeDepth);
-  g.fillStyle = fill;
+  // Naturalistic shading: darker at the stalk, lighter toward the middle, a soft highlight, a darker rim.
+  const grad = g.createLinearGradient(0, 0, len, 0);
+  grad.addColorStop(0, shade(fill, 0.72));
+  grad.addColorStop(0.45, shade(fill, 1.08));
+  grad.addColorStop(1, shade(fill, 0.9));
+  g.fillStyle = grad;
   g.fill();
+  g.save();
+  g.clip();
+  const hl = g.createRadialGradient(len * 0.4, -width * 0.3, 1, len * 0.4, -width * 0.3, Math.max(len, width) * 0.5);
+  hl.addColorStop(0, 'rgba(255,255,240,0.18)');
+  hl.addColorStop(1, 'rgba(255,255,240,0)');
+  g.fillStyle = hl;
+  g.fillRect(-len, -len, len * 3, len * 2);
+  g.restore();
+  g.strokeStyle = shade(fill, 0.55);
+  g.lineWidth = Math.max(0.8, len * 0.008);
+  g.stroke();
   g.strokeStyle = vein;
   g.lineWidth = Math.max(1, len * 0.012);
   g.beginPath();

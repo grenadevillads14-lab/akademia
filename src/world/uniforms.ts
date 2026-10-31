@@ -13,6 +13,10 @@ export interface WorldUniforms {
   gust: { value: number };
   /** Player position, for grass bending. */
   playerPos: { value: THREE.Vector3 };
+  /** Where detail is centred (player, or the free/benchmark camera): grass radius and fades. */
+  focusPos: { value: THREE.Vector3 };
+  /** 0..1 how green the meadows are (spring 1, high summer ~0.1). */
+  greenness: { value: number };
   /** Multiplier on grass colour per season. */
   seasonTint: { value: THREE.Color };
   /** 0 dry .. 1 rain-soaked. */
@@ -28,6 +32,8 @@ export function createWorldUniforms(): WorldUniforms {
     windStrength: { value: 0.5 },
     gust: { value: 0 },
     playerPos: { value: new THREE.Vector3() },
+    focusPos: { value: new THREE.Vector3() },
+    greenness: { value: 1 },
     seasonTint: { value: new THREE.Color(1, 1, 1) },
     wetness: { value: 0 },
     night: { value: 0 },

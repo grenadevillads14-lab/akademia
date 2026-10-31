@@ -1,6 +1,24 @@
 import { readFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
-import { defineConfig } from 'vitest/config';
+import { defineConfig, type Plugin } from 'vitest/config';
+import { Compiler } from 'inkjs/full';
+
+/** Compile `.ink` dialogue files to ink JSON at build time (imports resolve to the compiled story object). */
+function inkPlugin(): Plugin {
+  return {
+    name: 'akademeia-ink',
+    transform(src, id) {
+      if (!id.endsWith('.ink')) return null;
+      const compiler = new Compiler(src);
+      const story = compiler.Compile();
+      if (compiler.errors.length) {
+        this.error(`ink errors in ${id}:\n${compiler.errors.join('\n')}`);
+      }
+      for (const w of compiler.warnings) this.warn(`ink: ${w}`);
+      return { code: `export default ${story.ToJson()};`, map: null };
+    },
+  };
+}
 
 const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as { version: string };
 let commit = 'dev';
@@ -11,6 +29,7 @@ try {
 }
 
 export default defineConfig({
+  plugins: [inkPlugin()],
   define: {
     __APP_VERSION__: JSON.stringify(`${pkg.version}+${commit}`),
   },

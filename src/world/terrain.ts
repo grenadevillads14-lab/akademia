@@ -243,6 +243,7 @@ function createPhotoTerrainMaterial(uniforms: WorldUniforms, layers: GroundLayer
     shader.uniforms.uScaleB = { value: new THREE.Vector4(1 / m[4]!, 1 / m[5]!, 1 / m[6]!, 1 / m[7]!) };
     shader.uniforms.uSeasonTint = uniforms.seasonTint;
     shader.uniforms.uWetness = uniforms.wetness;
+    shader.uniforms.uGreen = uniforms.greenness;
     shader.vertexShader = shader.vertexShader
       .replace('#include <common>', `#include <common>
         attribute vec4 splatA; attribute vec4 splatB;
@@ -254,7 +255,7 @@ function createPhotoTerrainMaterial(uniforms: WorldUniforms, layers: GroundLayer
         uniform mediump sampler2DArray uDiff;
         uniform mediump sampler2DArray uNor;
         uniform vec4 uScaleA; uniform vec4 uScaleB;
-        uniform vec3 uSeasonTint; uniform float uWetness;
+        uniform vec3 uSeasonTint; uniform float uWetness; uniform float uGreen;
         varying vec4 vSplatA; varying vec4 vSplatB; varying vec3 vWorldPosT;
         vec2 terrainUv(float s) { return vec2(vWorldPosT.x, -vWorldPosT.z) * s; }
         // Explicit gradients: sampling happens inside a loop with early-outs, where implicit
@@ -284,7 +285,7 @@ function createPhotoTerrainMaterial(uniforms: WorldUniforms, layers: GroundLayer
           if (w0[i] < 0.004) continue;
           vec4 d = sampleLayer(uDiff, float(i), sc[i]);
           vec3 n = sampleLayer(uNor, float(i), sc[i]).xyz * 2.0 - 1.0;
-          vec3 tintL = i == 7 ? vec3(1.32, 1.24, 1.12) : i == 2 ? vec3(1.12, 1.07, 1.0) : i == 4 ? vec3(1.12, 1.08, 1.0) : vec3(1.0);
+          vec3 tintL = i == 7 ? vec3(1.08, 1.05, 1.0) : i == 4 ? vec3(1.12, 1.08, 1.0) : vec3(1.0);
           d.rgb *= tintL;
           float h = dot(d.rgb, vec3(0.333));
           float w = w0[i] * pow(h + 0.35, 4.0);
@@ -296,9 +297,11 @@ function createPhotoTerrainMaterial(uniforms: WorldUniforms, layers: GroundLayer
         col /= max(wsum, 1e-4);
         tnorm /= max(wsum, 1e-4);
         col = mix(col, col * uSeasonTint, vSplatA.x + vSplatA.y * 0.6);
+        // Spring meadows: push the photo grass toward fresh green (the source photo is half dry).
+        col = mix(col, col * vec3(0.78, 1.18, 0.62), uGreen * vSplatA.x * 0.85);
         // Pull photo albedo toward the painterly palette: a little less red, a little less saturated.
         float lum = dot(col, vec3(0.299, 0.587, 0.114));
-        col = mix(vec3(lum), col, 0.66 - 0.2 * (vSplatB.w + vSplatA.z)) * vec3(0.98, 0.97, 0.95);
+        col = mix(vec3(lum), col, 0.78) * vec3(1.0, 0.98, 0.95);
         float macro = textureGrad(uDiff, vec3(vec2(vWorldPosT.x, -vWorldPosT.z) / 160.0, 1.0), gdx / 160.0, gdy / 160.0).r;
         col *= mix(0.85, 1.12, macro);
         col *= mix(1.0, 0.7, uWetness * (vSplatB.y + vSplatA.z + vSplatB.w));

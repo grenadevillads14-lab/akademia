@@ -1,0 +1,103 @@
+{
+  "notes": "Historical cast (docs/RESEARCH.md §7). Appearance follows the sources where they exist: Aristotle's cropped hair, rings and conspicuous dress (DL 5.1); Diogenes' coarse cloak, staff and lamp (DL 6); Axiothea in men's clothes (Dicaearchus). Colours were bright in life.",
+  "characters": [
+    {
+      "id": "aristotle",
+      "nameKey": "char.aristotle",
+      "historical": true,
+      "appearance": { "height": 1.7, "build": 0.3, "age": "youth", "skin": "#c99470", "hair": { "style": "cropped", "color": "#2b1d14" }, "beard": { "style": "none", "color": "#2b1d14" },
+        "chiton": { "color": "#efe6d2", "length": "knee", "border": "#3d5470" }, "himation": { "color": "#8c3b2a", "border": "#c9922e" }, "rings": true, "props": ["scroll"] }
+    },
+    {
+      "id": "plato",
+      "nameKey": "char.plato",
+      "historical": true,
+      "appearance": { "height": 1.78, "build": 0.85, "age": "old", "skin": "#c08a64", "hair": { "style": "short", "color": "#9a9590" }, "beard": { "style": "full", "color": "#a39e98" },
+        "chiton": { "color": "#e8dfca", "length": "ankle" }, "himation": { "color": "#d9cbb0", "border": "#6b5a3e" }, "props": [] }
+    },
+    {
+      "id": "speusippus",
+      "nameKey": "char.speusippus",
+      "historical": true,
+      "appearance": { "height": 1.72, "build": 0.6, "age": "adult", "skin": "#c08a64", "hair": { "style": "short", "color": "#3a2618" }, "beard": { "style": "trimmed", "color": "#3a2618" },
+        "chiton": { "color": "#d9cbb0", "length": "ankle" }, "himation": { "color": "#6b5a3e" }, "props": ["tablet"] }
+    },
+    {
+      "id": "xenocrates",
+      "nameKey": "char.xenocrates",
+      "historical": true,
+      "appearance": { "height": 1.76, "build": 0.55, "age": "adult", "skin": "#b98560", "hair": { "style": "short", "color": "#1d1510" }, "beard": { "style": "full", "color": "#1d1510" },
+        "chiton": { "color": "#c9b79a", "length": "ankle" }, "himation": { "color": "#4a4038" }, "props": [] }
+    },
+    {
+      "id": "eudoxus",
+      "nameKey": "char.eudoxus",
+      "historical": true,
+      "appearance": { "height": 1.7, "build": 0.45, "age": "adult", "skin": "#a8744f", "hair": { "style": "curly", "color": "#2b1d14" }, "beard": { "style": "trimmed", "color": "#2b1d14" },
+        "chiton": { "color": "#b8a07a", "length": "knee" }, "chlamys": "#5e4a36", "petasos": true, "props": ["tablet"] }
+    },
+    {
+      "id": "heraclides",
+      "nameKey": "char.heraclides",
+      "historical": true,
+      "appearance": { "height": 1.74, "build": 0.9, "age": "youth", "skin": "#d8a882", "hair": { "style": "curly", "color": "#4a3220" }, "beard": { "style": "stubble", "color": "#4a3220" },
+        "chiton": { "color": "#efe6d2", "length": "ankle", "border": "#c9922e" }, "himation": { "color": "#6a2a5a", "border": "#c9922e" }, "rings": true, "props": [] }
+    },
+    {
+      "id": "philip",
+      "nameKey": "char.philip",
+      "historical": true,
+      "appearance": { "height": 1.66, "build": 0.35, "age": "adult", "skin": "#c99872", "hair": { "style": "short", "color": "#4a3220" }, "beard": { "style": "trimmed", "color": "#4a3220" },
+        "chiton": { "color": "#e8dfca", "length": "ankle" }, "himation": { "color": "#7a6a50" }, "props": ["tablet"] }
+    },
+    {
+      "id": "axiothea",
+      "nameKey": "char.axiothea",
+      "historical": true,
+      "appearance": { "height": 1.62, "build": 0.25, "sex": "f", "age": "youth", "skin": "#d8a882", "hair": { "style": "cropped", "color": "#3a2618" }, "beard": { "style": "none", "color": "#3a2618" },
+        "chiton": { "color": "#c9b79a", "length": "knee" }, "himation": { "color": "#4f6a8a" }, "props": ["scroll"] }
+    },
+    {
+      "id": "lasthenia",
+      "nameKey": "char.lasthenia",
+      "historical": true,
+      "appearance": { "height": 1.6, "build": 0.4, "sex": "f", "age": "adult", "skin": "#c99872", "hair": { "style": "bun", "color": "#1d1510" }, "beard": { "style": "none", "color": "#1d1510" },
+        "chiton": { "color": "#efe6d2", "length": "ankle", "border": "#8c3b2a" }, "himation": { "color": "#3d5470" }, "props": [] }
+    },
+    {
+      "id": "diogenes",
+      "nameKey": "char.diogenes",
+      "historical": true,
+      "appearance": { "height": 1.7, "build": 0.2, "age": "adult", "skin": "#a8744f", "hair": { "style": "wild", "color": "#5a4a3a" }, "beard": { "style": "ragged", "color": "#5a4a3a" },
+        "chiton": { "color": "#6b5a3e", "length": "short" }, "himation": { "color": "#5e5040" }, "props": ["staff", "lamp"] }
+    },
+    {
+      "id": "dion",
+      "nameKey": "char.dion",
+      "historical": true,
+      "appearance": { "height": 1.8, "build": 0.7, "age": "adult", "skin": "#c08a64", "hair": { "style": "short", "color": "#2b1d14" }, "beard": { "style": "full", "color": "#2b1d14" },
+        "chiton": { "color": "#efe6d2", "length": "ankle", "border": "#6a2a5a" }, "himation": { "color": "#a8442e", "border": "#c9922e" }, "rings": true, "props": [] }
+    },
+    {
+      "id": "theophrastus",
+      "nameKey": "char.theophrastus",
+      "historical": true,
+      "appearance": { "height": 1.72, "build": 0.45, "age": "adult", "skin": "#c99872", "hair": { "style": "curly", "color": "#3a2618" }, "beard": { "style": "trimmed", "color": "#3a2618" },
+        "chiton": { "color": "#d9cbb0", "length": "knee" }, "himation": { "color": "#5e6b44" }, "props": ["basket"] }
+    },
+    {
+      "id": "gymnasiarch",
+      "nameKey": "char.gymnasiarch",
+      "historical": false,
+      "appearance": { "height": 1.8, "build": 1.0, "age": "adult", "skin": "#a8744f", "hair": { "style": "cropped", "color": "#2b1d14" }, "beard": { "style": "full", "color": "#2b1d14" },
+        "chiton": { "color": "#a8442e", "length": "short" }, "props": ["staff"] }
+    },
+    {
+      "id": "kallias",
+      "nameKey": "char.kallias",
+      "historical": false,
+      "appearance": { "height": 1.65, "build": 0.6, "age": "adult", "skin": "#b98560", "hair": { "style": "short", "color": "#3a2618" }, "beard": { "style": "full", "color": "#3a2618" },
+        "chiton": { "color": "#7a6a50", "length": "short" }, "exomis": true, "props": ["amphora"] }
+    }
+  ]
+}

@@ -582,17 +582,17 @@
       "id": "gymnasium",
       "x": 0,
       "z": 0,
-      "hw": 26,
-      "hd": 26,
+      "hw": 24,
+      "hd": 24,
       "margin": 10,
-      "surface": "paving"
+      "surface": "dirt"
     },
     {
       "id": "palaestra_sand",
       "x": 0,
       "z": 0,
-      "hw": 15,
-      "hd": 15,
+      "hw": 14,
+      "hd": 14,
       "margin": 0.5,
       "surface": "sand"
     },
@@ -804,7 +804,7 @@
       "x": 2700,
       "z": 900,
       "radius": 300,
-      "height": 250
+      "height": 225
     },
     "ranges": [
       {
@@ -823,7 +823,7 @@
             -2600
           ]
         ],
-        "height": 420,
+        "height": 278,
         "width": 1400
       },
       {
@@ -842,7 +842,7 @@
             -4600
           ]
         ],
-        "height": 900,
+        "height": 300,
         "width": 2200
       },
       {
@@ -861,7 +861,7 @@
             4400
           ]
         ],
-        "height": 900,
+        "height": 488,
         "width": 2000
       },
       {
@@ -876,7 +876,7 @@
             -2600
           ]
         ],
-        "height": 1000,
+        "height": 343,
         "width": 2200
       }
     ],
@@ -884,6 +884,7 @@
       "x": 1200,
       "z": 7000,
       "radius": 4500
-    }
+    },
+    "notes": "Range heights scaled so each keeps its real apparent elevation angle seen from the Academy (game distances are compressed)."
   }
 }

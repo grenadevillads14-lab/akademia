@@ -53,3 +53,12 @@ Everything in the game that touches history is listed here under one of three he
 - The number and placement of herms used as fast-travel points.
 - Daily schedules of named historical people.
 - Specific events and quests (unless listed above).
+- **Built environment (look-test stage):** the Dipylon's dimensions (34 × 20 m court, 9 m towers) are approximations of the
+  excavated plan; tower windows and pyramid roofs follow better-preserved 4th-century towers elsewhere (e.g. Messene), not the
+  Dipylon itself. House plans follow the Olynthus "pastas" type. The Pompeion is simplified to a walled court with porticoes.
+  Grave terraces, monument mix and the positions of casualty lists are invented, in the documented style. Names on casualty lists
+  are generic Athenian names grouped under the real ten tribes, not a transcription of a real list.
+- Academy buildings: the gymnasium follows Vitruvius' palaestra plan at the size of the excavated 4th-century square peristyle;
+  the xystos, Mouseion shrine form, altar positions and the line of Hipparchus' wall are invented placements.
+- Poly Haven photographic textures stand in for Attic limestone, plaster and earth; the stand-in plants (e.g. "rooibos" scrub for
+  thyme and rosemary) are visual substitutes, not South African flora in Athens.

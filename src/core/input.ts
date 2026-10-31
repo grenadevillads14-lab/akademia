@@ -116,6 +116,11 @@ export class InputState {
     return this.bindings[action].some((c) => this.down.has(c));
   }
 
+  /** Raw physical code pressed this frame (e.g. "Digit1"), for UI that isn't action-bound. */
+  wasCodePressed(code: string): boolean {
+    return this.pressedThisFrame.has(code);
+  }
+
   wasPressed(action: Action): boolean {
     return this.bindings[action].some((c) => this.pressedThisFrame.has(c));
   }

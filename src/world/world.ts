@@ -10,7 +10,7 @@ import { buildBackdrop } from './backdrop';
 import { createHeightfield, type Heightfield } from './heightfield';
 import { parseLayout, type Layout } from './layout';
 import { createSky, type SkySystem } from './sky';
-import { buildStructures, type Structures } from './structures';
+import { buildStructures, type Poi, type Structures } from './structures';
 import { buildTerrain, type GroundLayers, type Terrain } from './terrain';
 import type { WorldUniforms } from './uniforms';
 import { parseVegetationPlan, planVegetation } from './vegetationPlan';
@@ -31,6 +31,8 @@ export interface World {
   readonly sky: SkySystem;
   readonly structures: Structures | null;
   readonly crowd: Crowd;
+  /** All points of interest: structures + named trees (moriai, the teaching plane). */
+  readonly pois: Poi[];
   readonly root: THREE.Group;
   /** Per-frame updates of LODs and ambient life. */
   update(camera: THREE.Camera, dt: number): void;
@@ -55,12 +57,12 @@ export function loadLayoutData(id: string): { layout: Layout; vegetation: unknow
 const GROUND: { id: TexId; metres: number }[] = [
   { id: 'sparse_grass', metres: 4 },
   { id: 'dry_ground_01', metres: 4 },
-  { id: 'stony_dirt_path', metres: 3 },
+  { id: 'gravelly_sand', metres: 3.5 },
   { id: 'rock_face', metres: 6 },
   { id: 'sand_01', metres: 3 },
   { id: 'brown_mud', metres: 4 },
   { id: 'rock_tile_floor', metres: 3.5 },
-  { id: 'gravel_road', metres: 6 },
+  { id: 'rocky_trail', metres: 4.5 },
 ];
 
 async function loadGroundLayers(): Promise<GroundLayers> {
@@ -120,7 +122,7 @@ export async function buildWorld(
   root.add(forest.group);
 
   await step('loading.grass');
-  const grass = createGrass(terrain, ctx.uniforms, { density: g.vegetationDensity, radius: g.preset === 'low' ? 22 : g.preset === 'medium' ? 30 : 40 });
+  const grass = createGrass(terrain, ctx.uniforms, { density: g.vegetationDensity, radius: g.preset === 'low' ? 24 : g.preset === 'medium' ? 34 : 48 });
   root.add(grass.mesh);
 
   await step('loading.city');
@@ -142,6 +144,9 @@ export async function buildWorld(
   for (const [x, z, n, r] of [[441, 497, 5, 1.6], [449, 514, 4, 1.3], [418, 476, 3, 1.2]] as const) crowd.addGroup(x, z, n, r);
   root.add(crowd.group);
 
+  const pois: Poi[] = [...(structures?.pois ?? [])];
+  for (const p of plants) if (p.id) pois.push({ id: p.id, kind: p.species === 'moria' ? 'moria' : 'tree', position: new THREE.Vector3(p.x, hf.height(p.x, p.z), p.z) });
+
   ctx.scene.add(root);
 
   return {
@@ -155,6 +160,7 @@ export async function buildWorld(
     sky,
     structures,
     crowd,
+    pois,
     root,
     update(camera, dt) {
       structures?.update(camera, dt);

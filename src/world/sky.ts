@@ -44,10 +44,10 @@ const KEYS: Key[] = [
   { el: -18, sun: C(0x000000), sunI: 0, sky: C(0x1b2440), ground: C(0x0c0d12), hemiI: 0.35, fog: C(0x0d1220), exposure: 1.25 },
   { el: -6, sun: C(0x000000), sunI: 0, sky: C(0x3a3f6e), ground: C(0x1a1620), hemiI: 0.45, fog: C(0x2a2c4a), exposure: 1.15 },
   { el: -1, sun: C(0xff6a3a), sunI: 0.3, sky: C(0x7b6a9a), ground: C(0x3a2c2a), hemiI: 0.6, fog: C(0x8a6f86), exposure: 1.0 },
-  { el: 4, sun: C(0xff8c4a), sunI: 2.0, sky: C(0xd9a07a), ground: C(0x5a4030), hemiI: 0.8, fog: C(0xe0a982), exposure: 0.85 },
-  { el: 12, sun: C(0xffb36b), sunI: 3.0, sky: C(0xb9c6d4), ground: C(0x7a6040), hemiI: 1.0, fog: C(0xe6caa4), exposure: 0.8 },
-  { el: 30, sun: C(0xffe2b8), sunI: 3.4, sky: C(0xa8c4e0), ground: C(0x8a7350), hemiI: 1.1, fog: C(0xcdd6da), exposure: 0.75 },
-  { el: 90, sun: C(0xfff2dc), sunI: 3.6, sky: C(0x9cc0e6), ground: C(0x8a7a5a), hemiI: 1.15, fog: C(0xc8d6e0), exposure: 0.72 },
+  { el: 4, sun: C(0xff8c4a), sunI: 2.0, sky: C(0xd9a07a), ground: C(0x5a4030), hemiI: 0.8, fog: C(0xe0a982), exposure: 1.0 },
+  { el: 12, sun: C(0xffb36b), sunI: 3.0, sky: C(0xb9c6d4), ground: C(0x7a6040), hemiI: 1.0, fog: C(0xe6caa4), exposure: 0.98 },
+  { el: 30, sun: C(0xffe2b8), sunI: 3.4, sky: C(0xa8c4e0), ground: C(0x8a7350), hemiI: 1.1, fog: C(0xcdd6da), exposure: 0.92 },
+  { el: 90, sun: C(0xfff2dc), sunI: 3.6, sky: C(0x9cc0e6), ground: C(0x8a7a5a), hemiI: 1.15, fog: C(0xc8d6e0), exposure: 0.9 },
 ];
 
 function sampleKeys(el: number, out: Key): Key {

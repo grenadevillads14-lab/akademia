@@ -104,10 +104,13 @@ export function buildHumanoid(a: Appearance): Humanoid {
 
   // --- Parts ---
   const parts: Part[] = [];
+  /** Colours that are fabric (get the linen weave); everything else is skin, hair, leather or metal. */
+  const cloth = new Set<THREE.Color>();
   const skin = col(a.skin);
   const hairC = col(a.hair.color);
   const beardC = col(a.beard.color);
   const chitonC = col(a.chiton.color);
+  cloth.add(chitonC);
   const sandal = col('#6b4a2e');
 
   const add = (geo: THREE.BufferGeometry, color: THREE.Color, bone: Part['bone']) => parts.push({ geo, color, bone });
@@ -256,12 +259,15 @@ export function buildHumanoid(a: Appearance): Humanoid {
     add(g, color, skirtWeights);
   };
   if (a.loincloth) {
-    skirt(hipY + 0.03 * s, hipY - 0.1 * s, dims.chestW * 1.0, dims.chestW * 1.02, col('#e9e1cf'));
+    const lc = col('#e9e1cf');
+    cloth.add(lc);
+    skirt(hipY + 0.03 * s, hipY - 0.1 * s, dims.chestW * 1.0, dims.chestW * 1.02, lc);
   } else {
     const hem = a.chiton.length === 'short' ? hipY - 0.25 * s : a.chiton.length === 'knee' ? hipY - dims.thigh - 0.04 * s : 0.12 * s;
     skirt(hipY + 0.08 * s, hem, dims.chestW * 1.02, dims.chestW * 1.25, chitonC, 18, a.chiton.length === 'ankle' ? 0.06 * s : 0.02 * s);
     if (a.chiton.border) {
       const bc = col(a.chiton.border);
+      cloth.add(bc);
       skirt(hem + 0.035 * s, hem, dims.chestW * 1.25 + 0.004, dims.chestW * 1.27 + 0.006, bc, 18, a.chiton.length === 'ankle' ? 0.06 * s : 0.02 * s);
     }
     // Belt (zone).
@@ -275,9 +281,14 @@ export function buildHumanoid(a: Appearance): Humanoid {
   // Himation: a heavy cloak wrapped around the body, over the LEFT shoulder, right arm free.
   if (a.himation) {
     const hc = col(a.himation.color);
+    cloth.add(hc);
     const hemY = a.age === 'youth' ? hipY - dims.thigh - 0.02 * s : 0.3 * s;
     skirt(hipY + 0.16 * s, hemY, dims.chestW * 1.18, dims.chestW * 1.42, hc, 20, 0.05 * s);
-    if (a.himation.border) skirt(hemY + 0.04 * s, hemY, dims.chestW * 1.42 + 0.006, dims.chestW * 1.44 + 0.008, col(a.himation.border), 20, 0.05 * s);
+    if (a.himation.border) {
+      const hb = col(a.himation.border);
+      cloth.add(hb);
+      skirt(hemY + 0.04 * s, hemY, dims.chestW * 1.42 + 0.006, dims.chestW * 1.44 + 0.008, hb, 20, 0.05 * s);
+    }
     // Diagonal band from the left shoulder across the chest and back to the right hip.
     const band = new THREE.CylinderGeometry(dims.chestW * 1.18, dims.chestW * 1.22, 0.2 * s, 18, 1, true);
     band.scale(1, 1, 0.78);
@@ -294,6 +305,7 @@ export function buildHumanoid(a: Appearance): Humanoid {
   // Chlamys: short cloak pinned at the right shoulder (travellers, horsemen, young men).
   if (a.chlamys) {
     const cc = col(a.chlamys);
+    cloth.add(cc);
     // Theta 0 is +Z (front); cover the back half and drape over both shoulders.
     const cape = new THREE.CylinderGeometry(dims.chestW * 0.9, dims.chestW * 1.5, 0.62 * s, 16, 3, true, Math.PI * 0.42, Math.PI * 1.16);
     cape.scale(1, 1, 0.85);
@@ -315,9 +327,11 @@ export function buildHumanoid(a: Appearance): Humanoid {
   const tmp = new THREE.Vector3();
   for (const part of parts) {
     const g = part.geo.index ? part.geo.toNonIndexed() : part.geo;
-    for (const name of Object.keys(g.attributes)) if (name !== 'position' && name !== 'normal') g.deleteAttribute(name);
+    for (const name of Object.keys(g.attributes)) if (name !== 'position' && name !== 'normal' && name !== 'uv') g.deleteAttribute(name);
     if (!g.attributes.normal) g.computeVertexNormals();
     const n = g.attributes.position!.count;
+    if (!g.attributes.uv) g.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(n * 2), 2));
+    g.setAttribute('aCloth', new THREE.BufferAttribute(new Float32Array(n).fill(cloth.has(part.color) ? 1 : 0), 1));
     const colors = new Float32Array(n * 3);
     const skinIndex = new Uint16Array(n * 4);
     const skinWeight = new Float32Array(n * 4);
@@ -350,7 +364,7 @@ export function buildHumanoid(a: Appearance): Humanoid {
   for (const p of parts) p.geo.dispose();
   merged.computeBoundingSphere();
 
-  const material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, metalness: 0 });
+  const material = characterMaterial();
   const mesh = new THREE.SkinnedMesh(merged, material);
   mesh.castShadow = true;
   mesh.receiveShadow = true;
@@ -390,6 +404,56 @@ export function buildHumanoid(a: Appearance): Humanoid {
       });
     },
   };
+}
+
+/**
+ * Shared character material: vertex colours, with the Poly Haven linen weave (albedo and normal)
+ * applied only where aCloth = 1. Characters share one program (and one texture load).
+ */
+let sharedLinen: { diff: THREE.Texture; nor: THREE.Texture } | null = null;
+function characterMaterial(): THREE.MeshStandardMaterial {
+  if (!sharedLinen && typeof document !== 'undefined') {
+    const loader = new THREE.TextureLoader();
+    const base = `${import.meta.env.BASE_URL}assets/ph/textures/rough_linen/`;
+    const diff = loader.load(`${base}diff.webp`);
+    diff.colorSpace = THREE.SRGBColorSpace;
+    const nor = loader.load(`${base}nor.webp`);
+    for (const t of [diff, nor]) {
+      t.wrapS = t.wrapT = THREE.RepeatWrapping;
+      t.anisotropy = 4;
+    }
+    sharedLinen = { diff, nor };
+  }
+  const mat = new THREE.MeshStandardMaterial({
+    vertexColors: true,
+    roughness: 0.85,
+    metalness: 0,
+    ...(sharedLinen ? { map: sharedLinen.diff, normalMap: sharedLinen.nor, normalScale: new THREE.Vector2(0.8, 0.8) } : {}),
+  });
+  mat.onBeforeCompile = (shader) => {
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', '#include <common>\nattribute float aCloth;\nvarying float vCloth;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvCloth = aCloth;');
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', '#include <common>\nvarying float vCloth;')
+      .replace(
+        '#include <map_fragment>',
+        `#ifdef USE_MAP
+           vec4 weave = texture2D(map, vMapUv * vec2(7.0, 4.0));
+           // The linen photo is light grey; normalise it so it adds texture, not tint.
+           diffuseColor.rgb *= mix(vec3(1.0), weave.rgb / max(dot(weave.rgb, vec3(0.333)), 0.05) * 0.92, vCloth * 0.85);
+         #endif`,
+      )
+      .replace(
+        '#include <normal_fragment_maps>',
+        `#ifdef USE_NORMALMAP_TANGENTSPACE
+           vec3 mapN = texture2D(normalMap, vNormalMapUv * vec2(7.0, 4.0)).xyz * 2.0 - 1.0;
+           mapN.xy *= normalScale * vCloth;
+           normal = normalize(tbn * mapN);
+         #endif`,
+      );
+  };
+  return mat;
 }
 
 function buildProp(kind: string, s: number): THREE.Object3D | null {
