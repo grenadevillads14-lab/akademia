@@ -173,8 +173,8 @@ export function createSky(
   sun.shadow.camera.bottom = -span;
   sun.shadow.camera.near = 1;
   sun.shadow.camera.far = 400;
-  sun.shadow.bias = -0.0005;
-  sun.shadow.normalBias = 0.03;
+  sun.shadow.bias = -0.0007;
+  sun.shadow.normalBias = 0.06; // layered cloth on characters otherwise self-shadows in blocks
   sun.shadow.radius = opts.shadowMapSize >= 2048 ? 2.5 : 1.5; // soft PCF edges
   scene.add(sun);
   scene.add(sun.target);
@@ -253,7 +253,7 @@ export function createSky(
         fog.density = system.fogDensity;
       }
       renderer.toneMappingExposure = key.exposure;
-      clouds.update(camera, sunDir, system.sunColor, key.sky, uniforms.time.value, 0.32 + system.overcast * 0.55, nightness);
+      clouds.update(camera, sunDir, system.sunColor, key.sky, uniforms.time.value, 0.4 + system.overcast * 0.5, nightness);
     },
     dispose() {
       for (const o of [sky, stars, moon, hemi, sun, sun.target, moonLight, moonLight.target, clouds.mesh]) scene.remove(o);

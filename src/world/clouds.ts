@@ -72,10 +72,10 @@ export function createClouds(): Clouds {
       const float H = 2000.0;
       float density(vec2 xz) {
         vec2 w = vec2(uTime * 7.0, uTime * 2.5);
-        vec2 q = (xz + w) / 7000.0;
+        vec2 q = (xz + w) / 14000.0;
         float base = texture2D(uNoise, q).r;
         float detail = texture2D(uNoise, q * 3.3 + 0.37).g * 0.5 + texture2D(uNoise, q * 9.1 + 0.71).b * 0.28;
-        float d = base * 1.1 + detail * 0.55 - (1.2 - uCoverage);
+        float d = base * 1.15 + detail * 0.5 - (1.18 - uCoverage);
         return clamp(d * 2.6, 0.0, 1.0);
       }
       void main() {
@@ -87,7 +87,7 @@ export function createClouds(): Clouds {
         if (d < 0.01) discard;
         // Self-shadowing: march a little toward the sun across the sheet (bellies grey, tops bright).
         vec2 sd = normalize(uSunDir.xz + 1e-4) * (1.0 - clamp(uSunDir.y, 0.0, 0.95));
-        float occ = density(p + sd * 180.0) * 0.5 + density(p + sd * 420.0) * 0.35 + density(p + sd * 800.0) * 0.25;
+        float occ = density(p + sd * 300.0) * 0.5 + density(p + sd * 700.0) * 0.35 + density(p + sd * 1300.0) * 0.25;
         float lightT = exp(-occ * 2.4 - d * 1.2);
         float cosA = dot(rd, uSunDir);
         float silver = pow(max(cosA, 0.0), 10.0) * (1.0 - d) * 2.5;

@@ -21,7 +21,7 @@ export function createClutter(hf: Heightfield, leafAtlas: THREE.Texture, opts: {
   group.name = 'clutter';
   const across = Math.ceil((opts.radius * 2) / TILE) + 1;
   const tiles = across * across;
-  const perTilePebbles = Math.round(140 * opts.density);
+  const perTilePebbles = Math.round(200 * opts.density);
   const perTileLeaves = Math.round(110 * opts.density);
 
   // Pebbles: irregular, flattened icosahedra.
@@ -35,7 +35,7 @@ export function createClutter(hf: Heightfield, leafAtlas: THREE.Texture, opts: {
     }
     pebbleGeo.computeVertexNormals();
   }
-  const pebbleMat = new THREE.MeshStandardMaterial({ roughness: 0.95, color: 0xffffff, envMapIntensity: 0.5 });
+  const pebbleMat = new THREE.MeshStandardMaterial({ roughness: 0.95, color: 0xffffff, envMapIntensity: 0.25 });
   const pebbles = new THREE.InstancedMesh(pebbleGeo, pebbleMat, tiles * perTilePebbles);
   pebbles.castShadow = false;
   pebbles.receiveShadow = true;
@@ -81,15 +81,15 @@ export function createClutter(hf: Heightfield, leafAtlas: THREE.Texture, opts: {
       const stony = w[2]! * 1.0 + w[7]! * 0.9 + w[1]! * 0.45 + w[3]! * 1.0 + w[4]! * 0.25 + w[0]! * 0.08;
       const keep = rng() < stony && hf.water(x, z).level < hf.height(x, z) - 0.05;
       const r = keep ? 0.012 + Math.pow(rng(), 3) * 0.07 : 0;
-      pos.set(x, hf.height(x, z) + r * 0.15, z);
+      pos.set(x, hf.height(x, z) - r * 0.2, z); // half sunk into the soil
       q.setFromEuler(new THREE.Euler((rng() - 0.5) * 0.4, rng() * Math.PI * 2, (rng() - 0.5) * 0.4));
       s.set(r, r, r);
       m.compose(pos, q, s);
       const k = slot * perTilePebbles + i;
       pebbles.setMatrixAt(k, m);
       // Limestone and schist pebbles: earthy, not white.
-      const shade = 0.22 + rng() * 0.22;
-      col.setRGB(shade * 1.08, shade * 0.98, shade * 0.84);
+      const shade = 0.24 + rng() * 0.2;
+      col.setRGB(shade * 1.15, shade * 0.97, shade * 0.76);
       pebbles.setColorAt(k, col);
     }
     for (let i = 0; i < perTileLeaves; i++) {
