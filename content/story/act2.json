@@ -1,0 +1,335 @@
+{
+  "notes": "Act 2: The life of the school (autumn 367 – 365 BC). Dialogue in content/dialogue/act2.ink.",
+  "order": 3,
+  "quests": {
+    "act2": {
+      "titleKey": "quest.act2",
+      "steps": {
+        "stars": {
+          "textKey": "quest.act2.stars",
+          "marker": [
+            330,
+            -480
+          ]
+        },
+        "solids": {
+          "textKey": "quest.act2.solids",
+          "marker": [
+            -126,
+            128
+          ]
+        },
+        "torch": {
+          "textKey": "quest.act2.torch",
+          "marker": [
+            118,
+            150
+          ]
+        },
+        "plato_returns": {
+          "textKey": "quest.act2.plato_returns",
+          "marker": [
+            160.5,
+            -260.5
+          ]
+        },
+        "lesson": {
+          "textKey": "quest.act2.lesson",
+          "marker": [
+            160,
+            -262
+          ]
+        },
+        "cave": {
+          "textKey": "quest.act2.cave",
+          "marker": [
+            160,
+            -262
+          ]
+        }
+      }
+    },
+    "axiothea": {
+      "titleKey": "quest.axiothea",
+      "steps": {
+        "fetch": {
+          "textKey": "quest.axiothea.fetch",
+          "marker": [
+            205,
+            -300
+          ]
+        },
+        "return": {
+          "textKey": "quest.axiothea.return",
+          "marker": [
+            160,
+            -262
+          ]
+        }
+      }
+    }
+  },
+  "npcs": [
+    {
+      "npc": "eudoxus",
+      "when": {
+        "flag": "plato_returned"
+      },
+      "ring": [
+        160,
+        -262,
+        6.3,
+        1.8
+      ],
+      "anim": "sit"
+    },
+    {
+      "npc": "eudoxus",
+      "when": {
+        "questStep": "act2:stars"
+      },
+      "x": 326,
+      "z": -474,
+      "heading": 0.9,
+      "anim": "gesture"
+    },
+    {
+      "npc": "xenocrates",
+      "when": {
+        "questStep": "act2:solids"
+      },
+      "x": -121,
+      "z": 123,
+      "heading": -0.8,
+      "anim": "idle"
+    },
+    {
+      "npc": "plato",
+      "when": {
+        "questStep": "act2:plato_returns"
+      },
+      "x": 160.5,
+      "z": -260.5,
+      "heading": 0.6,
+      "anim": "idle"
+    },
+    {
+      "npc": "plato",
+      "when": {
+        "flag": "plato_returned"
+      },
+      "x": 160.5,
+      "z": -260.5,
+      "heading": 0.6,
+      "anim": "drawDirt"
+    },
+    {
+      "npc": "diogenes",
+      "when": {
+        "questStep": "act2:lesson",
+        "notFlag": "chicken_seen"
+      },
+      "x": 168,
+      "z": -252,
+      "heading": -2.4,
+      "anim": "idle"
+    }
+  ],
+  "triggers": [
+    {
+      "id": "act2_start",
+      "type": "auto",
+      "dialogue": "act2.autumn",
+      "requires": {
+        "questDone": "act1",
+        "notFlag": "act2_started"
+      },
+      "set": "act2_started"
+    },
+    {
+      "id": "eudoxus_stars",
+      "type": "talk",
+      "npc": "eudoxus",
+      "dialogue": "act2.eudoxus_stars",
+      "requires": {
+        "questStep": "act2:stars",
+        "notFlag": "spheres_solved"
+      }
+    },
+    {
+      "id": "stars_done",
+      "type": "auto",
+      "dialogue": "act2.stars_done",
+      "requires": {
+        "questStep": "act2:stars",
+        "flag": "spheres_solved"
+      }
+    },
+    {
+      "id": "xenocrates_solids",
+      "type": "talk",
+      "npc": "xenocrates",
+      "dialogue": "act2.xenocrates_solids",
+      "requires": {
+        "questStep": "act2:solids",
+        "notFlag": "solids_solved"
+      }
+    },
+    {
+      "id": "solids_done",
+      "type": "auto",
+      "dialogue": "act2.solids_done",
+      "requires": {
+        "questStep": "act2:solids",
+        "flag": "solids_solved"
+      }
+    },
+    {
+      "id": "promethia",
+      "type": "interact",
+      "poi": "altar-prometheus",
+      "labelKey": "interact.torch_altar",
+      "dialogue": "act2.promethia",
+      "requires": {
+        "questStep": "act2:torch",
+        "notFlag": "torch_run"
+      }
+    },
+    {
+      "id": "torch_done",
+      "type": "auto",
+      "dialogue": "act2.torch_done",
+      "requires": {
+        "questStep": "act2:torch",
+        "flag": "torch_run"
+      }
+    },
+    {
+      "id": "plato_back",
+      "type": "talk",
+      "npc": "plato",
+      "dialogue": "act2.plato_back",
+      "requires": {
+        "questStep": "act2:plato_returns",
+        "notFlag": "plato_returned"
+      }
+    },
+    {
+      "id": "plato_delian_retry",
+      "type": "talk",
+      "npc": "plato",
+      "dialogue": "act2.plato_delian_retry",
+      "requires": {
+        "questStep": "act2:plato_returns",
+        "flag": "plato_returned",
+        "notFlag": "delian_solved"
+      }
+    },
+    {
+      "id": "delian_done",
+      "type": "auto",
+      "dialogue": "act2.delian_done",
+      "requires": {
+        "questStep": "act2:plato_returns",
+        "flag": "delian_solved"
+      }
+    },
+    {
+      "id": "plato_lesson",
+      "type": "zone",
+      "circle": [
+        160,
+        -262,
+        9
+      ],
+      "dialogue": "act2.plato_lesson",
+      "requires": {
+        "questStep": "act2:lesson",
+        "notFlag": "chicken_seen"
+      }
+    },
+    {
+      "id": "line_retry",
+      "type": "talk",
+      "npc": "plato",
+      "dialogue": "act2.line_retry",
+      "requires": {
+        "questStep": "act2:lesson",
+        "flag": "chicken_seen",
+        "notFlag": "divided_line_solved"
+      }
+    },
+    {
+      "id": "line_done",
+      "type": "auto",
+      "dialogue": "act2.line_done",
+      "requires": {
+        "questStep": "act2:lesson",
+        "flag": "divided_line_solved"
+      }
+    },
+    {
+      "id": "cave_wake",
+      "type": "auto",
+      "dialogue": "act2.cave_wake",
+      "requires": {
+        "questStep": "act2:cave",
+        "flag": "cave_done"
+      }
+    },
+    {
+      "id": "cave_story",
+      "type": "zone",
+      "circle": [
+        160,
+        -262,
+        9
+      ],
+      "dialogue": "act2.cave_story",
+      "requires": {
+        "questStep": "act2:cave",
+        "notFlag": "cave_done"
+      }
+    },
+    {
+      "id": "axiothea_secret",
+      "type": "talk",
+      "npc": "axiothea",
+      "dialogue": "act2.axiothea_secret",
+      "requires": {
+        "flag": "plato_returned",
+        "notFlag": "axiothea_met"
+      },
+      "set": "axiothea_met"
+    },
+    {
+      "id": "plato_house_scroll",
+      "type": "interact",
+      "poi": "plato-house",
+      "labelKey": "interact.plato_house",
+      "dialogue": "act2.plato_house_scroll",
+      "requires": {
+        "questStep": "axiothea:fetch"
+      }
+    },
+    {
+      "id": "axiothea_return",
+      "type": "talk",
+      "npc": "axiothea",
+      "dialogue": "act2.axiothea_return",
+      "requires": {
+        "questStep": "axiothea:return"
+      }
+    },
+    {
+      "id": "diogenes_act2",
+      "type": "talk",
+      "npc": "diogenes",
+      "dialogue": "act2.diogenes_act2",
+      "requires": {
+        "questActive": "act2",
+        "notFlag": "diogenes_act2"
+      }
+    }
+  ]
+}

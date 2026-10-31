@@ -1,0 +1,370 @@
+{
+  "notes": "Athletic events (M6). Rival names are students of the school or extras in content/story/athletics.json. Times are tuned to the player's jog 3.8 m/s and sprint 6.4 m/s with stamina. The stadion here is one length of the dromos, about 177 m (the Attic stade was about 185 m).",
+  "races": {
+    "stadion": {
+      "titleKey": "athletics.stadion",
+      "course": [
+        [
+          56,
+          95
+        ],
+        [
+          56,
+          6
+        ],
+        [
+          56,
+          -82
+        ]
+      ],
+      "radius": 4.5,
+      "countdown": 3,
+      "start": {
+        "x": 56,
+        "z": 97.5,
+        "heading": 3.1416
+      },
+      "rivals": [
+        {
+          "id": "thrasyllos",
+          "time": 33.5,
+          "pace": 0.92
+        },
+        {
+          "id": "damon",
+          "time": 36.0,
+          "pace": 1.05
+        },
+        {
+          "id": "heraclides",
+          "time": 40.5,
+          "pace": 1.0
+        }
+      ],
+      "onPlace": {
+        "1": [
+          "xp gymnastike 40",
+          "rep gymnasiarch 1",
+          "flag won_stadion"
+        ],
+        "2": [
+          "xp gymnastike 25"
+        ],
+        "3": [
+          "xp gymnastike 15"
+        ],
+        "4": [
+          "xp gymnastike 10"
+        ]
+      }
+    },
+    "diaulos": {
+      "titleKey": "athletics.diaulos",
+      "course": [
+        [
+          56,
+          95
+        ],
+        [
+          56,
+          6
+        ],
+        [
+          56,
+          -82
+        ],
+        [
+          56,
+          6
+        ],
+        [
+          56,
+          95
+        ]
+      ],
+      "radius": 4.5,
+      "countdown": 3,
+      "start": {
+        "x": 56,
+        "z": 97.5,
+        "heading": 3.1416
+      },
+      "rivals": [
+        {
+          "id": "thrasyllos",
+          "time": 70,
+          "pace": 0.95
+        },
+        {
+          "id": "damon",
+          "time": 75,
+          "pace": 1.08
+        },
+        {
+          "id": "heraclides",
+          "time": 84,
+          "pace": 1.0
+        }
+      ],
+      "onPlace": {
+        "1": [
+          "xp gymnastike 60",
+          "rep gymnasiarch 1",
+          "flag won_diaulos"
+        ],
+        "2": [
+          "xp gymnastike 35"
+        ],
+        "3": [
+          "xp gymnastike 20"
+        ],
+        "4": [
+          "xp gymnastike 10"
+        ]
+      }
+    },
+    "torch": {
+      "titleKey": "athletics.torch",
+      "torch": true,
+      "course": [
+        [
+          118,
+          150
+        ],
+        [
+          150,
+          190
+        ],
+        [
+          196,
+          236
+        ],
+        [
+          255,
+          300
+        ],
+        [
+          320,
+          372
+        ],
+        [
+          380,
+          430
+        ],
+        [
+          432.7,
+          493.2
+        ]
+      ],
+      "radius": 7,
+      "countdown": 4,
+      "start": {
+        "x": 121,
+        "z": 154,
+        "heading": 0.67
+      },
+      "rivals": [
+        {
+          "id": "thrasyllos",
+          "time": 108,
+          "pace": 0.85,
+          "outAt": 70
+        },
+        {
+          "id": "damon",
+          "time": 115,
+          "pace": 0.97
+        },
+        {
+          "id": "philip",
+          "time": 121,
+          "pace": 1.04
+        },
+        {
+          "id": "heraclides",
+          "time": 128,
+          "pace": 1.0,
+          "outAt": 96
+        }
+      ],
+      "onPlace": {
+        "1": [
+          "xp gymnastike 80",
+          "xp mousike 20",
+          "flag won_torch",
+          "codex torch_race",
+          "flag torch_run"
+        ],
+        "2": [
+          "xp gymnastike 45",
+          "codex torch_race",
+          "flag torch_run"
+        ],
+        "3": [
+          "xp gymnastike 30",
+          "codex torch_race",
+          "flag torch_run"
+        ],
+        "4": [
+          "xp gymnastike 20",
+          "codex torch_race",
+          "flag torch_run"
+        ],
+        "5": [
+          "xp gymnastike 10",
+          "codex torch_race",
+          "flag torch_run"
+        ]
+      },
+      "onFail": [
+        "xp gymnastike 10",
+        "codex torch_race",
+        "flag torch_run"
+      ]
+    }
+  },
+  "throws": {
+    "discus": {
+      "titleKey": "athletics.discus",
+      "balbis": {
+        "x": 56,
+        "z": 70,
+        "heading": 3.1416
+      },
+      "attempts": 3,
+      "rivals": [
+        {
+          "id": "thrasyllos",
+          "mark": 27.2
+        },
+        {
+          "id": "damon",
+          "mark": 24.8
+        },
+        {
+          "id": "heraclides",
+          "mark": 19.5
+        }
+      ],
+      "onPlace": {
+        "1": [
+          "xp gymnastike 40",
+          "flag won_discus"
+        ],
+        "2": [
+          "xp gymnastike 25"
+        ],
+        "3": [
+          "xp gymnastike 15"
+        ],
+        "4": [
+          "xp gymnastike 10"
+        ]
+      }
+    },
+    "javelin": {
+      "titleKey": "athletics.javelin",
+      "balbis": {
+        "x": 56,
+        "z": 80,
+        "heading": 3.1416
+      },
+      "attempts": 3,
+      "rivals": [
+        {
+          "id": "damon",
+          "mark": 44.5
+        },
+        {
+          "id": "thrasyllos",
+          "mark": 41.0
+        },
+        {
+          "id": "heraclides",
+          "mark": 33.0
+        }
+      ],
+      "onPlace": {
+        "1": [
+          "xp gymnastike 40",
+          "flag won_javelin"
+        ],
+        "2": [
+          "xp gymnastike 25"
+        ],
+        "3": [
+          "xp gymnastike 15"
+        ],
+        "4": [
+          "xp gymnastike 10"
+        ]
+      }
+    }
+  },
+  "wrestling": {
+    "thrasyllos": {
+      "titleKey": "athletics.wrestle_thrasyllos",
+      "opponent": {
+        "id": "thrasyllos",
+        "window": 1.0,
+        "pause": [
+          0.9,
+          1.6
+        ],
+        "opening": 0.9,
+        "feint": 0
+      },
+      "spot": {
+        "x": 0,
+        "z": 0
+      },
+      "onWin": [
+        "xp gymnastike 40",
+        "rep thrasyllos 1",
+        "flag beat_thrasyllos"
+      ],
+      "onLose": [
+        "xp gymnastike 15"
+      ]
+    },
+    "damon": {
+      "titleKey": "athletics.wrestle_damon",
+      "opponent": {
+        "id": "damon",
+        "window": 0.7,
+        "pause": [
+          0.6,
+          1.2
+        ],
+        "opening": 0.6,
+        "feint": 0.3
+      },
+      "spot": {
+        "x": 0,
+        "z": 0
+      },
+      "onWin": [
+        "xp gymnastike 70",
+        "rep gymnasiarch 2",
+        "flag beat_damon"
+      ],
+      "onLose": [
+        "xp gymnastike 20"
+      ]
+    }
+  },
+  "cues": {
+    "shoot": {
+      "key": "athletics.cue.shoot",
+      "icon": "⤓"
+    },
+    "clinch": {
+      "key": "athletics.cue.clinch",
+      "icon": "⇔"
+    },
+    "trip": {
+      "key": "athletics.cue.trip",
+      "icon": "↯"
+    }
+  }
+}

@@ -133,6 +133,76 @@
       "certainty": "documented",
       "sources": "Plato, Laches 190d–199e",
       "text": "Two Athenian generals, Laches and Nicias, try to say what courage is. 'Standing firm in the line' fails against the Scythians who fight by retreating; 'endurance of the soul' fails because foolish endurance is not admirable; 'knowledge of what is to be feared' turns out to be all of virtue at once. The dialogue ends without an answer."
+    },
+    "theaetetus": {
+      "title": "Theaetetus",
+      "category": "people",
+      "certainty": "documented",
+      "sources": "Plato, Theaetetus 142a–b, 147d–148b; scholium to Euclid XIII; Suda",
+      "text": "Athenian mathematician and friend of Plato, who made him the hero of a dialogue. He classified irrational lengths and, by the ancient tradition, first constructed the octahedron and icosahedron and proved there are only five regular solids. He died in 369 BC after the fighting at Corinth, of wounds and dysentery."
+    },
+    "timaeus_elements": {
+      "title": "The elements of the Timaeus",
+      "category": "ideas",
+      "certainty": "documented",
+      "sources": "Plato, Timaeus 53c–56c",
+      "text": "In the Timaeus, the four elements are made of tiny regular solids built from two kinds of right triangles: fire of tetrahedra (sharp, mobile), air of octahedra, water of icosahedra (smooth, rolling), earth of cubes (stable). The fifth solid, the dodecahedron, the god used 'for the whole'. Plato calls the account 'a likely story'."
+    },
+    "eudoxus_spheres": {
+      "title": "Eudoxus' homocentric spheres",
+      "category": "ideas",
+      "certainty": "documented",
+      "sources": "Aristotle, Metaphysics Λ.8 1073b17–32; Simplicius, On Aristotle's De Caelo; Schiaparelli (1877), Yavetz (1998)",
+      "text": "Eudoxus explained the wandering of the planets with spheres nested around the Earth, each turning steadily: four per planet, three each for the Sun and Moon, one for the fixed stars, twenty-seven in all. Two inner spheres turning against each other on tilted axes trace a figure-eight (the hippopede); added to the steady motion along the zodiac, it produces the planet's retrograde loops. The model works well for Jupiter and Saturn but fails for Mars. Aristotle later raised the count to fifty-five."
+    },
+    "delian_problem": {
+      "title": "The Delian problem",
+      "category": "ideas",
+      "certainty": "tradition",
+      "sources": "Eratosthenes, in Eutocius on Archimedes; Plutarch, De E apud Delphos 386e, De genio Socratis 579b–d, Quaestiones convivales 8.2.1",
+      "text": "To end a plague, the Delians were told to double Apollo's cubic altar. Doubling the edge gives eight times the volume. Hippocrates of Chios reduced the problem to finding two mean proportionals; Archytas, Menaechmus and Eudoxus solved it. Plutarch has Plato say the god was rebuking the Greeks for neglecting geometry, and also has him scold those who used instruments. Eutocius attributes a mechanical solution to Plato himself, almost certainly wrongly."
+    },
+    "divided_line": {
+      "title": "The Divided Line",
+      "category": "ideas",
+      "certainty": "documented",
+      "sources": "Plato, Republic VI 509d–511e",
+      "text": "A line cut into unequal parts, each cut again in the same ratio: images, visible things, mathematical objects, Forms; and the four states of mind that go with them, eikasia, pistis, dianoia, noesis. The two middle segments always come out equal, a fact Plato does not mention."
+    },
+    "cave": {
+      "title": "The Allegory of the Cave",
+      "category": "ideas",
+      "certainty": "documented",
+      "sources": "Plato, Republic VII 514a–520a",
+      "text": "Prisoners chained since childhood see only shadows of objects carried before a fire. One is freed, turned around, dragged up into the sunlight; first he can bear only shadows and reflections, then things, then the night sky, and at last the sun. Back in the cave, his eyes no longer used to the dark, the others laugh at him and would kill whoever tried to free them. Plato insists the philosopher must nevertheless go back down."
+    },
+    "axiothea": {
+      "title": "Axiothea of Phlius",
+      "category": "people",
+      "certainty": "tradition",
+      "sources": "Diogenes Laertius 3.46, 4.2; Themistius, Orations 23.295c (after Dicaearchus)",
+      "text": "One of two women known to have studied with Plato, the other being Lasthenia of Mantinea. After reading the Republic she came to Athens and, according to Dicaearchus, attended the Academy wearing men's clothes. Her friendship with the player is invented."
+    },
+    "third_man": {
+      "title": "The Third Man",
+      "category": "ideas",
+      "certainty": "documented",
+      "sources": "Plato, Parmenides 132a–b; Aristotle, Metaphysics A.9 990b17, Sophistical Refutations 22 178b36",
+      "text": "If many large things are large by sharing in one Form of Largeness, and Largeness itself is large, then the large things together with Largeness need a further Form, and so on without end. Plato raised the objection against himself in the Parmenides; Aristotle gave it the name 'the third man' and used it against the Forms."
+    },
+    "aristotle_biology": {
+      "title": "Aristotle the biologist",
+      "category": "people",
+      "certainty": "documented",
+      "sources": "Aristotle, History of Animals, Parts of Animals, Generation of Animals",
+      "text": "About a quarter of Aristotle's surviving works are about animals: some five hundred kinds, many observed himself, much of it on Lesbos in the 340s. He classified them by blood, by how they reproduce and by their parts, and insisted that even the humblest animal has something wonderful in it. His start on it at the Academy is the game's invention."
+    },
+    "plato_death": {
+      "title": "The death of Plato",
+      "category": "people",
+      "certainty": "tradition",
+      "sources": "Diogenes Laertius 3.2, 3.40–41; Pausanias 1.30.3",
+      "text": "Plato died in 348/7 BC in his eighty-first year; Hermippus says at a wedding feast. He was buried in the Academy, near where he taught. His nephew Speusippus succeeded him; Aristotle and Xenocrates left Athens for Assos."
     }
   },
   "ideas": {
@@ -180,6 +250,46 @@
       "title": "Aporia",
       "sources": "Plato, Laches; Meno 80a",
       "text": "A state of puzzlement, of having no way through. Socrates' questions often end there. Meno compared him to a stingray that numbs whoever it touches. Plato treats aporia as the start of inquiry: you look for what you know you lack."
+    },
+    "five_solids": {
+      "title": "Only five regular solids",
+      "sources": "Euclid XIII.18 (after Theaetetus)",
+      "text": "At least three faces meet at each corner, and their angles must add to less than 360°. Only 3, 4 or 5 triangles, 3 squares or 3 pentagons pass that test."
+    },
+    "homocentric_spheres": {
+      "title": "Saving the appearances",
+      "sources": "Simplicius, On De Caelo 488",
+      "text": "Explain the irregular motions of the heavens by combining perfectly regular circular motions."
+    },
+    "mean_proportionals": {
+      "title": "Two mean proportionals",
+      "sources": "Hippocrates of Chios, in Eutocius",
+      "text": "If a : x = x : y = y : 2a, then a cube on x has twice the volume of a cube on a."
+    },
+    "divided_line": {
+      "title": "Four kinds of seeing",
+      "sources": "Plato, Republic VI",
+      "text": "Images, things, mathematical objects, Forms: each grasped more clearly than the one below."
+    },
+    "cave": {
+      "title": "Out of the cave",
+      "sources": "Plato, Republic VII",
+      "text": "Education is not putting sight into blind eyes but turning the whole soul around toward the light."
+    },
+    "women_guardians": {
+      "title": "Women as guardians",
+      "sources": "Plato, Republic V 451c–457c",
+      "text": "No pursuit of the city belongs to a woman as a woman or to a man as a man: natures are distributed alike, and women may be guardians too."
+    },
+    "third_man": {
+      "title": "The Third Man",
+      "sources": "Plato, Parmenides 132a–b",
+      "text": "If the Form shares the quality it explains, another Form is needed over both: an endless regress."
+    },
+    "form_in_matter": {
+      "title": "Form in matter",
+      "sources": "Aristotle, Metaphysics Z",
+      "text": "The form of a thing is in the thing, not apart from it: what makes a heron a heron is in the heron."
     }
   }
 }

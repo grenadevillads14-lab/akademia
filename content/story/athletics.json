@@ -1,0 +1,88 @@
+{
+  "notes": "M6 athletics: the gymnasiarch's games after Act 1's palaestra trial, and the torch race at the altar of Prometheus. Events are defined in content/athletics/events.json.",
+  "order": 2,
+  "quests": {},
+  "npcs": [
+    {
+      "npc": "thrasyllos",
+      "when": {
+        "questDone": "prologue"
+      },
+      "x": -6,
+      "z": 5,
+      "heading": 2.2,
+      "anim": "idle"
+    },
+    {
+      "npc": "damon",
+      "when": {
+        "questDone": "prologue"
+      },
+      "x": 6,
+      "z": -5,
+      "heading": -0.9,
+      "anim": "gesture"
+    }
+  ],
+  "triggers": [
+    {
+      "id": "gymnasiarch_games",
+      "type": "talk",
+      "npc": "gymnasiarch",
+      "dialogue": "athletics.gymnasiarch_games",
+      "requires": {
+        "questDone": "trial_palaestra"
+      }
+    },
+    {
+      "id": "torch_altar",
+      "type": "interact",
+      "poi": "altar-prometheus",
+      "labelKey": "interact.torch_altar",
+      "dialogue": "athletics.torch_altar",
+      "requires": {
+        "questDone": "act2"
+      }
+    }
+  ],
+  "extras": {
+    "thrasyllos": {
+      "nameKey": "char.thrasyllos",
+      "appearance": {
+        "height": 1.78,
+        "build": 0.75,
+        "age": "youth",
+        "skin": "#c99068",
+        "hair": {
+          "style": "short",
+          "color": "#2a1a10"
+        },
+        "chiton": {
+          "color": "#efe6d2",
+          "length": "short"
+        }
+      }
+    },
+    "damon": {
+      "nameKey": "char.damon",
+      "appearance": {
+        "height": 1.74,
+        "build": 0.85,
+        "age": "adult",
+        "skin": "#b07850",
+        "hair": {
+          "style": "curly",
+          "color": "#1e140c"
+        },
+        "beard": {
+          "style": "trimmed",
+          "color": "#1e140c"
+        },
+        "chiton": {
+          "color": "#8c5a3a",
+          "length": "short"
+        }
+      }
+    }
+  }
+}

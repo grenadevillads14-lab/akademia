@@ -76,6 +76,10 @@ export interface StateEvents {
   'state:command': { command: string };
   'state:puzzle': { id: string; arg?: string };
   'state:time': { hours: number; nextDay: boolean };
+  'state:athletics': { kind: string; id: string };
+  'state:season': { season: 'spring' | 'summer' | 'autumn' | 'winter' };
+  'state:cave': { action: string };
+  'state:lesbos': { action: string };
 }
 
 export class GameState {
@@ -118,6 +122,10 @@ export class GameState {
    *   herm <id>
    *   toast <text…>
    *   time <hours> [next]        set the clock (next = the following day), e.g. after a night passes
+   *   season spring|summer|autumn|winter
+   *   lesbos enter               the Lesbos lagoon interlude (Act 4, if the player goes with Aristotle)
+   *   cave enter                 start the Allegory of the Cave interlude
+   *   athletics race|throw|wrestle <id>  start an athletic event (content/athletics/events.json)
    *   puzzle <id> [arg]          open a puzzle (meno, waterworks, debate <id>); the game applies its rewards
    * Unknown commands throw (content bugs should be loud in tests).
    */
@@ -204,6 +212,19 @@ export class GameState {
         break;
       case 'time':
         this.bus.emit('state:time', { hours: Number(a), nextDay: b === 'next' });
+        break;
+      case 'season':
+        if (!['spring', 'summer', 'autumn', 'winter'].includes(a!)) throw new Error(`Unknown season "${a}"`);
+        this.bus.emit('state:season', { season: a as 'spring' | 'summer' | 'autumn' | 'winter' });
+        break;
+      case 'lesbos':
+        this.bus.emit('state:lesbos', { action: a ?? 'enter' });
+        break;
+      case 'cave':
+        this.bus.emit('state:cave', { action: a ?? 'enter' });
+        break;
+      case 'athletics':
+        this.bus.emit('state:athletics', { kind: a!, id: b! });
         break;
       case 'puzzle':
         this.bus.emit('state:puzzle', { id: a!, ...(b ? { arg: b } : {}) });

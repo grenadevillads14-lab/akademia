@@ -1,0 +1,103 @@
+{
+  "notes": "Aristotle's catalogue (Act 3): living things along the Cephissus and in the grove. Observations paraphrased from Aristotle's History of Animals (HA) and Parts of Animals (PA), and Theophrastus' Enquiry into Plants (HP). Positions are invented.",
+  "set": "specimens",
+  "need": 6,
+  "items": {
+    "heron": {
+      "kind": "heron",
+      "x": -488,
+      "z": 20,
+      "title": "The grey heron",
+      "certainty": "documented",
+      "source": "Aristotle, HA 9.1 609b; 9.18 616b",
+      "text": "Aristotle distinguishes three herons: the grey (pellos), the white and the starry. The grey one, he notes, mates with difficulty and cries out, and is said to bleed from the eyes. He watched them hunt the shallows like this one."
+    },
+    "tortoise": {
+      "kind": "tortoise",
+      "x": -474,
+      "z": -120,
+      "title": "The tortoise",
+      "certainty": "documented",
+      "source": "Aristotle, PA 4.11 691a; HA 8.17 600a",
+      "text": "The land tortoise has a shell above and below, lays its eggs in the ground and hides in winter. Aristotle saw that it has no teeth, only a hard beak-like mouth, and a bladder, which most egg-layers lack."
+    },
+    "frog": {
+      "kind": "frog",
+      "x": -500,
+      "z": 160,
+      "title": "The frog",
+      "certainty": "documented",
+      "source": "Aristotle, HA 4.9 536a",
+      "text": "Male frogs call at mating time with their lower jaw held level with the water and the upper stretched: the voice of the male frog is distinct from the female's, Aristotle says, and is called ololygon."
+    },
+    "crab": {
+      "kind": "crab",
+      "x": -462,
+      "z": 300,
+      "title": "The river crab",
+      "certainty": "documented",
+      "source": "Aristotle, HA 4.2 525b",
+      "text": "Besides the sea crabs there are small river crabs, Aristotle says, and he classifies all crabs with the crayfish and lobsters as the 'soft-shelled' (malakostraka): hard outside, soft within."
+    },
+    "eel": {
+      "kind": "eel",
+      "x": -508,
+      "z": 120,
+      "title": "The eel",
+      "certainty": "documented",
+      "source": "Aristotle, HA 6.16 570a",
+      "text": "No one has ever seen an eel with eggs or milt, Aristotle writes; he concluded they arise from the 'earth's guts' in mud. The mystery of where eels breed was not solved until the twentieth century, in the Sargasso Sea."
+    },
+    "cicada": {
+      "kind": "cicada",
+      "x": 18,
+      "z": 162,
+      "title": "The cicada",
+      "certainty": "documented",
+      "source": "Aristotle, HA 5.30 556a–b; 4.9 535b",
+      "text": "Only the males sing, with a membrane under the waist, and the females are silent. Cicadas, he says, feed on dew alone and have no mouth for solid food; the larvae grow in the ground and split their skins on the trees."
+    },
+    "bees": {
+      "kind": "bees",
+      "x": 168,
+      "z": -282,
+      "title": "Bees at the hive",
+      "certainty": "documented",
+      "source": "Aristotle, HA 9.40 623b–627b",
+      "text": "Aristotle gives bees more pages than any other insect: the workers, the drones, and the large 'leaders' (he called them kings; they are queens). He records that a bee visits only one kind of flower on each trip."
+    },
+    "snail": {
+      "kind": "snail",
+      "x": -118,
+      "z": 140,
+      "title": "The land snail",
+      "certainty": "documented",
+      "source": "Aristotle, HA 4.4 528a; 8.15 599a",
+      "text": "Snails seal themselves in with a lid of hardened slime in winter and hide. Aristotle grouped them with the shellfish (ostrakoderma), creatures that carry their stone house."
+    },
+    "plane": {
+      "kind": "planeleaf",
+      "x": -62,
+      "z": 158,
+      "title": "The oriental plane",
+      "certainty": "documented",
+      "source": "Theophrastus, Enquiry into Plants 4.5; Pliny, Natural History 12.5",
+      "text": "Theophrastus, Aristotle's student, counts the plane among the trees that love water and grow along rivers. It sheds its leaves, and its bark peels in patches. Pliny, centuries later, repeats a story of a plane in the Academy whose roots reached further than its branches."
+    },
+    "asphodel": {
+      "kind": "asphodel",
+      "x": 320,
+      "z": -460,
+      "title": "The asphodel",
+      "certainty": "documented",
+      "source": "Theophrastus, HP 7.13.2–3; Homer, Odyssey 11.539",
+      "text": "A tall spike of pale flowers over grey grass-like leaves, on the dry slope of Colonus. Theophrastus says its stalk is eaten roasted and its root with figs. Homer planted it in the meadows of the dead."
+    }
+  },
+  "complete": [
+    "xp mathesis 40",
+    "xp logos 30",
+    "flag specimens_complete",
+    "rep aristotle 2"
+  ]
+}

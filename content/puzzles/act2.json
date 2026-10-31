@@ -1,0 +1,85 @@
+{
+  "solids": {
+    "title": "The five figures",
+    "intro": "At the Mouseion, Xenocrates sets out a heap of cut leather shapes: triangles, squares, pentagons, hexagons. 'Theaetetus showed there are only five regular solids, then died of his wounds before he could teach it properly. Build their corners. Find every one. Then try for a sixth.'",
+    "polygons": { "3": "Triangles", "4": "Squares", "5": "Pentagons", "6": "Hexagons" },
+    "count": "How many meet at a corner",
+    "outcome": {
+      "too_few": "Two faces make a crease, not a corner. A corner needs at least three.",
+      "flat": "The angles add to exactly four right angles: the faces lie flat. They tile the floor, but no solid closes.",
+      "overlap": "The angles add to more than four right angles. The faces overlap; no corner can hold them.",
+      "solid": "The angles add to less than four right angles. The gap folds up into a corner, and the corner repeats until the solid closes."
+    },
+    "element": { "fire": "Timaeus gives it to fire: the sharpest and most mobile.", "air": "Timaeus gives it to air.", "water": "Timaeus gives it to water: the roundest of the four, the most slippery.", "earth": "Timaeus gives it to earth: the most stable, on its square bases.", "cosmos": "The fifth, which 'the god used for the whole', for embroidering the heavens." },
+    "solidNames": { "tetrahedron": "Tetrahedron (pyramid)", "octahedron": "Octahedron", "icosahedron": "Icosahedron", "cube": "Cube", "dodecahedron": "Dodecahedron" },
+    "found": "Found: {n} of 5",
+    "sixth": "Now look for a sixth. Try everything: there is none. Triangles stop at five, squares at three, pentagons at three, and hexagons already lie flat with three. That is the proof.",
+    "hints": [
+      "Add up the angles at the corner: a triangle's is 60°, a square's 90°, a pentagon's 108°, a hexagon's 120°.",
+      "The sum must stay below 360° (four right angles) and you need at least three faces.",
+      "Triangles: 3, 4 and 5 at a corner. Squares: 3. Pentagons: 3."
+    ],
+    "onSolve": ["xp mathesis 70", "idea five_solids", "codex timaeus_elements", "flag solids_solved", "rep xenocrates 2"]
+  },
+  "spheres": {
+    "title": "The star of Zeus",
+    "intro": "Night on the hill of Colonus. Eudoxus has fixed a bronze model of nested rings to a post. 'Zeus's star walks east through the zodiac, then stops, walks back about ten degrees for four months, stops again and goes on. Make my spheres do it.'",
+    "inclination": "Tilt between the inner axes",
+    "synodic": "Days for the inner pair to turn once",
+    "target": "Observed: about 10° backwards, lasting about 121 days, once a year",
+    "model": "Your spheres: {arc}° backwards over {days} days, {loops} times in three years",
+    "none": "Your spheres never turn the planet back.",
+    "close": "Close enough that a Babylonian would nod. Eudoxus is beaming.",
+    "hints": [
+      "The two inner spheres turn against each other. If their axes line up, they cancel and the planet just moves steadily on.",
+      "Tilt them apart and the planet swings to and fro along the zodiac in a figure-eight. A bigger tilt, a bigger swing.",
+      "Keep the inner pair turning once in about 399 days (the time between oppositions) and look for a tilt between 10° and 16°."
+    ],
+    "mars": "Eudoxus sighs. 'Ares' star I cannot do. With its true period the spheres never turn it back, unless I tilt them so far that it would wander thirty degrees off the zodiac, which it never does.'",
+    "onSolve": ["xp mathesis 80", "idea homocentric_spheres", "codex eudoxus_spheres", "flag spheres_solved", "rep eudoxus 2"]
+  },
+  "delian": {
+    "title": "Apollo's altar",
+    "intro": "The Delians are dying of plague; the god demands his cubic altar doubled. They doubled each edge, and the plague went on. Plato says the god was not asking for an altar: he was shaming the Greeks for neglecting geometry.",
+    "stage1": "A cube of edge 2 is built from how many cubes of edge 1?",
+    "stage1Answers": ["2", "4", "6", "8"],
+    "stage1Right": "Eight. Doubling the edge makes the altar eight times as large. The Delians made the god's anger worse.",
+    "stage1Wrong": "Count the layers: two layers of four.",
+    "stage2": "Hippocrates of Chios showed it is enough to find two mean proportionals between a and 2a. Slide the carpenter's square along the line until both corners are right angles.",
+    "slider": "Slide the square",
+    "angle": "The other corner: {deg}°",
+    "solved": "Both corners square. Then a : OX = OX : OY = OY : 2a, and a cube on OX is exactly twice the cube on a. The new edge is about 1.26 times the old.",
+    "hints": [
+      "The corner on the horizontal line must stay square, with one arm through B. Watch the angle at X on the vertical line.",
+      "Move slowly near 1.5 to 1.6 times OA."
+    ],
+    "onSolve": ["xp mathesis 70", "idea mean_proportionals", "codex delian_problem", "flag delian_solved", "rep plato 1"]
+  },
+  "dividedLine": {
+    "title": "The Divided Line",
+    "intro": "Plato draws a line in the dust, cuts it unequally, and cuts each part again in the same ratio. 'Put each thing where it belongs, from the dimmest kind of seeing to the clearest kind of knowing.'",
+    "segments": {
+      "eikasia": "Images (eikasia): shadows and reflections",
+      "pistis": "Things (pistis): animals, plants, everything made",
+      "dianoia": "Reasoning (dianoia): mathematics, from hypotheses, with diagrams",
+      "noesis": "Understanding (noesis): the Forms, up to the Good itself"
+    },
+    "cards": {
+      "shadow": { "text": "The shadow of a plane tree on the path", "segment": "eikasia" },
+      "reflection": { "text": "Your face in the water of Cimon's channel", "segment": "eikasia" },
+      "painting": { "text": "A painted horse on a krater", "segment": "eikasia" },
+      "horse": { "text": "A horse", "segment": "pistis" },
+      "plane": { "text": "The plane tree itself", "segment": "pistis" },
+      "altar": { "text": "The altar of Prometheus", "segment": "pistis" },
+      "drawn_square": { "text": "The square drawn in the dust, used to reason about the square itself", "segment": "dianoia" },
+      "odd_even": { "text": "The odd and the even, assumed as starting points", "segment": "dianoia" },
+      "justice": { "text": "Justice itself", "segment": "noesis" },
+      "good": { "text": "The Good, the first principle that rests on no hypothesis", "segment": "noesis" }
+    },
+    "pick": "Choose a card, then the segment where it belongs.",
+    "wrong": "Not there. Ask: is this an image of something, the thing itself, something reasoned about through a diagram, or something grasped by thought alone?",
+    "middle": "Now measure the two middle segments. Cut the same way at any ratio, and they always come out equal. Plato never says why; readers have argued about it ever since.",
+    "onSolve": ["xp logos 60", "idea divided_line", "codex divided_line", "flag divided_line_solved", "rep plato 1"]
+  },
+  "ui": { "check": "Check", "next": "Next" }
+}

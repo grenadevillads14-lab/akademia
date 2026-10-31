@@ -1,0 +1,49 @@
+{
+  "notes": "The Allegory of the Cave interlude (Plato, Republic VII 514a–518b, paraphrased; no long quotation).",
+  "chained": [
+    "You cannot turn your head. You never could.",
+    "On the wall in front of you, shapes pass: a horse, a jar, a man, a tree. They are the only things you have ever seen.",
+    "The others beside you name them as they pass, and praise whoever guesses best what comes next."
+  ],
+  "turned": [
+    "Someone loosens the chains. 'Stand up. Turn around.'",
+    "Behind you, a fire. It hurts to look at. The shadows were easier.",
+    "Between you and the fire runs a low wall, and men walk along it holding things up above it."
+  ],
+  "objects": {
+    "horse": "A carved horse of wood. Its shadow is what you called 'a horse' all your life.",
+    "vase": "A painted jar. Its shadow had no colour. You had no idea it had colour.",
+    "man": "A stone figure of a man. And the men carrying it are not shadows at all.",
+    "tree": "A little tree cut from leather, held up on a stick. Is this, then, what a tree is?"
+  },
+  "dragged": [
+    "A hand grips your arm and pulls you, past the fire, toward a rough steep passage climbing into the dark."
+  ],
+  "ascent": [
+    "The way up is steep and rough. You do not want to go. Your guide does not let go."
+  ],
+  "outside": [
+    "Light. Too much light. You can see nothing at all.",
+    "Wait. Let your eyes get used to it. Look down first, at the ground."
+  ],
+  "seen": {
+    "shadow": "Shadows on the grass, sharp and clear. These, at least, you understand.",
+    "reflection": "In the still pool, the tree and the sky, upside down. Reflections are easier than the things themselves.",
+    "things": "The tree itself. Bark, leaves, a bird in the branches. Real, and more real than anything below.",
+    "sun": "And at last the sun: not its reflection in water, but the sun itself, in its own place. The cause of the seasons and the years, and in a way of everything you used to see."
+  },
+  "tooBright": "Too bright. You look away, eyes streaming. Not yet.",
+  "choice": [
+    "You remember the cave, and the others still chained there, naming shadows.",
+    "Would you go back down to free them? They would laugh at you. They might kill you."
+  ],
+  "descend": [
+    "You go back down. After the sun, the cave is black. You stumble; you cannot see the shadows at all.",
+    "'He went up, and came back with his eyes ruined,' they say. 'Better never to go up.'",
+    "But your eyes will get used to the dark again. And then you will see the shadows better than any of them, because you know what they are shadows of."
+  ],
+  "stay": [
+    "You stay in the light. Nobody below will ever know what you saw.",
+    "Is that wisdom, or is it selfishness? The question follows you back down into sleep."
+  ]
+}

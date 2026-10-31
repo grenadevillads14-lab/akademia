@@ -24,12 +24,15 @@ import { drawMap } from '../ui/map';
 import { PauseMenu } from '../ui/menu';
 import type { NewGameChoices } from '../ui/title';
 import { saveSettings } from '../core/settings';
+import { CaveInterlude } from '../cave/cave';
+import { AthleticsHost } from './athletics';
 import { PuzzleHost } from './puzzleHost';
 import { StoryDirector } from './story';
 import { onResize } from '../render/renderer';
 import { WorldClock, formatTime, type Season } from '../world/clock';
 import { createWorldUniforms, type WorldUniforms } from '../world/uniforms';
 import { Wind } from '../world/wind';
+import { buildSpecimens, type SpecimenField } from '../world/specimens';
 import { buildWorld, type World } from '../world/world';
 
 /**
@@ -72,6 +75,9 @@ export class Game {
   readonly state = new GameState();
   story!: StoryDirector;
   puzzles!: PuzzleHost;
+  athletics!: AthleticsHost;
+  cave!: CaveInterlude;
+  private specimens: SpecimenField | null = null;
   menu!: PauseMenu;
   compass!: Compass;
   /** True while the title screen or a menu covers the game. */
@@ -143,8 +149,23 @@ export class Game {
     this.tpCamera.snapBehind(this.player.heading);
     this.applySeason();
     this.hint.textContent = t('hint.play');
+    this.specimens = buildSpecimens(this.world.hf, this.world.pois);
+    this.scene.add(this.specimens.group);
     this.story = new StoryDirector(o.app, this.state, this.player, this.tpCamera, this.world.pois, this.world.hf.height);
     this.scene.add(this.story.group);
+    this.athletics = new AthleticsHost({
+      app: o.app,
+      scene: this.scene,
+      state: this.state,
+      player: this.player,
+      camera: this.tpCamera,
+      uniforms: this.uniforms,
+      ground: this.world.hf.height,
+      appearance: (id) => this.story.appearances.get(id),
+      nameOf: (id) => this.story.nameOf(id),
+      waiting: () => this.story.inDialogue || this.puzzles.open || this.titleOpen,
+    });
+    this.cave = new CaveInterlude({ app: o.app, camera: this.camera, state: this.state, appearance: (id) => this.story.appearances.get(id) });
     this.puzzles = new PuzzleHost(this.state, this.world.water, (id) => this.story.nameOf(id), () => this.story.inDialogue || this.titleOpen);
     if (o.params.get('story') === '0') this.state.runCommand('flag seen_arrival');
     this.compass = new Compass(o.app);
@@ -170,6 +191,13 @@ export class Game {
     this.state.bus.on('state:time', (e) => {
       if (e.nextDay || e.hours < this.clock.hours) this.clock.day += 1;
       this.clock.hours = e.hours;
+    });
+    // Until the Lesbos interlude is built, sailing to Lesbos skips ahead.
+    this.state.bus.on('state:lesbos', () => queueMicrotask(() => this.state.runCommand('flag lesbos_done')));
+    this.state.bus.on('state:season', (e) => {
+      this.clock.season = e.season;
+      this.state.data.clock.season = e.season;
+      this.applySeason();
     });
     this.state.bus.on('state:herm', () => this.story.hud.toast(t('herm.discovered'), 'info'));
 
@@ -269,6 +297,46 @@ export class Game {
     document.exitPointerLock?.();
   }
 
+  /** One frame of the Cave interlude: its own scene, first-person camera and exposure. */
+  private cavePlay(dt: number, rawDt: number, input: Input): void {
+    const cave = this.cave;
+    const r = this.o.renderer;
+    if (!cave.active) {
+      this.player.controlEnabled = false;
+      this.hint.hidden = true;
+      this.compass.visible = false;
+      this.story.hud.setPrompt(null);
+      this.story.hud.setObjective(null, null);
+      cave.enter(() => {
+        r.toneMappingExposure = 1;
+        this.player.controlEnabled = true;
+        this.hint.hidden = false;
+        this.tpCamera.snapBehind(this.player.heading);
+        this.clock.hours = 20.2;
+      });
+    }
+    cave.update(dt, input);
+    r.toneMappingExposure = cave.exposure;
+    r.info.reset();
+    this.elapsed += dt;
+    if (this.post) {
+      const p = this.post.params;
+      p.sunDir.set(0.25, 0.55, 1).normalize();
+      p.sunColor.setRGB(1, 0.92, 0.75);
+      p.fogColor.copy(cave.fogColor);
+      p.fogDensity = 0;
+      p.shafts = 0;
+      p.horizonHaze = 0;
+      p.warmth = 0.35;
+      this.post.render(cave.scene, this.camera, this.elapsed);
+    } else {
+      r.render(cave.scene, this.camera);
+    }
+    this.stats.push(rawDt * 1000);
+    input.endFrame();
+    this.frames++;
+  }
+
   /** Debug/screenshot helper: switch to the free camera at a fixed spot. */
   debugSetCamera(pos: [number, number, number], target: [number, number, number], groundRelative = false): void {
     const hf = this.world.hf;
@@ -354,7 +422,11 @@ export class Game {
     }
     if (input.wasPressed('toggleOverlay')) this.overlay.toggle();
     this.puzzles?.update();
-    if (this.menu && !this.story.inDialogue && !this.travelEl && !this.titleOpen && !this.puzzles.open) {
+    if (this.cave && (this.cave.active || (this.cave.pendingEnter && !this.story.inDialogue && !this.puzzles.open))) {
+      this.cavePlay(dt, rawDt, input);
+      return;
+    }
+    if (this.menu && !this.story.inDialogue && !this.travelEl && !this.titleOpen && !this.puzzles.open && !this.athletics.busy) {
       if (input.wasPressed('pause')) {
         if (this.menu.open) this.menu.close();
         else this.menu.show('journal');
@@ -406,8 +478,11 @@ export class Game {
     this.world.forest.update(this.camera);
     this.world.grass.update(focus);
     this.world.water.update(dt);
+    this.specimens?.update(this.camera, this.elapsed);
     this.world.update(this.camera, dt);
     if (!this.benchRunning && !halted) {
+      this.athletics.update(dt, input);
+      this.story.suspended = this.athletics.busy;
       this.story.update(dt, input, this.camera.position, zone ? t(zone.nameKey) : null);
       this.state.data.playSeconds += dt;
       // Fog of war, herm discovery, autosave.

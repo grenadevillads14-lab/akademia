@@ -1,9 +1,12 @@
 import moriai from '../../content/collectibles/moriai.json';
+import specimens from '../../content/collectibles/specimens.json';
 import text from '../../content/puzzles/text.json';
 import waterData from '../../content/puzzles/waterworks.json';
 import { t } from '../core/i18n';
 import type { DebateDef } from '../puzzles/debate';
+import act2 from '../../content/puzzles/act2.json';
 import { openDebate, openLoreCard, openMeno, openWaterworks } from '../puzzles/ui';
+import { openDelian, openDividedLine, openSolids, openSpheres } from '../puzzles/ui2';
 import { simulate, type WaterNetwork, type WaterSetting } from '../puzzles/waterworks';
 import type { GameState } from '../systems/state';
 import type { WaterSystem } from '../world/water';
@@ -29,11 +32,13 @@ export class PuzzleHost {
   ) {
     const bus = state.bus;
     bus.on('state:puzzle', (e) => this.enqueue(() => this.run(e.id, e.arg)));
+    const sets: Record<string, { items: Record<string, { title: string; certainty: string; source: string; text: string }>; complete: string[] }> = { moriai, specimens };
     bus.on('state:collect', (e) => {
-      if (e.set !== 'moriai') return;
-      const item = (moriai.items as Record<string, { title: string; certainty: string; source: string; text: string }>)[e.id];
+      const set = sets[e.set];
+      if (!set) return;
+      const item = set.items[e.id];
       if (item) this.enqueue(() => openLoreCard(item.title, item.text, item.source, item.certainty, t(`certainty.${item.certainty}`)));
-      if (e.count === Object.keys(moriai.items).length) this.enqueue(async () => this.runAll(moriai.complete));
+      if (e.count === Object.keys(set.items).length) this.enqueue(async () => this.runAll(set.complete));
     });
     this.applyWater();
   }
@@ -88,6 +93,14 @@ export class PuzzleHost {
       if (outcome === 'won') this.runAll(def.onWin);
       else if (outcome === 'lost') this.runAll(def.onLose);
       if (outcome !== 'left') this.state.runCommand(`flag debate.${def.id} ${outcome}`);
+    } else if (id === 'solids') {
+      if (await openSolids()) this.runAll(act2.solids.onSolve);
+    } else if (id === 'spheres') {
+      if (await openSpheres()) this.runAll(act2.spheres.onSolve);
+    } else if (id === 'delian') {
+      if (await openDelian()) this.runAll(act2.delian.onSolve);
+    } else if (id === 'divided_line') {
+      if (await openDividedLine()) this.runAll(act2.dividedLine.onSolve);
     } else throw new Error(`Unknown puzzle "${id}"`);
   }
 

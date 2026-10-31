@@ -1,0 +1,193 @@
+{
+  "notes": "Act 3: The student who disagrees (c. 357–348 BC). Dialogue in content/dialogue/act3.ink.",
+  "order": 4,
+  "quests": {
+    "act3": {
+      "titleKey": "quest.act3",
+      "steps": {
+        "reader": {
+          "textKey": "quest.act3.reader",
+          "marker": [
+            198,
+            -292
+          ]
+        },
+        "debate": {
+          "textKey": "quest.act3.debate",
+          "marker": [
+            160,
+            -262
+          ]
+        },
+        "catalogue": {
+          "textKey": "quest.act3.catalogue",
+          "marker": [
+            160,
+            -262
+          ]
+        },
+        "catalogue_go": {
+          "textKey": "quest.act3.catalogue_go",
+          "marker": [
+            -488,
+            60
+          ]
+        },
+        "rift": {
+          "textKey": "quest.act3.rift",
+          "marker": [
+            160,
+            -262
+          ]
+        }
+      }
+    }
+  },
+  "npcs": [
+    {
+      "npc": "eudoxus",
+      "when": {
+        "questDone": "act2"
+      },
+      "hidden": true
+    },
+    {
+      "npc": "aristotle",
+      "when": {
+        "questStep": "act3:reader"
+      },
+      "x": 198,
+      "z": -292,
+      "heading": 2.4,
+      "anim": "read"
+    },
+    {
+      "npc": "aristotle",
+      "when": {
+        "questStep": "act3:catalogue_go"
+      },
+      "x": -484,
+      "z": 56,
+      "heading": -1.4,
+      "anim": "write"
+    },
+    {
+      "npc": "theophrastus",
+      "when": {
+        "questDone": "act2"
+      },
+      "ring": [
+        160,
+        -262,
+        6.3,
+        2.7
+      ],
+      "anim": "sit"
+    }
+  ],
+  "triggers": [
+    {
+      "id": "act3_start",
+      "type": "auto",
+      "dialogue": "act3.years",
+      "requires": {
+        "questDone": "act2",
+        "notFlag": "act3_started"
+      },
+      "set": "act3_started"
+    },
+    {
+      "id": "aristotle_reader",
+      "type": "talk",
+      "npc": "aristotle",
+      "dialogue": "act3.aristotle_reader",
+      "requires": {
+        "questStep": "act3:reader"
+      }
+    },
+    {
+      "id": "debate_done_a",
+      "type": "auto",
+      "dialogue": "act3.debate_done",
+      "requires": {
+        "questStep": "act3:debate",
+        "flag": "debate.forms_defend"
+      }
+    },
+    {
+      "id": "debate_done_b",
+      "type": "auto",
+      "dialogue": "act3.debate_done",
+      "requires": {
+        "questStep": "act3:debate",
+        "flag": "debate.third_man"
+      }
+    },
+    {
+      "id": "debate_intro",
+      "type": "zone",
+      "circle": [
+        160,
+        -262,
+        9
+      ],
+      "dialogue": "act3.debate_intro",
+      "requires": {
+        "questStep": "act3:debate",
+        "notFlag": "act3_debated"
+      },
+      "set": "act3_debated"
+    },
+    {
+      "id": "debate_retry",
+      "type": "talk",
+      "npc": "aristotle",
+      "dialogue": "act3.debate_retry",
+      "requires": {
+        "questStep": "act3:debate",
+        "flag": "act3_debated"
+      }
+    },
+    {
+      "id": "catalogue",
+      "type": "talk",
+      "npc": "aristotle",
+      "dialogue": "act3.catalogue",
+      "requires": {
+        "questStep": "act3:catalogue"
+      }
+    },
+    {
+      "id": "specimen_collect",
+      "type": "interact",
+      "poiKind": "specimen",
+      "collect": "specimens",
+      "labelKey": "interact.specimen",
+      "requires": {
+        "questDone": "act2"
+      }
+    },
+    {
+      "id": "catalogue_done",
+      "type": "auto",
+      "dialogue": "act3.catalogue_done",
+      "requires": {
+        "questStep": "act3:catalogue_go",
+        "collected": "specimens:6"
+      }
+    },
+    {
+      "id": "rift",
+      "type": "zone",
+      "circle": [
+        160,
+        -262,
+        9
+      ],
+      "dialogue": "act3.rift",
+      "requires": {
+        "questStep": "act3:rift"
+      }
+    }
+  ]
+}

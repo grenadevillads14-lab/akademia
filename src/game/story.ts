@@ -52,6 +52,8 @@ const StorySchema = z.object({
         patrol: z.array(z.tuple([z.number(), z.number()])).optional(),
         speed: z.number().optional(),
         ring: z.tuple([z.number(), z.number(), z.number(), z.number()]).optional(),
+        /** Hide the character while this placement applies (gone from the story for now). */
+        hidden: z.boolean().optional(),
       }),
     )
     .default([]),
@@ -75,6 +77,8 @@ const StorySchema = z.object({
     )
     .default([]),
   extras: z.record(z.string(), z.object({ nameKey: z.string(), appearance: z.record(z.string(), z.unknown()) })).default({}),
+  /** Story props that appear when their requirement is met (e.g. Plato's grave). Each is also a POI. */
+  props: z.array(z.object({ id: z.string(), kind: z.enum(['grave', 'pyre_ash', 'cart']), x: z.number(), z: z.number(), heading: z.number().default(0), when: Requires })).default([]),
 });
 type StoryData = z.infer<typeof StorySchema>;
 type Trigger = StoryData['triggers'][number];
@@ -105,13 +109,14 @@ export function meets(state: GameState, r: Requires): boolean {
 }
 
 export function loadStory(): StoryData {
-  const merged: StoryData = { order: 0, quests: {}, npcs: [], triggers: [], extras: {} };
+  const merged: StoryData = { order: 0, quests: {}, npcs: [], triggers: [], extras: {}, props: [] };
   const files = Object.values(storyFiles).map((raw) => StorySchema.parse(raw)).sort((a, b) => a.order - b.order);
   for (const d of files) {
     Object.assign(merged.quests, d.quests);
     merged.npcs.push(...d.npcs);
     merged.triggers.push(...d.triggers);
     Object.assign(merged.extras, d.extras);
+    merged.props.push(...d.props);
   }
   return merged;
 }
@@ -123,12 +128,17 @@ export class StoryDirector {
   readonly npcs = new Map<string, Npc>();
   private readonly data = loadStory();
   private readonly names = new Map<string, string>();
+  /** Every known character's appearance (characters.json + story extras). */
+  readonly appearances = new Map<string, AppearanceInput>();
+  /** While true (an athletic event is running), no triggers fire and no prompts are offered. */
+  suspended = false;
   private readonly fired = new Set<string>();
   private placementTimer = 0;
   private activeTrigger: Trigger | null = null;
   private partner: Npc | null = null;
   private target: { kind: 'npc'; npc: Npc; trigger: Trigger } | { kind: 'poi'; poi: Poi; trigger: Trigger } | null = null;
   private lastZone: string | null = null;
+  private readonly props: { def: StoryData['props'][number]; object: THREE.Object3D; poi: Poi }[] = [];
   readonly group = new THREE.Group();
 
   constructor(
@@ -143,7 +153,7 @@ export class StoryDirector {
     this.runner = new DialogueRunner(state);
     this.hud = new Hud(parent);
     this.ui = new DialogueUI(parent, this.runner, (id) => this.nameOf(id));
-    const appearances = new Map<string, AppearanceInput>();
+    const appearances = this.appearances;
     for (const c of charactersData.characters) {
       appearances.set(c.id, c.appearance as AppearanceInput);
       this.names.set(c.id, t(c.nameKey));
@@ -161,6 +171,16 @@ export class StoryDirector {
       const npc = new Npc(id, app, ground, seed++);
       this.npcs.set(id, npc);
       this.group.add(npc.object);
+    }
+    // Story props.
+    for (const pr of this.data.props) {
+      const o = buildStoryProp(pr.kind);
+      const y = ground(pr.x, pr.z);
+      o.position.set(pr.x, y, pr.z);
+      o.rotation.y = pr.heading;
+      o.visible = false;
+      this.group.add(o);
+      this.props.push({ def: pr, object: o, poi: { id: pr.id, kind: `prop_${pr.kind}`, position: new THREE.Vector3(pr.x, y, pr.z) } });
     }
     this.bindToasts();
     this.applyPlacements(true);
@@ -193,12 +213,19 @@ export class StoryDirector {
 
   /** Put every NPC where the latest matching placement says. */
   private applyPlacements(initial = false): void {
+    for (const pr of this.props) {
+      const show = meets(this.state, pr.def.when);
+      pr.object.visible = show;
+      const i = this.pois.indexOf(pr.poi);
+      if (show && i < 0) this.pois.push(pr.poi);
+      else if (!show && i >= 0) this.pois.splice(i, 1);
+    }
     const chosen = new Map<string, StoryData['npcs'][number]>();
     for (const p of this.data.npcs) if (meets(this.state, p.when)) chosen.set(p.npc, p); // later entries win
     for (const [id, npc] of this.npcs) {
       const p = chosen.get(id);
-      npc.object.visible = !!p;
-      if (!p) continue;
+      npc.object.visible = !!p && !p.hidden;
+      if (!p || p.hidden) continue;
       const key = JSON.stringify(p);
       if (npc.object.userData.placement === key && !initial) continue;
       npc.object.userData.placement = key;
@@ -328,7 +355,10 @@ export class StoryDirector {
       this.lastZone = zoneName;
     }
     this.hud.update(dt);
-    if (this.ui.open || !this.player.controlEnabled) return;
+    if (this.ui.open || !this.player.controlEnabled || this.suspended) {
+      if (this.suspended) this.hud.setPrompt(null);
+      return;
+    }
 
     // Auto and zone triggers.
     const p = this.player.position;
@@ -417,4 +447,45 @@ export class StoryDirector {
   dispose(): void {
     for (const n of this.npcs.values()) n.dispose();
   }
+}
+
+/** Simple story props built from primitives. */
+function buildStoryProp(kind: 'grave' | 'pyre_ash' | 'cart'): THREE.Object3D {
+  const g = new THREE.Group();
+  const m = (c: number, r = 0.9) => new THREE.MeshStandardMaterial({ color: c, roughness: r });
+  if (kind === 'grave') {
+    const mound = new THREE.Mesh(new THREE.SphereGeometry(1.6, 18, 8, 0, Math.PI * 2, 0, Math.PI / 2), m(0x7a6248, 1));
+    mound.scale.set(1, 0.45, 1.5);
+    const stele = new THREE.Mesh(new THREE.BoxGeometry(0.62, 1.45, 0.14), m(0xe8e2d4, 0.5));
+    stele.position.set(0, 0.72, -2.1);
+    const top = new THREE.Mesh(new THREE.CylinderGeometry(0.31, 0.31, 0.14, 12, 1, false, 0, Math.PI), m(0xe8e2d4, 0.5));
+    top.rotation.set(Math.PI / 2, 0, Math.PI / 2);
+    top.position.set(0, 1.45, -2.1);
+    const wreath = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.04, 6, 16), m(0x4a6a32, 0.8));
+    wreath.rotation.x = -Math.PI / 2;
+    wreath.position.set(0.3, 0.68, 0.3);
+    for (const o of [mound, stele, top, wreath]) {
+      o.castShadow = true;
+      o.receiveShadow = true;
+      g.add(o);
+    }
+  } else if (kind === 'pyre_ash') {
+    const ash = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.4, 0.15, 14), m(0x3a3530, 1));
+    ash.position.y = 0.07;
+    g.add(ash);
+  } else {
+    const bed = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.35, 2.4), m(0x7a5a3a));
+    bed.position.y = 0.75;
+    const load = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.5, 1.6), m(0xb89a6a));
+    load.position.y = 1.15;
+    g.add(bed, load);
+    for (const [x, z] of [[-0.75, 0.8], [0.75, 0.8], [-0.75, -0.8], [0.75, -0.8]] as const) {
+      const w = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 0.08, 14), m(0x5a4028));
+      w.rotation.z = Math.PI / 2;
+      w.position.set(x, 0.45, z);
+      g.add(w);
+    }
+    g.traverse((o) => (o.castShadow = true));
+  }
+  return g;
 }

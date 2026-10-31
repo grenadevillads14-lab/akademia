@@ -456,7 +456,8 @@ function characterMaterial(): THREE.MeshStandardMaterial {
   return mat;
 }
 
-function buildProp(kind: string, s: number): THREE.Object3D | null {
+/** Build a hand prop (scroll, staff, torch…) scaled for a figure of height factor s. */
+export function buildProp(kind: string, s: number): THREE.Object3D | null {
   const mat = (c: number, r = 0.8, emissive = 0) => new THREE.MeshStandardMaterial({ color: c, roughness: r, emissive: emissive ? c : 0, emissiveIntensity: emissive });
   const g = new THREE.Group();
   g.name = `prop-${kind}`;

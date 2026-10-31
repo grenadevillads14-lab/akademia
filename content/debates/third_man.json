@@ -1,0 +1,48 @@
+{
+  "id": "third_man",
+  "title": "The Third Man",
+  "opponent": "speusippus",
+  "question": "Speusippus defends his uncle's Forms. You press the objection Aristotle has been sharpening: that the Forms multiply without end.",
+  "opponentConsistency": 4,
+  "playerConsistency": 3,
+  "start": "r1",
+  "rounds": [
+    {
+      "id": "r1",
+      "claim": "Many men are men by sharing in one thing, Man itself. That is why we call them all by one name.",
+      "moves": [
+        { "id": "large", "text": "Then Man itself is a man too? Is the Form of Large itself large?", "hit": 0, "commits": ["self_predication"], "reply": "Of course. What could be larger than Largeness? The Form has its quality perfectly." },
+        { "id": "regress", "text": "Then look at the large things and Largeness itself together. Isn't there another Largeness, by which all of them are large?", "hit": 1, "needsCommit": ["self_predication"], "weakReply": "Why would there be? Largeness is not one of the large things.", "reply": "Another... a second Largeness over the first. And then a third over those, and so on.", "next": "r2" },
+        { "id": "insult", "text": "The Forms are just empty words, Speusippus. Poetic metaphors.", "hit": 0, "reply": "Say that to my uncle. He has heard better objections from Parmenides, in his own dialogue." }
+      ]
+    },
+    {
+      "id": "r2",
+      "claim": "Then perhaps the Form is not like its instances. It is a pattern, and things resemble it.",
+      "moves": [
+        { "id": "resemble", "text": "But if a thing resembles the pattern, the pattern resembles the thing. Resemblance runs both ways.", "hit": 1, "commits": ["likeness_symmetric"], "reply": "I suppose it does.", "next": "r3" },
+        { "id": "unlike", "text": "So the Form is completely unlike anything we see?", "hit": 0, "contradicts": ["self_predication"], "reply": "You said yourself a moment ago that Largeness was large." },
+        { "id": "number", "text": "Your own view, Speusippus, is that numbers come first and the Forms are not needed at all. Why defend them?", "hit": 1, "requires": { "idea": "divided_line" }, "reply": "...because he is my uncle. And because I am not yet sure I am right.", "next": "r3" }
+      ]
+    },
+    {
+      "id": "r3",
+      "claim": "Then things and Forms share a likeness. That is all.",
+      "moves": [
+        { "id": "third", "text": "And that shared likeness needs its own Form, over both. A third man over the man and Man itself. The regress again.", "hit": 2, "needsCommit": ["likeness_symmetric"], "weakReply": "Why should a likeness need a Form?", "reply": "Parmenides makes exactly this point to the young Socrates, in my uncle's own dialogue. My uncle answered it by... writing it down. I do not have an answer.", "next": "r4" },
+        { "id": "give_up", "text": "Perhaps there are no universals at all, only particular things.", "hit": 0, "reply": "Then what is knowledge knowledge of? Particulars come and go." }
+      ]
+    },
+    {
+      "id": "r4",
+      "claim": "Very well. If the Forms are separate from things, the regress follows. But if they are not separate...",
+      "moves": [
+        { "id": "in_things", "text": "Then perhaps the form is in the things: this man's humanity is in him, not somewhere apart. That is what Aristotle says.", "hit": 1, "reply": "That is not Plato. But I can see why the boy from Stagira likes it." },
+        { "id": "mock", "text": "So your uncle has spent forty years on nothing.", "hit": 0, "contradicts": ["likeness_symmetric"], "reply": "You have spent ten years learning from him. Was that nothing?" }
+      ]
+    }
+  ],
+  "onWin": ["xp logos 60", "rep aristotle 2", "rep speusippus -1", "idea third_man", "codex third_man"],
+  "onLose": ["xp logos 20", "rep speusippus 1", "idea third_man", "codex third_man"],
+  "lesson": "The Third Man is Plato's own objection to his theory, put in the mouth of Parmenides (Parmenides 132a–b) and later named by Aristotle. If the Form of Large is itself large, then the large things and the Form together need a further Form, and so on without end. Aristotle's answer was to put form in things, not apart from them."
+}

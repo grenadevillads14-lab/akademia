@@ -1,0 +1,46 @@
+{
+  "id": "forms_defend",
+  "title": "In defence of the Forms",
+  "opponent": "aristotle",
+  "question": "Aristotle says Plato's Forms explain nothing. You take Plato's side.",
+  "opponentConsistency": 4,
+  "playerConsistency": 3,
+  "start": "r1",
+  "rounds": [
+    {
+      "id": "r1",
+      "claim": "Saying things are what they are by 'participating' in Forms is empty words and poetic metaphor. What does participating mean?",
+      "moves": [
+        { "id": "knowledge", "text": "Knowledge must be of something that does not change. Particular things change. So there must be unchanging objects of knowledge.", "hit": 1, "commits": ["knowledge_unchanging"], "reply": "Granted: knowledge is of the universal. But why must the universal exist apart?", "next": "r2" },
+        { "id": "geometry", "text": "No drawn circle is perfectly round, yet geometry proves things about the perfect circle. What is it proving them about?", "hit": 1, "requires": { "idea": "divided_line" }, "reply": "About circles, considered in abstraction from their matter. Not about a circle in some other world.", "next": "r2" },
+        { "id": "authority", "text": "Plato says so, and he is wiser than either of us.", "hit": 0, "reply": "Plato is dear to me. Truth is dearer." }
+      ]
+    },
+    {
+      "id": "r2",
+      "claim": "The universal is real, but it exists in the things. Man is in Callias and Socrates, not beside them.",
+      "moves": [
+        { "id": "perish", "text": "If humanity is only in men, then when every man has died, there is no humanity. Is mathematics true only while there are things to count?", "hit": 1, "commits": ["eternal_truth"], "reply": "A good question. I will have to think about how the eternal things are. Not today.", "next": "r3" },
+        { "id": "agree_in", "text": "Then you are right, and the Forms are in things.", "hit": 0, "contradicts": ["knowledge_unchanging"], "reply": "You argued a moment ago that knowledge needs unchanging objects. Things change." }
+      ]
+    },
+    {
+      "id": "r3",
+      "claim": "Still, your Forms do not move anything. A Form of house does not build a house. A builder does.",
+      "moves": [
+        { "id": "cause", "text": "A builder builds by having the form of the house in his mind. Without that, he piles stones. So the form is a cause.", "hit": 2, "needsCommit": ["eternal_truth"], "weakReply": "A form in his mind, yes. That is my point, not yours.", "reply": "...So the form is a cause, but in the builder. You are making my argument for me, and better than Plato does. We agree more than we disagree.", "next": "r4" },
+        { "id": "silence", "text": "That is a cheap objection.", "hit": 0, "reply": "Cheap objections are the ones that are hard to answer." }
+      ]
+    },
+    {
+      "id": "r4",
+      "claim": "Let us call it a draw. We both want to know what makes a thing what it is.",
+      "moves": [
+        { "id": "draw", "text": "A draw. Plato would say that is the beginning of philosophy.", "hit": 1, "reply": "And I would say it is the beginning of a very long book." }
+      ]
+    }
+  ],
+  "onWin": ["xp logos 60", "rep plato 2", "rep aristotle 1", "idea forms", "codex third_man"],
+  "onLose": ["xp logos 20", "rep aristotle 1", "idea forms", "codex third_man"],
+  "lesson": "Aristotle's criticism of the Forms (Metaphysics A.9, M–N) is that 'participation' is an empty metaphor, that separate Forms do not explain change or generation, and that the theory multiplies entities. Platonists answered that knowledge needs unchanging objects, and mathematics seems to be about perfect objects no one has seen. Aristotle's own view, that form is in things, grew out of this argument."
+}

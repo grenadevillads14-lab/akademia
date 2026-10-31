@@ -10,7 +10,7 @@ import { simulate, type WaterNetwork, type WaterSetting } from './waterworks';
  */
 const T = text;
 
-function overlay(cls: string): { root: HTMLDivElement; box: HTMLDivElement; close: () => void } {
+export function overlay(cls: string): { root: HTMLDivElement; box: HTMLDivElement; close: () => void } {
   const root = document.createElement('div');
   root.className = `puzzle ${cls}`;
   root.setAttribute('data-testid', 'puzzle');
@@ -22,7 +22,7 @@ function overlay(cls: string): { root: HTMLDivElement; box: HTMLDivElement; clos
   return { root, box, close: () => root.remove() };
 }
 
-function btn(label: string, fn: () => void, cls = 'menu-button'): HTMLButtonElement {
+export function btn(label: string, fn: () => void, cls = 'menu-button'): HTMLButtonElement {
   const b = document.createElement('button');
   b.type = 'button';
   b.className = cls;
@@ -31,7 +31,7 @@ function btn(label: string, fn: () => void, cls = 'menu-button'): HTMLButtonElem
   return b;
 }
 
-function h(tag: string, txt: string, cls = ''): HTMLElement {
+export function h(tag: string, txt: string, cls = ''): HTMLElement {
   const e = document.createElement(tag);
   e.textContent = txt;
   if (cls) e.className = cls;

@@ -1,0 +1,274 @@
+{
+  "notes": "Act 4: The death of Plato (348/347 BC). Dialogue in content/dialogue/act4.ink.",
+  "order": 5,
+  "quests": {
+    "act4": {
+      "titleKey": "quest.act4",
+      "steps": {
+        "funeral": {
+          "textKey": "quest.act4.funeral",
+          "marker": [
+            186,
+            -282
+          ]
+        },
+        "succession": {
+          "textKey": "quest.act4.succession",
+          "marker": [
+            160.5,
+            -260.5
+          ]
+        },
+        "farewell": {
+          "textKey": "quest.act4.farewell",
+          "marker": [
+            446,
+            507
+          ]
+        }
+      }
+    }
+  },
+  "npcs": [
+    {
+      "npc": "plato",
+      "when": {
+        "flag": "plato_dead"
+      },
+      "hidden": true
+    },
+    {
+      "npc": "speusippus",
+      "when": {
+        "questStep": "act4:funeral"
+      },
+      "ring": [
+        186,
+        -282,
+        4.6,
+        0.0
+      ],
+      "anim": "idle"
+    },
+    {
+      "npc": "xenocrates",
+      "when": {
+        "questStep": "act4:funeral"
+      },
+      "ring": [
+        186,
+        -282,
+        4.6,
+        0.8
+      ],
+      "anim": "idle"
+    },
+    {
+      "npc": "aristotle",
+      "when": {
+        "questStep": "act4:funeral"
+      },
+      "ring": [
+        186,
+        -282,
+        4.6,
+        1.6
+      ],
+      "anim": "idle"
+    },
+    {
+      "npc": "heraclides",
+      "when": {
+        "questStep": "act4:funeral"
+      },
+      "ring": [
+        186,
+        -282,
+        4.6,
+        2.4
+      ],
+      "anim": "idle"
+    },
+    {
+      "npc": "philip",
+      "when": {
+        "questStep": "act4:funeral"
+      },
+      "ring": [
+        186,
+        -282,
+        4.6,
+        3.2
+      ],
+      "anim": "idle"
+    },
+    {
+      "npc": "axiothea",
+      "when": {
+        "questStep": "act4:funeral"
+      },
+      "ring": [
+        186,
+        -282,
+        4.6,
+        4.0
+      ],
+      "anim": "idle"
+    },
+    {
+      "npc": "lasthenia",
+      "when": {
+        "questStep": "act4:funeral"
+      },
+      "ring": [
+        186,
+        -282,
+        4.6,
+        4.8
+      ],
+      "anim": "idle"
+    },
+    {
+      "npc": "theophrastus",
+      "when": {
+        "questStep": "act4:funeral"
+      },
+      "ring": [
+        186,
+        -282,
+        4.6,
+        5.6
+      ],
+      "anim": "idle"
+    },
+    {
+      "npc": "speusippus",
+      "when": {
+        "questStep": "act4:succession"
+      },
+      "x": 160.5,
+      "z": -260.5,
+      "heading": 0.6,
+      "anim": "idle"
+    },
+    {
+      "npc": "aristotle",
+      "when": {
+        "questStep": "act4:succession"
+      },
+      "x": 166,
+      "z": -250,
+      "heading": 2.6,
+      "anim": "idle"
+    },
+    {
+      "npc": "aristotle",
+      "when": {
+        "questStep": "act4:farewell"
+      },
+      "x": 446,
+      "z": 507,
+      "heading": -2.3,
+      "anim": "idle"
+    },
+    {
+      "npc": "xenocrates",
+      "when": {
+        "questStep": "act4:farewell"
+      },
+      "x": 448.2,
+      "z": 508.0,
+      "heading": -2.0,
+      "anim": "idle"
+    },
+    {
+      "npc": "aristotle",
+      "when": {
+        "questDone": "act4"
+      },
+      "hidden": true
+    },
+    {
+      "npc": "xenocrates",
+      "when": {
+        "flag": "act4_path"
+      },
+      "hidden": true
+    }
+  ],
+  "props": [
+    {
+      "id": "plato-grave",
+      "kind": "grave",
+      "x": 186,
+      "z": -282,
+      "heading": 0.7,
+      "when": {
+        "flag": "plato_dead"
+      }
+    },
+    {
+      "id": "aristotle-cart",
+      "kind": "cart",
+      "x": 449,
+      "z": 504.5,
+      "heading": 0.8,
+      "when": {
+        "questStep": "act4:farewell"
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "id": "act4_start",
+      "type": "auto",
+      "dialogue": "act4.news",
+      "requires": {
+        "questDone": "act3",
+        "notFlag": "act4_started"
+      },
+      "set": "act4_started"
+    },
+    {
+      "id": "funeral",
+      "type": "zone",
+      "circle": [
+        186,
+        -282,
+        9
+      ],
+      "dialogue": "act4.funeral",
+      "requires": {
+        "questStep": "act4:funeral"
+      }
+    },
+    {
+      "id": "speusippus_succession",
+      "type": "talk",
+      "npc": "speusippus",
+      "dialogue": "act4.speusippus_succession",
+      "requires": {
+        "questStep": "act4:succession"
+      }
+    },
+    {
+      "id": "act4_after",
+      "type": "auto",
+      "dialogue": "act4.after",
+      "requires": {
+        "questStep": "act4:farewell",
+        "flag": "lesbos_done"
+      }
+    },
+    {
+      "id": "farewell",
+      "type": "talk",
+      "npc": "aristotle",
+      "dialogue": "act4.farewell",
+      "requires": {
+        "questStep": "act4:farewell",
+        "notFlag": "act4_path"
+      }
+    }
+  ]
+}
