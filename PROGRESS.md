@@ -10,22 +10,41 @@
 | M3 Life (NPCs, dialogue, prologue) | ✅ done |
 | M4 Systems | ✅ done |
 | M5 Puzzles batch 1 + Act 1 (vertical slice complete) | ✅ done |
-| Visual overhaul (user feedback: "looks like 2000") | ✅ passes 1–3 done, continuing |
-| M6 Athletics | 🔨 built (races, torch race, throws, wrestling), being polished |
-| M7 Act 2 + Cave | 🔨 built (puzzles, story, Cave interlude) |
-| M8 Acts 3–4 | 🔨 built (debates, specimens, funeral, farewell; Lesbos stubbed) |
-| M7–M10 | — |
-
----|---|
-| M0 Foundation | ✅ done |
-| M1 Walking in the grove | ⏭ next |
-| M2 Academy graybox → first art pass | — |
-| M3 Life (NPCs, dialogue, prologue) | — |
-| M4 Systems | — |
-| M5 Puzzles batch 1 (vertical slice complete) | — |
-| M6–M10 | — |
+| Visual overhaul (user feedback: "looks like 2000") | ✅ passes 1–4 done |
+| Enchanted Academy (user feedback: "feels so empty", School of Athens) | 🔨 painterly grade, life, statues, flowers, fauna, fires |
+| M6 Athletics | ✅ built (races, torch race, throws, wrestling) |
+| M7 Act 2 + Cave | ✅ built (puzzles, story, Cave interlude) |
+| M8 Acts 3–4 | ✅ built (debates, specimens, funeral, farewell; Lesbos stubbed) |
+| M9 Lyceum + Act 5 | — |
+| M10 Polish + endings | — |
 
 ---
+
+## Enchanted Academy (2026-11-01)
+
+User feedback, with Raphael's *School of Athens* as the reference: "it has to be more beautiful, it feels so empty. It
+should be an enchanted akademia, with beautiful color grading like this."
+
+- **Painterly grade** (`src/render/post.ts`, `painterly`): soft Orton glow from the bloom chain, vibrance that protects
+  skin, split toning (umber shadows, ivory-gold highlights), a warm lift instead of black, a gentle S-curve, and no teal:
+  skylit shade that drifts cyan is pulled to olive, as a painter would.
+- **Life** (`content/world/academy.life.json`, `src/npc/life.ts`): philosophers walking the peripatos two by two,
+  students on every path, runners on the dromos, wrestlers, a discus thrower and their trainer in the palaestra, debate
+  circles under the planes, a lecture with listeners on the ground, geometry drawn in the sand, readers and writers,
+  scribes on a bench at the Mouseion, worshippers and a priest at the altars, gardeners in the sacred olives. Students
+  wear a richer palette (madder, saffron, woad, sea-green, purple-brown over undyed wool). Crowd shadows only within 45 m.
+- **Statues** (`src/world/statues.ts`): MakeHuman figures frozen in a pose and turned to painted marble or golden bronze
+  on pedestals: Athena by her altar, the Graces Speusippus set up in the Mouseion (D.L. 4.1), Heracles, a praying bronze
+  youth by the altar of Eros, a victor outside the palaestra.
+- **Painted architecture** (`src/architecture/doric.ts`): masonry-style plaster inside the stoas (black plinth,
+  oxblood and ochre orthostats, white string course, blue meander frieze), painted ceiling beams, terracotta antefixes,
+  an ashlar socle, string course and high windows outside.
+- **Wildflowers** (`src/vegetation/flowers.ts`): poppies, chamomile, anemones and crown daisies in drifts, opening
+  with the season and swaying in the wind.
+- **Ambience** (`src/world/ambience.ts`): pollen and dust motes glinting against the sun, fireflies on summer nights,
+  butterflies (cabbage white, Cleopatra, painted lady, common blue) and swallows.
+- **Altar fires** (`src/world/fires.ts`): the fire of Prometheus and offerings on the smaller altars, with a warm
+  ground glow that grows at dusk.
 
 ## Visual overhaul (2026-10-31)
 

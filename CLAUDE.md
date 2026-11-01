@@ -40,6 +40,7 @@ In game: **F2** free camera, **F3** stats, **F4** respawn, **F6** +2 hours. Clic
 content/                       ALL game content as data (validated with zod at load)
   world/academy.json           layout: bounds, terrain noise, hills, rivers, Cimon's channels, paths, flats, zones, backdrop, spawn
   world/academy.vegetation.json planting plan (points, along, rows, ring, scatter, riverbank)
+  world/academy.life.json      ambient life: walkers per path, scenes (circle, lecture, geometry, wrestle, bench, solo), statues
   world/academy.structures.json city wall, gates, districts, grave road, Academy buildings, enclosures, herms, props, rocks
   assets/polyhaven.json        Poly Haven asset manifest (CC0)
   i18n/en.json                 every player-facing string
@@ -52,8 +53,10 @@ src/
   core/                        events, loop, input (+gamepad), settings/presets, i18n
   procgen/                     seeded rng, noise (incl. tileable), 2D polyline geometry
   world/                       heightfield (analytic terrain + surfaces + water), terrain mesh, sky/clock/wind,
-                               water ribbons, vegetation plan, structures, backdrop, world assembly
-  vegetation/                  tree generator, species, leaf atlas, BatchedMesh forest with LODs + impostors, GPU grass
+                               water ribbons, vegetation plan, structures, backdrop, statues (frozen marble/bronze figures),
+                               ambience (motes, fireflies, butterflies, swallows), altar fires, world assembly
+  vegetation/                  tree generator, species, leaf atlas, BatchedMesh forest with LODs + impostors, GPU grass,
+                               ground clutter, wildflower drifts
   architecture/                kit (Builder/Frame, metre UVs, per-material merge), greek (walls, gates, houses, graves, pottery),
                                doric (fluted columns, entablature, stoa), academy (gymnasium, shrine, altars, enclosures…), reliefs
   render/                      renderer, material library (Poly Haven), model library (glTF LODs, instancing),
@@ -61,7 +64,8 @@ src/
   characters/                  appearance schema; mhuman.ts = realistic MakeHuman bodies (targets, fitted hair/beards, clothes cut
                                from helpers with masked edges, bound to the 20-bone rig); humanoid.ts = stylised fallback; animator
   player/                      Rapier kinematic controller (walk/run/sprint/jump/swim), third-person camera with collision
-  npc/                         ambient crowd (walkers, groups) and story NPCs (pose / walk / patrol / follow)
+  npc/                         ambient crowd (walkers, pairs, posed figures), Academy life scenes from
+                               content/world/<id>.life.json (debates, lectures, wrestlers, readers, statues), story NPCs
   dialogue/                    ink runner (cmd:/anim:/shot: tags, external functions) and the dialogue UI
   systems/                     GameState + command language (flag, xp, rep, idea, item, quest, codex, collect, herm, toast, time, puzzle), saves
   game/story.ts                story director: placements, triggers (auto/zone/talk/interact/collect), requirements, objective

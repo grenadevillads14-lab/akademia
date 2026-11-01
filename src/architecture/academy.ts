@@ -163,7 +163,9 @@ export function altar(b: Builder, f: Frame, kind: 'small' | 'stepped' = 'small')
     b.boxIn(f, 'ashlar', 0, 0.15, 0, 2.0, 0.3, 1.4);
     b.boxIn(f, 'marble', 0, 0.65, 0, 1.5, 0.7, 0.95);
     b.boxIn(f, 'marble', 0, 1.05, 0, 1.7, 0.12, 1.1);
-    b.boxIn(f, 'dark', 0, 1.12, 0, 1.2, 0.03, 0.7);
+    // Ash and charred offerings on the hearth (the fire itself is world/fires.ts).
+    b.boxIn(f, 'paint', 0, 1.12, 0, 1.2, 0.03, 0.7, new THREE.Color(0.32, 0.29, 0.26));
+    b.boxIn(f, 'paint', 0.1, 1.14, -0.05, 0.5, 0.04, 0.35, new THREE.Color(0.12, 0.1, 0.09));
     return [[0, 0.6, 0, 2, 1.2, 1.4]];
   }
   for (let s = 0; s < 3; s++) b.boxIn(f, 'ashlar', 0, 0.12 + s * 0.24, 0, 5.2 - s * 0.6, 0.24, 3.6 - s * 0.5);

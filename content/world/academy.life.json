@@ -1,0 +1,526 @@
+{
+  "notes": "Ambient life inside the Academy precinct (src/npc/life.ts). Story NPCs stand at the teaching circle, the altar of Prometheus area and the Mouseion; these scenes keep clear of them. Headings: radians, same as rotation.y (0 = facing +Z = south). Statues: Athena by her altar; the Graces that Speusippus set up in the Mouseion (Diogenes Laertius 4.1); Heracles by his altar; a bronze praying youth by the altar of Eros; a victor's bronze outside the palaestra.",
+  "walkers": [
+    {
+      "path": "peripatos",
+      "count": 8,
+      "lateral": 0.7,
+      "roles": [
+        "scholar",
+        "scholar",
+        "elder"
+      ],
+      "pairs": true,
+      "speed": [
+        0.75,
+        0.95
+      ]
+    },
+    {
+      "path": "gate_to_gym",
+      "count": 6,
+      "lateral": 1.6,
+      "roles": [
+        "scholar",
+        "citizen",
+        "youth",
+        "traveller",
+        "elder"
+      ]
+    },
+    {
+      "path": "grove_loop",
+      "count": 4,
+      "lateral": 0.6,
+      "roles": [
+        "scholar",
+        "citizen",
+        "worker"
+      ]
+    },
+    {
+      "path": "to_kepidion",
+      "count": 4,
+      "lateral": 0.8,
+      "roles": [
+        "scholar",
+        "scholar",
+        "elder"
+      ],
+      "pairs": true,
+      "speed": [
+        0.8,
+        1.0
+      ]
+    },
+    {
+      "path": "to_mouseion",
+      "count": 2,
+      "lateral": 0.5,
+      "roles": [
+        "scholar"
+      ]
+    },
+    {
+      "path": "to_ford",
+      "count": 3,
+      "lateral": 0.8,
+      "roles": [
+        "worker",
+        "traveller",
+        "citizen"
+      ]
+    },
+    {
+      "path": "dromos",
+      "count": 4,
+      "lateral": 2.4,
+      "roles": [
+        "athlete"
+      ],
+      "gait": "run",
+      "speed": [
+        3.4,
+        4.8
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "id": "wrestlers-1",
+      "kind": "wrestle",
+      "x": -8,
+      "z": -8,
+      "heading": 0.7
+    },
+    {
+      "id": "wrestlers-2",
+      "kind": "wrestle",
+      "x": 8.5,
+      "z": 8,
+      "heading": 2.3
+    },
+    {
+      "id": "discus",
+      "kind": "solo",
+      "x": -9,
+      "z": 9,
+      "heading": 2.4,
+      "roles": [
+        "athlete"
+      ],
+      "anim": "throw"
+    },
+    {
+      "id": "trainer",
+      "kind": "solo",
+      "x": -3.5,
+      "z": -11.5,
+      "heading": -0.6,
+      "roles": [
+        "elder"
+      ],
+      "anim": "gesture"
+    },
+    {
+      "id": "athletes-resting",
+      "kind": "circle",
+      "x": 11,
+      "z": -10,
+      "count": 3,
+      "radius": 1.1,
+      "roles": [
+        "athlete"
+      ]
+    },
+    {
+      "id": "track-watchers",
+      "kind": "bench",
+      "x": 63,
+      "z": -22,
+      "heading": -1.5708,
+      "count": 3,
+      "roles": [
+        "scholar",
+        "citizen",
+        "elder"
+      ],
+      "anim": "sit"
+    },
+    {
+      "id": "plane-debate-1",
+      "kind": "circle",
+      "x": -25,
+      "z": -45,
+      "count": 5,
+      "radius": 1.5,
+      "roles": [
+        "scholar"
+      ]
+    },
+    {
+      "id": "plane-debate-2",
+      "kind": "circle",
+      "x": -77,
+      "z": -93,
+      "count": 4,
+      "radius": 1.3,
+      "roles": [
+        "scholar",
+        "elder"
+      ]
+    },
+    {
+      "id": "plane-lecture",
+      "kind": "lecture",
+      "x": 8,
+      "z": -112,
+      "heading": 3.0,
+      "count": 9,
+      "radius": 3.2,
+      "roles": [
+        "scholar",
+        "elder"
+      ]
+    },
+    {
+      "id": "sand-geometry",
+      "kind": "geometry",
+      "x": 32,
+      "z": -42,
+      "heading": 1.0,
+      "count": 4,
+      "radius": 1.5,
+      "roles": [
+        "scholar"
+      ]
+    },
+    {
+      "id": "plane-reader-1",
+      "kind": "solo",
+      "x": -48,
+      "z": -30,
+      "heading": 0.4,
+      "roles": [
+        "scholar"
+      ],
+      "anim": "read"
+    },
+    {
+      "id": "plane-reader-2",
+      "kind": "solo",
+      "x": -6,
+      "z": -78,
+      "heading": -2.2,
+      "roles": [
+        "scholar"
+      ],
+      "anim": "read"
+    },
+    {
+      "id": "plane-writer",
+      "kind": "solo",
+      "x": -95,
+      "z": -55,
+      "heading": 1.2,
+      "roles": [
+        "scholar"
+      ],
+      "anim": "write",
+      "seat": true
+    },
+    {
+      "id": "plane-rest",
+      "kind": "solo",
+      "x": -40,
+      "z": -88,
+      "heading": 2.6,
+      "roles": [
+        "scholar",
+        "youth"
+      ],
+      "anim": "sitGround"
+    },
+    {
+      "id": "mouseion-scribes",
+      "kind": "bench",
+      "x": -104,
+      "z": 128,
+      "heading": -1.5708,
+      "count": 3,
+      "roles": [
+        "scholar"
+      ]
+    },
+    {
+      "id": "grove-reader",
+      "kind": "solo",
+      "x": 40,
+      "z": 134,
+      "heading": 2.0,
+      "roles": [
+        "scholar"
+      ],
+      "anim": "read"
+    },
+    {
+      "id": "grove-talk",
+      "kind": "circle",
+      "x": 64,
+      "z": 118,
+      "count": 3,
+      "radius": 1.1,
+      "roles": [
+        "citizen",
+        "scholar",
+        "elder"
+      ]
+    },
+    {
+      "id": "grove-dig-1",
+      "kind": "solo",
+      "x": 12,
+      "z": 176,
+      "heading": 0.3,
+      "roles": [
+        "worker"
+      ],
+      "anim": "dig"
+    },
+    {
+      "id": "grove-dig-2",
+      "kind": "solo",
+      "x": -48,
+      "z": 118,
+      "heading": -1.0,
+      "roles": [
+        "worker"
+      ],
+      "anim": "dig"
+    },
+    {
+      "id": "pray-athena",
+      "kind": "solo",
+      "x": -22,
+      "z": 61,
+      "heading": 3.1416,
+      "roles": [
+        "citizen",
+        "woman",
+        "elder"
+      ],
+      "anim": "pray"
+    },
+    {
+      "id": "pray-hermes",
+      "kind": "solo",
+      "x": 62,
+      "z": 151.2,
+      "heading": 3.1416,
+      "roles": [
+        "youth",
+        "athlete"
+      ],
+      "anim": "pray"
+    },
+    {
+      "id": "pray-eros",
+      "kind": "solo",
+      "x": 158,
+      "z": 211.2,
+      "heading": 3.1416,
+      "roles": [
+        "youth"
+      ],
+      "anim": "pray"
+    },
+    {
+      "id": "priest-heracles",
+      "kind": "solo",
+      "x": 40,
+      "z": -58.8,
+      "heading": 3.1416,
+      "roles": [
+        "priest"
+      ],
+      "anim": "pray"
+    },
+    {
+      "id": "kepidion-walkers-rest",
+      "kind": "circle",
+      "x": 112,
+      "z": -196,
+      "count": 3,
+      "radius": 1.2,
+      "roles": [
+        "scholar"
+      ]
+    }
+  ],
+  "statues": [
+    {
+      "id": "athena",
+      "x": -25.5,
+      "z": 54.5,
+      "heading": 2.4,
+      "material": "marble",
+      "base": 1.25,
+      "scale": 1.15,
+      "pose": "idle",
+      "appearance": {
+        "height": 1.72,
+        "build": 0.45,
+        "sex": "f",
+        "age": "adult",
+        "skin": "#e6dccb",
+        "hair": {
+          "style": "bun",
+          "color": "#8a7a62"
+        },
+        "beard": {
+          "style": "none",
+          "color": "#000"
+        },
+        "chiton": {
+          "color": "#e9e1d2",
+          "length": "ankle",
+          "border": "#2c4878"
+        },
+        "himation": {
+          "color": "#d9c08a",
+          "border": "#9c3426"
+        },
+        "props": [
+          "staff"
+        ]
+      }
+    },
+    {
+      "id": "graces",
+      "x": -108.5,
+      "z": 137,
+      "heading": -2.2,
+      "material": "marble",
+      "base": 0.9,
+      "scale": 1.0,
+      "pose": "idle",
+      "appearance": {
+        "height": 1.62,
+        "build": 0.3,
+        "sex": "f",
+        "age": "youth",
+        "skin": "#e6dccb",
+        "hair": {
+          "style": "bun",
+          "color": "#8a7a62"
+        },
+        "beard": {
+          "style": "none",
+          "color": "#000"
+        },
+        "chiton": {
+          "color": "#ece4d6",
+          "length": "ankle",
+          "border": "#c47468"
+        },
+        "himation": null,
+        "props": []
+      }
+    },
+    {
+      "id": "heracles",
+      "x": 43.5,
+      "z": -58,
+      "heading": -2.6,
+      "material": "bronze",
+      "base": 1.2,
+      "scale": 1.15,
+      "pose": "idle",
+      "appearance": {
+        "height": 1.82,
+        "build": 1.0,
+        "sex": "m",
+        "age": "adult",
+        "skin": "#b27c48",
+        "hair": {
+          "style": "curly",
+          "color": "#3a2618"
+        },
+        "beard": {
+          "style": "full",
+          "color": "#3a2618"
+        },
+        "chiton": {
+          "color": "#b27c48",
+          "length": "short"
+        },
+        "loincloth": true,
+        "props": [
+          "staff"
+        ]
+      }
+    },
+    {
+      "id": "praying-youth",
+      "x": 154.5,
+      "z": 206,
+      "heading": 0.9,
+      "material": "bronze",
+      "base": 1.0,
+      "scale": 1.0,
+      "pose": "pray",
+      "appearance": {
+        "height": 1.66,
+        "build": 0.45,
+        "sex": "m",
+        "age": "youth",
+        "skin": "#b27c48",
+        "hair": {
+          "style": "short",
+          "color": "#3a2618"
+        },
+        "beard": {
+          "style": "none",
+          "color": "#000"
+        },
+        "chiton": {
+          "color": "#b27c48",
+          "length": "short"
+        },
+        "loincloth": true,
+        "props": []
+      }
+    },
+    {
+      "id": "victor",
+      "x": -6,
+      "z": 27.5,
+      "heading": 3.1416,
+      "material": "bronze",
+      "base": 1.1,
+      "scale": 1.05,
+      "pose": "idle",
+      "appearance": {
+        "height": 1.78,
+        "build": 0.7,
+        "sex": "m",
+        "age": "youth",
+        "skin": "#b27c48",
+        "hair": {
+          "style": "curly",
+          "color": "#3a2618"
+        },
+        "beard": {
+          "style": "none",
+          "color": "#000"
+        },
+        "chiton": {
+          "color": "#b27c48",
+          "length": "short"
+        },
+        "loincloth": true,
+        "props": []
+      }
+    }
+  ]
+}

@@ -28,6 +28,12 @@ export interface AtmosphereParams {
   warmth: number;
   saturation: number;
   contrast: number;
+  /**
+   * Painterly grade (0..1), after Raphael's School of Athens: warm umber lift in the shadows instead of
+   * black, ivory-gold highlights, vibrance that wakes up muted drapery without burning skin, and a soft
+   * Orton glow that makes sunlit stone luminous.
+   */
+  painterly: number;
 }
 
 const COMMON = /* glsl */ `
@@ -185,6 +191,7 @@ const COMPOSITE_FRAG = /* glsl */ `
   uniform float warmth;
   uniform float saturation;
   uniform float contrast;
+  uniform float painterly;
   uniform float time;
   uniform float useAO;
   uniform float debugMode;
@@ -246,6 +253,38 @@ const COMPOSITE_FRAG = /* glsl */ `
     c = max(mix(vec3(l), c, saturation), 0.0);
     c = pow(c / 0.18, vec3(contrast)) * 0.18;
 
+    // Painterly grade (Raphael): luminous glow, vibrance, warm umber shadows, ivory-gold highlights.
+    if (painterly > 0.0) {
+      // Orton glow: a soft, wide halo of the bright scene screened over the image (dreamy, not hazy).
+      vec3 halo = texture2D(tBloomB, vUv).rgb * 0.7 + texture2D(tBloomA, vUv).rgb * 0.3;
+      c = c + halo * 0.08 * painterly * (1.0 - min(c, vec3(1.0)) * 0.5);
+      l = dot(c, vec3(0.2126, 0.7152, 0.0722));
+      // Vibrance: lift the saturation of muted colours (cloth, foliage, painted stone) more than strong ones.
+      float mxc = max(c.r, max(c.g, c.b));
+      float mnc = min(c.r, min(c.g, c.b));
+      float sat = (mxc - mnc) / max(mxc, 1e-4);
+      // Skin-ish hues (red > green > blue, modest saturation) are protected.
+      float skin = smoothstep(0.12, 0.0, abs(sat - 0.38)) * step(c.b, c.g) * step(c.g, c.r);
+      c = max(mix(vec3(l), c, 1.0 + painterly * 0.32 * (1.0 - sat) * (1.0 - skin * 0.7)), 0.0);
+      // Split tone by exposure zone: umber/terracotta lift below mid grey, ivory-gold toward the highlights,
+      // a breath of lapis in the deep sky-lit mid tones keeps it from going muddy.
+      float z = clamp(log2(l / 0.18 + 1e-5) / 5.0 + 0.5, 0.0, 1.0);
+      vec3 shadowTint = vec3(1.10, 0.97, 0.80);
+      vec3 midTint = vec3(0.98, 1.0, 1.04);
+      vec3 highTint = vec3(1.07, 1.01, 0.86);
+      vec3 tint = z < 0.5 ? mix(shadowTint, midTint, smoothstep(0.15, 0.5, z)) : mix(midTint, highTint, smoothstep(0.5, 0.9, z));
+      c *= mix(vec3(1.0), tint, painterly);
+      // No teal: skylit shade on grass and stone drifts cyan in a physically lit scene, but a painter's
+      // shadows are olive and umber. Pull cyan toward warm green, keep true sky blues (b well above g).
+      float cyan = clamp(min(c.g, c.b) - c.r, 0.0, 1.0) * (1.0 - smoothstep(0.0, 0.25, (c.b - c.g) / max(c.b, 1e-4)));
+      c.b -= cyan * 0.75 * painterly;
+      c.r += cyan * 0.25 * painterly;
+      // Lift the blacks warmly, as a fresco's darkest darks are earth pigments, never black.
+      c += vec3(0.0045, 0.003, 0.0015) * painterly * (1.0 - smoothstep(0.0, 0.08, l));
+      // A gentle S around mid grey: depth in the shadows, the lit stone and cloth stand forward.
+      c = pow(c / 0.18, vec3(1.0 + 0.1 * painterly)) * 0.18;
+    }
+
     // Vignette and a little grain.
     vec2 q = vUv - 0.5;
     c *= 1.0 - dot(q, q) * 0.55;
@@ -289,6 +328,7 @@ export class PostPipeline {
     warmth: 0.35,
     saturation: 1.08,
     contrast: 1.06,
+    painterly: 1,
   };
 
   constructor(
@@ -303,7 +343,7 @@ export class PostPipeline {
     this.mats.ao = make(AO_FRAG, { texel: { value: new THREE.Vector2() }, radius: { value: 1.2 }, proj: { value: new THREE.Matrix4() } });
     this.mats.aoBlur = make(BLUR_AO_FRAG, { tAO: { value: null }, dir: { value: new THREE.Vector2() } });
     this.mats.shafts = make(SHAFT_FRAG, { tColor: { value: null }, sunUv: { value: new THREE.Vector2() }, sunVisible: { value: 0 } });
-    this.mats.bright = make(BRIGHT_FRAG, { tColor: { value: null }, threshold: { value: 1.4 } });
+    this.mats.bright = make(BRIGHT_FRAG, { tColor: { value: null }, threshold: { value: 1.25 } });
     this.mats.blur = make(BLUR_FRAG, { tColor: { value: null }, dir: { value: new THREE.Vector2() } });
     this.mats.composite = make(
       COMPOSITE_FRAG,
@@ -328,6 +368,7 @@ export class PostPipeline {
         warmth: { value: 0.3 },
         saturation: { value: 1.05 },
         contrast: { value: 1.05 },
+        painterly: { value: 1 },
         time: { value: 0 },
         useAO: { value: 1 },
         debugMode: { value: Number(new URLSearchParams(location.search).get('postdebug') ?? 0) },
@@ -468,6 +509,7 @@ export class PostPipeline {
     u.texel!.value.set(1 / this.w, 1 / this.h);
     u.saturation!.value = p.saturation;
     u.contrast!.value = p.contrast;
+    u.painterly!.value = g.bloom ? p.painterly : 0;
     u.time!.value = time % 100;
     this.pass(c, null);
   }

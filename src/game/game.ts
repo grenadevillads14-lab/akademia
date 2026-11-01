@@ -495,6 +495,9 @@ export class Game {
     this.world.forest.update(this.camera);
     this.world.grass.update(focus);
     this.world.clutter.update(focus);
+    this.world.flowers.update(focus);
+    this.world.fires.update(this.elapsed, this.uniforms.night.value);
+    this.world.ambience.update(dt, this.camera, focus, this.world.sky.sunDir, this.uniforms.night.value, { spring: 1, summer: 1, autumn: 0.5, winter: 0 }[this.clock.season]);
     this.world.water.update(dt);
     this.specimens?.update(this.camera, this.elapsed);
     this.world.update(this.camera, dt);

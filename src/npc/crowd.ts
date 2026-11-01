@@ -43,6 +43,7 @@ export function randomCitizen(rng: Rng, role: 'traveller' | 'citizen' | 'worker'
 }
 
 interface Walker {
+  gait: 'walk' | 'run';
   h: Humanoid;
   anim: Animator;
   path: Vec2[];
@@ -59,6 +60,17 @@ interface Loiterer {
   anim: Animator;
   state: AnimState;
   switchIn: number;
+  /** Holds its pose (seated, reading, wrestling) instead of alternating idle and gesture. */
+  fixed: boolean;
+}
+
+export interface WalkerOptions {
+  /** Appearance per walker. */
+  appearance?: (rng: Rng) => AppearanceInput;
+  speed?: [number, number];
+  gait?: 'walk' | 'run';
+  /** Walk side by side, two by two. */
+  pairs?: boolean;
 }
 
 export class Crowd {
@@ -76,17 +88,42 @@ export class Crowd {
     this.rng = mulberry32(seed);
   }
 
-  addWalkers(path: Vec2[], count: number, lateral: number): void {
+  addWalkers(path: Vec2[], count: number, lateral: number, opts: WalkerOptions = {}): void {
     const len = polylineLength(path);
+    const rng = this.rng;
+    const [v0, v1] = opts.speed ?? [1.05, 1.45];
+    const gait = opts.gait ?? 'walk';
+    let partner: Walker | null = null;
     for (let i = 0; i < count; i++) {
-      const rng = this.rng;
       const role = pick(rng, ['traveller', 'citizen', 'citizen', 'worker', 'woman', 'elder', 'youth'] as const);
-      const h = buildHumanoid(parseAppearance(randomCitizen(rng, role)), { lite: true });
+      const h = buildHumanoid(parseAppearance(opts.appearance ? opts.appearance(rng) : randomCitizen(rng, role)), { lite: true });
       this.group.add(h.object);
       const anim = new Animator(h, rng() * 100);
-      anim.play('walk');
-      this.walkers.push({ h, anim, path, len, s: rng() * len, dir: rng() < 0.5 ? 1 : -1, speed: range(rng, 1.05, 1.45) * (role === 'elder' ? 0.75 : 1), lateral: (rng() - 0.5) * 2 * lateral, pause: 0 });
+      anim.play(gait);
+      let w: Walker;
+      if (opts.pairs && partner) {
+        // The second of a pair keeps step with the first, half a metre to the side.
+        w = { ...partner, h, anim, lateral: partner.lateral + (partner.lateral > 0 ? -0.55 : 0.55) };
+        partner = null;
+      } else {
+        const speed = range(rng, v0, v1) * (role === 'elder' && !opts.appearance ? 0.75 : 1);
+        w = { gait, h, anim, path, len, s: rng() * len, dir: rng() < 0.5 ? 1 : -1, speed, lateral: (rng() - 0.5) * 2 * lateral, pause: 0 };
+        if (opts.pairs) partner = w;
+      }
+      this.walkers.push(w);
     }
+  }
+
+  /** One standing, seated or working figure. */
+  addFigure(appearance: AppearanceInput, x: number, z: number, heading: number, state: AnimState, fixed: boolean): void {
+    const rng = this.rng;
+    const h = buildHumanoid(parseAppearance(appearance), { lite: true });
+    h.object.position.set(x, this.ground(x, z), z);
+    h.object.rotation.y = heading;
+    this.group.add(h.object);
+    const anim = new Animator(h, rng() * 100);
+    anim.play(state);
+    this.loiterers.push({ h, anim, state, switchIn: range(rng, 3, 9), fixed });
   }
 
   /** A knot of people standing around a point, facing inward, chatting. */
@@ -104,8 +141,22 @@ export class Crowd {
       const anim = new Animator(h, rng() * 100);
       const state: AnimState = rng() < 0.4 ? 'gesture' : 'idle';
       anim.play(state);
-      this.loiterers.push({ h, anim, state, switchIn: range(rng, 3, 9) });
+      this.loiterers.push({ h, anim, state, switchIn: range(rng, 3, 9), fixed: false });
     }
+  }
+
+  /** Figures beyond this distance are hidden; only near ones cast shadows (draw-call budget). */
+  viewDistance = 130;
+  shadowDistance = 45;
+  private readonly shadowState = new WeakMap<Humanoid, boolean>();
+
+  private shade(h: Humanoid, d: number): void {
+    const want = d < this.shadowDistance;
+    if (this.shadowState.get(h) === want) return;
+    this.shadowState.set(h, want);
+    h.object.traverse((o) => {
+      if ((o as THREE.Mesh).isMesh) o.castShadow = want;
+    });
   }
 
   get count(): number {
@@ -117,13 +168,14 @@ export class Crowd {
     for (const w of this.walkers) {
       if (w.pause > 0) {
         w.pause -= dt;
-        if (w.pause <= 0) w.anim.play('walk');
+        if (w.pause <= 0) w.anim.play(w.gait);
       } else {
         w.s += w.speed * w.dir * dt;
         if (w.s > w.len || w.s < 0) {
           w.dir = w.dir === 1 ? -1 : 1;
           w.s = THREE.MathUtils.clamp(w.s, 0, w.len);
-          w.pause = range(this.rng, 1, 6);
+          // Pairs turn together: the pause is derived from the path position, not the rng.
+          w.pause = 1 + (Math.abs(Math.sin(w.speed * 1000)) * 5);
           w.anim.play('idle');
         }
       }
@@ -134,15 +186,17 @@ export class Crowd {
       o.position.set(x, this.ground(x, z), z);
       o.rotation.y = Math.atan2(p.tx * w.dir, p.tz * w.dir);
       const d = o.position.distanceTo(this.camPos);
-      o.visible = d < 130;
+      o.visible = d < this.viewDistance;
+      this.shade(w.h, d);
       if (o.visible && d < 90) w.anim.update(dt, w.pause > 0 ? 0 : w.speed);
     }
     for (const l of this.loiterers) {
       const d = l.h.object.position.distanceTo(this.camPos);
-      l.h.object.visible = d < 130;
+      l.h.object.visible = d < this.viewDistance;
+      this.shade(l.h, d);
       if (!l.h.object.visible || d > 90) continue;
       l.switchIn -= dt;
-      if (l.switchIn <= 0) {
+      if (!l.fixed && l.switchIn <= 0) {
         l.state = l.state === 'gesture' ? 'idle' : this.rng() < 0.5 ? 'gesture' : 'idle';
         l.anim.play(l.state);
         l.switchIn = range(this.rng, 3, 9);

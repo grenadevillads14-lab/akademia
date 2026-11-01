@@ -127,7 +127,19 @@ export function stoa(b: Builder, f: Frame, length: number, depth: number, o: Dor
   if (opts.backWall !== false) {
     b.boxIn(f, 'whitewash', 0, 0.57 + top / 2, -depth / 2, length + o.D * 1.4, top, 0.6);
     // Exedra niches / doors along the back.
-    for (let i = 1; i < n - 1; i += 3) b.boxIn(f, 'dark', x0 + i * spacing, 0.57 + 1.3, -depth / 2 + 0.31, 1.4, 2.6, 0.05);
+    const doors: number[] = [];
+    for (let i = 1; i < n - 1; i += 3) {
+      b.boxIn(f, 'dark', x0 + i * spacing, 0.57 + 1.3, -depth / 2 + 0.31, 1.4, 2.6, 0.05);
+      doors.push(x0 + i * spacing);
+    }
+    paintedWall(b, f, x0, x0 + length, -depth / 2 + 0.3, 0.57, spacing, doors);
+    // Outside face: a socle of squared blocks, a string course, high slit windows under the eaves.
+    const oz = -depth / 2 - 0.3;
+    const wl = length + o.D * 1.4;
+    b.boxIn(f, 'ashlar', 0, 0.57 + 0.45, oz - 0.06, wl + 0.12, 0.9 + 1.14, 0.14);
+    b.boxIn(f, 'ashlar', 0, 0.57 + 0.98, oz - 0.1, wl + 0.2, 0.12, 0.2);
+    for (let x = x0 + spacing / 2; x < x0 + length; x += spacing * 1.5) b.boxIn(f, 'dark', x, 0.57 + top - 0.9, oz - 0.01, 0.35, 0.7, 0.04);
+    b.boxIn(f, 'whitewash', 0, 0.57 + top - 0.12, oz - 0.12, wl + 0.3, 0.24, 0.26);
   }
   // Lean-to roof sloping toward the colonnade.
   const roofFrame = f.sub(0, 0, 0, f.y + 0.57 + top);
@@ -148,4 +160,58 @@ export function stoa(b: Builder, f: Frame, length: number, depth: number, o: Dor
   b.geometry('wood', under, new THREE.Vector3(rx, roofFrame.y, rz), new THREE.Euler(0, f.rot, 0));
   geo.dispose();
   under.dispose();
+  // Ceiling beams across the portico, one over each column and one between, their soffits painted
+  // (blue with a red edge): what you see when you look up walking the stoa.
+  const ang = Math.atan2(rise, depth + 1);
+  const beamLen = Math.hypot(depth + 1, rise);
+  const beam = new THREE.BoxGeometry(0.2, 0.24, beamLen);
+  beam.rotateX(ang);
+  const soffit = new THREE.BoxGeometry(0.12, 0.02, beamLen);
+  soffit.rotateX(ang);
+  const zc = 0.2;
+  const yc = roofFrame.y - 0.1 + rise / 2 - 0.13;
+  const blue = new THREE.Color(0.2, 0.3, 0.58);
+  for (let x = -length / 2; x <= length / 2 + 1e-3; x += spacing / 2) {
+    const [bx, bz] = f.toWorld(x, zc);
+    b.geometry('wood', beam, new THREE.Vector3(bx, yc, bz), new THREE.Euler(0, f.rot, 0, 'YXZ'));
+    b.geometry('paint', soffit, new THREE.Vector3(bx, yc - 0.125, bz), new THREE.Euler(0, f.rot, 0, 'YXZ'), new THREE.Vector3(1, 1, 1), { tint: blue });
+  }
+  beam.dispose();
+  soffit.dispose();
+  // Painted terracotta antefixes (palmettes) closing the cover-tile rows along the low eave.
+  const red = new THREE.Color(0.62, 0.24, 0.13);
+  // A small upright plaque, rounded at the top (a squashed 5-sided disc).
+  const antefix = new THREE.CircleGeometry(0.13, 5, Math.PI / 2 - 0.9, 1.8 + Math.PI / 2);
+  antefix.scale(0.85, 1.1, 1);
+  antefix.translate(0, 0.02, 0);
+  for (let x = -hw + 0.2; x < hw; x += 0.62) {
+    const [ax, az] = f.toWorld(x, depth / 2 + 0.72);
+    b.geometry('paint', antefix, new THREE.Vector3(ax, roofFrame.y + 0.14, az), new THREE.Euler(0, f.rot, 0), new THREE.Vector3(1, 1, 1), { tint: red });
+  }
+  antefix.dispose();
+}
+
+/**
+ * Painted plaster on the inner face of a back wall, in the "masonry style" of the 4th century: a dark plinth,
+ * tall orthostat panels alternating oxblood and ochre with white joints, a projecting white string course,
+ * and above it a frieze band with a running meander suggested by alternating blocks.
+ */
+export function paintedWall(b: Builder, f: Frame, x0: number, x1: number, z: number, y: number, spacing: number, doors: number[] = []): void {
+  const red = new THREE.Color(0.55, 0.16, 0.1);
+  const ochre = new THREE.Color(0.78, 0.55, 0.22);
+  const black = new THREE.Color(0.09, 0.08, 0.07);
+  const blue = new THREE.Color(0.2, 0.32, 0.6);
+  const len = x1 - x0;
+  const cx = (x0 + x1) / 2;
+  b.boxIn(f, 'paint', cx, y + 0.15, z + 0.02, len, 0.3, 0.03, black);
+  const panelW = spacing / 2 - 0.08;
+  let k = 0;
+  for (let x = x0 + spacing / 4; x < x1 - 0.1; x += spacing / 2, k++) {
+    if (doors.some((d) => Math.abs(d - x) < 1.0)) continue;
+    b.boxIn(f, 'paint', x, y + 0.92, z + 0.025, panelW, 1.18, 0.03, k % 2 ? ochre : red);
+  }
+  b.boxIn(f, 'paint', cx, y + 1.58, z + 0.06, len, 0.1, 0.1, new THREE.Color(0.92, 0.9, 0.84));
+  // Frieze band: blue ground with a key of ochre blocks.
+  b.boxIn(f, 'paint', cx, y + 2.85, z + 0.02, len, 0.22, 0.03, blue);
+  for (let x = x0 + 0.2; x < x1; x += 0.5) b.boxIn(f, 'paint', x, y + 2.85 + (Math.round((x - x0) / 0.5) % 2 ? 0.04 : -0.04), z + 0.035, 0.22, 0.08, 0.02, ochre);
 }

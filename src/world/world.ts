@@ -2,12 +2,18 @@ import * as THREE from 'three';
 import type { Settings } from '../core/settings';
 import type { Physics } from '../physics/physics';
 import { Crowd } from '../npc/crowd';
+import { buildSeats, lifeAppearance, LifeSchema, sceneFigures } from '../npc/life';
+import { mulberry32, pick } from '../procgen/rng';
 import { loadTextureArray, phTextureUrl, type MaterialLib, type TexId } from '../render/materialLib';
 import type { ModelLib } from '../render/modelLib';
 import { buildForest, type Forest } from '../vegetation/forest';
 import { loadLeafPhoto } from '../vegetation/leafAtlas';
 import { weatherUniforms } from '../render/weathering';
 import { createClutter, type Clutter } from '../vegetation/clutter';
+import { createFlowers, type Flowers } from '../vegetation/flowers';
+import { createAmbience, type Ambience } from './ambience';
+import { buildStatues } from './statues';
+import { createFires, type FireSpot, type Fires } from './fires';
 import { createGrass, type Grass } from '../vegetation/grass';
 import { buildBackdrop } from './backdrop';
 import { createHeightfield, type Heightfield } from './heightfield';
@@ -32,6 +38,11 @@ export interface World {
   readonly forest: Forest;
   readonly grass: Grass;
   readonly clutter: Clutter;
+  readonly flowers: Flowers;
+  /** Motes, fireflies, butterflies, swallows. */
+  readonly ambience: Ambience;
+  /** Altar fires (flames and ground glow). */
+  readonly fires: Fires;
   readonly sky: SkySystem;
   readonly structures: Structures | null;
   readonly crowd: Crowd;
@@ -134,6 +145,14 @@ export async function buildWorld(
   root.add(grass.mesh);
   const clutter = createClutter(hf, forest.leafAtlas, { radius: g.preset === 'low' ? 12 : g.preset === 'medium' ? 18 : 26, density: g.preset === 'low' ? 0.5 : 1 });
   root.add(clutter.group);
+  const flowers = createFlowers(hf, ctx.uniforms, { radius: g.preset === 'low' ? 12 : g.preset === 'medium' ? 18 : 24, density: g.preset === 'low' ? 0.5 : 1 });
+  root.add(flowers.mesh);
+  const ambience = createAmbience(hf, ctx.uniforms, {
+    motes: g.preset === 'low' ? 250 : g.preset === 'medium' ? 600 : 1000,
+    butterflies: g.preset === 'low' ? 8 : 18,
+    birds: g.preset === 'low' ? 6 : 12,
+  });
+  root.add(ambience.group);
 
   await step('loading.city');
   const detail = g.preset === 'low' ? 0.5 : g.preset === 'medium' ? 0.8 : 1;
@@ -152,7 +171,55 @@ export async function buildWorld(
   const sacred = layout.paths.find((p) => p.id === 'sacred_way');
   if (sacred) crowd.addWalkers(sacred.points.slice(0, 3), Math.round(6 * crowdScale), 2);
   for (const [x, z, n, r] of [[441, 497, 5, 1.6], [449, 514, 4, 1.3], [418, 476, 3, 1.2]] as const) crowd.addGroup(x, z, n, r);
+  // The life of the Academy itself: philosophers, students, athletes, worshippers (content/world/<id>.life.json).
+  const disposers: (() => void)[] = [];
+  const lifeData = layouts[`../../content/world/${id}.life.json`];
+  if (lifeData) {
+    const life = LifeSchema.parse(lifeData);
+    const rng = mulberry32(layout.seed ^ 0x51fe);
+    for (const w of life.walkers) {
+      const path = layout.paths.find((p) => p.id === w.path);
+      if (!path) throw new Error(`life: unknown path "${w.path}"`);
+      const pts = w.slice ? path.points.slice(w.slice[0], w.slice[1] + 1) : path.points;
+      const n = Math.round(w.count * crowdScale);
+      crowd.addWalkers(pts, w.pairs ? n + (n % 2) : n, w.lateral, { appearance: (r) => lifeAppearance(r, pick(r, w.roles)), speed: w.speed, gait: w.gait, pairs: w.pairs });
+    }
+    const seats: { x: number; z: number; heading: number; y: number }[] = [];
+    for (const sc of life.scenes) {
+      // On the low preset, keep every other scene.
+      if (g.preset === 'low' && rng() < 0.5) continue;
+      for (const f of sceneFigures(sc, rng)) {
+        crowd.addFigure(lifeAppearance(rng, f.role), f.x, f.z, f.heading, f.anim, f.fixed);
+        if (f.seat) seats.push({ x: f.x, z: f.z, heading: f.heading, y: hf.height(f.x, f.z) });
+      }
+    }
+    const seatMesh = buildSeats(seats);
+    if (seatMesh) root.add(seatMesh);
+    const statues = buildStatues(life.statues, hf.height);
+    root.add(statues.group);
+    disposers.push(() => statues.dispose());
+    const R = ctx.physics.R;
+    for (const f of statues.footprints) ctx.physics.world.createCollider(R.ColliderDesc.cuboid(f.r, 1.2, f.r).setTranslation(f.x, hf.height(f.x, f.z) + 1.2, f.z));
+  }
   root.add(crowd.group);
+
+  // Altar fires: the eternal fire of Prometheus and embers on the smaller altars.
+  const fireSpots: FireSpot[] = [];
+  const buildings = ((structuresData as { buildings?: { type: string; x: number; z: number; rot?: number }[] } | null)?.buildings ?? []);
+  for (const bd of buildings) {
+    const y = hf.height(bd.x, bd.z);
+    if (bd.type === 'altarStepped') fireSpots.push({ x: bd.x, y: y + 2.5, z: bd.z, size: 1.1 });
+    else if (bd.type === 'altar') fireSpots.push({ x: bd.x, y: y + 1.12, z: bd.z, size: 0.45 });
+    else if (bd.type === 'shrine') {
+      // The shrine's own altar stands 8 m in front of it (architecture/academy.ts shrine()).
+      const r = bd.rot ?? 0;
+      const ax = bd.x + Math.sin(r) * 8;
+      const az = bd.z + Math.cos(r) * 8;
+      fireSpots.push({ x: ax, y: hf.height(ax, az) + 1.12, z: az, size: 0.4 });
+    }
+  }
+  const fires = createFires(fireSpots, hf.height);
+  root.add(fires.group);
 
   const pois: Poi[] = [...(structures?.pois ?? [])];
   for (const p of plants) if (p.id) pois.push({ id: p.id, kind: p.species === 'moria' ? 'moria' : 'tree', position: new THREE.Vector3(p.x, hf.height(p.x, p.z), p.z) });
@@ -168,6 +235,9 @@ export async function buildWorld(
     forest,
     grass,
     clutter,
+    flowers,
+    ambience,
+    fires,
     sky,
     structures,
     crowd,
@@ -196,9 +266,13 @@ export async function buildWorld(
       forest.dispose();
       grass.dispose();
       clutter.dispose();
+      flowers.dispose();
+      ambience.dispose();
+      fires.dispose();
       sky.dispose();
       structures?.dispose();
       crowd.dispose();
+      for (const d of disposers) d();
       ground.diff.dispose();
       ground.nor.dispose();
     },
